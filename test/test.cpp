@@ -1,6 +1,28 @@
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
-TEST(a, b)
+#include "src/delete_n_th.h"
+#include <iostream>
+
+using namespace ::testing;
+
+TEST(DeleteNth, WhenNoDublicatesThanReturnFullArray)
 {
-    EXPECT_TRUE(true);
+    std::vector<int> a{1, 2, 3};
+    auto res = deleteNth(a, 1);
+    EXPECT_THAT(res, Eq(a));
+}
+TEST(DeleteNth, WhenOneDublicateThanRemoveIt)
+{
+    std::vector<int> a{1, 1, 2, 3};
+    auto res = deleteNth(a, 1);
+    std::vector<int> expect{1, 2, 3};
+    EXPECT_THAT(res, Eq(expect));
+}
+TEST(DeleteNth, WhenN2OneElementToRemoveThanRemoveIt)
+{
+    std::vector<int> a{1, 1, 2, 2, 2, 3};
+    auto res = deleteNth(a, 2);
+    std::vector<int> expect{1, 1, 2, 2, 3};
+    EXPECT_THAT(res, Eq(expect));
 }
