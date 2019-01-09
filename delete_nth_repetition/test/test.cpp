@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "src/delete_n_th.h"
+#include "delete_nth_repetition/src/delete_n_th.h"
 #include <iostream>
 
 using namespace ::testing;

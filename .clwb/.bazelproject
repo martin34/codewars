@@ -1,0 +1,14 @@
+directories:
+  delete_nth_repetition
+  guess_number_game
+
+targets:
+  //delete_nth_repetition/test/...:all
+  //delete_nth_repetition/src/...:all
+  //guess_number_game/test/...:all
+  //guess_number_game/src/...:all
+
+
+additional_languages:
+  # Uncomment any additional languages you want supported
+  # dart
