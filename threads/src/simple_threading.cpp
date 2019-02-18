@@ -1,4 +1,4 @@
-#include "foo.h"
+#include "simple_threading.h"
 #include <thread>
 #include <future>
 #include <iostream>
@@ -12,22 +12,6 @@ int add(int a, int b)
   std::this_thread::sleep_for(2s);
   return a + b;
 }
-class AutoJoinThread{
-  public: 
-    AutoJoinThread(std::thread&& thread) : thread_(std::move(thread)){}
-    ~AutoJoinThread(){
-      if(thread_.joinable())
-      {
-        thread_.join();
-      }
-    }
-    void join(){
-      thread_.join();
-    }
-
-  private:
-    std::thread thread_;
-};
 
 class Adder{
   public:

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <regex>
+#include "auto_join_thread.h"
 
 class Foo{
   public:

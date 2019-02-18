@@ -1,6 +1,6 @@
 cc_test(
     name = "tests",
-    srcs = ["foo_spec.cpp"],
+    srcs = ["simple_threading_spec.cpp", "shared_resource_spec.cpp",],
     deps = [
         "//threads/src:lib",
         "//third_party/googletest:gtest_main",
