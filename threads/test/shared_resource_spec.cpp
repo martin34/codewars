@@ -2,6 +2,7 @@
 #include "gmock/gmock.h"
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <thread>
 #include <mutex>
 #include <chrono>
@@ -28,21 +29,21 @@ class Logger{
 
 TEST(Logging, WhenCreatedLogger)
 {
-  std::stringbuf output_stream;
-  Logger logger{&output_stream};
+  std::stringbuf buffer;
+  Logger logger{&buffer};
 
-  std::string output = output_stream.str();
+  std::string output = buffer.str();
   EXPECT_THAT(output, Eq(std::string{"Created logger\n"}));
 }
 
 TEST(Logging, WhenLog)
 {
-  std::stringbuf output_stream;
-  Logger logger{&output_stream};
+  std::stringbuf buffer;
+  Logger logger{&buffer};
 
   logger.Log("Foo");
 
-  std::string output = output_stream.str();
+  std::string output = buffer.str();
   EXPECT_THAT(output, Eq(std::string{"Created logger\nFoo\n"}));
 }
 
@@ -53,8 +54,8 @@ void Log(Logger& logger, std::string const& msg)
 
 TEST(Logging, WhenMultipleThreadsLogSimulatneously)
 {
-  std::stringbuf output_stream;
-  Logger logger{&output_stream};
+  std::stringbuf buffer;
+  Logger logger{&buffer};
 
   std::string msg{"Foo"};
   AutoJoinThread thread1{std::thread(Log, std::ref(logger), "Foo")};
@@ -62,6 +63,19 @@ TEST(Logging, WhenMultipleThreadsLogSimulatneously)
   thread1.join();
   thread2.join();
 
-  std::string output = output_stream.str();
+  std::string output = buffer.str();
   EXPECT_THAT(output, Eq(std::string{"Created logger\nFoo\nBar\n"}));
+}
+
+TEST(Logging, WhenMultipleThreadsAndLogToFile)
+{
+  std::ofstream output_stream("test.log", std::ios::out);
+  std::filebuf* output_buffer = output_stream.rdbuf();
+  Logger logger{output_buffer};
+
+  std::string msg{"Foo"};
+  AutoJoinThread thread1{std::thread(Log, std::ref(logger), "Foo")};
+  AutoJoinThread thread2{std::thread(Log, std::ref(logger), "Bar")};
+  thread1.join();
+  thread2.join();
 }
