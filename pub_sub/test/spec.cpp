@@ -12,31 +12,73 @@ class ISubscriber{
 class IPublisher{
   public:
     virtual void Send(std::int32_t data)=0;
+    virtual void Register(ISubscriber* subscriber)=0;
     virtual ~IPublisher(){}
 };
 
-class SubscriberMock : public ISubscriber{
+class SimpleSubscriber : public ISubscriber{
   public:
-    MOCK_METHOD1(Receive, void(std::int32_t));
+    SimpleSubscriber(std::weak_ptr<IPublisher> publisher) : publisher_(publisher){
+      RegisterMe();
+    }
+    SimpleSubscriber(SimpleSubscriber&& donator){
+      this->publisher_ = donator.publisher_.lock();
+      RegisterMe();
+    }
+    ~SimpleSubscriber()
+    {
+      // Implement unsubscribe
+    }
+    void Receive(std::int32_t data) override{
+      data_ = data;
+    }
+  std::int32_t data_{};
+  private:
+    void RegisterMe(){
+      if(publisher_.expired())
+      {
+        return;
+      }
+      auto pub = publisher_.lock();
+      pub->Register(this);
+    }
+    std::weak_ptr<IPublisher> publisher_;
 };
 
 class Publisher : public IPublisher{
   public:
-    Publisher(ISubscriber* subscriber) : subscriber_(*subscriber){}
     void Send(std::int32_t data)override{
-      subscriber_.Receive(data);
+      subscriber_->Receive(data);
     }
-
+    void Register(ISubscriber* subscriber)override{
+      subscriber_ = subscriber;
+    } 
   private:
-    ISubscriber& subscriber_;
+    ISubscriber* subscriber_;
 };
 
-TEST(a, b)
+TEST(PubSubSpec, WhenSendingInt)
 {
-  SubscriberMock subscriber;
-  Publisher publischer(&subscriber);
-  EXPECT_CALL(subscriber, Receive(Eq(3))).Times(1);
-  publischer.Send(3);
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>();
+  SimpleSubscriber subscriber(publisher);
+  publisher->Send(3);
+  EXPECT_THAT(subscriber.data_, Eq(3));
+}
+TEST(PubSubSpec, WhenMovingSubsciber)
+{
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>();
+  SimpleSubscriber subscriber(publisher);
+  SimpleSubscriber subscriber2(std::move(subscriber)); // Pointer in Publisher still points to old subscriber
+  publisher->Send(3);
+  EXPECT_THAT(subscriber2.data_, Eq(3));
+}
+TEST(PubSubSpec, DISABLED_WhenSubscriberDestructedBeforeSend)
+{
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>();
+  {
+    SimpleSubscriber subscriber(publisher);
+  }
+  publisher->Send(3);
 }
 
 int main(int argc, char** argv) {
