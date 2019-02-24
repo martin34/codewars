@@ -1,72 +1,9 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
+#include "pub_sub/src/pub_sub.h"
+
 using namespace testing;
-
-class ISubscriber{
-  public:
-    virtual void Receive(std::int32_t data)=0;
-    virtual ~ISubscriber(){}
-};
-
-class IPublisher{
-  public:
-    virtual void Send(std::int32_t data)=0;
-    virtual void Register(std::weak_ptr<ISubscriber> subscriber)=0;
-    virtual ~IPublisher(){}
-};
-
-class SubscriberImp : public ISubscriber{
-  public:
-    using Callback = std::function<void(std::int32_t)>;
-    SubscriberImp(std::weak_ptr<IPublisher> publisher) : publisher_(publisher){
-    }
-    void SetReceiveCallback(Callback callback){
-      callback_ = callback;
-    }
-
-    void Receive(std::int32_t data) override{
-      callback_(data);
-    }
-    void RegisterMe(std::weak_ptr<SubscriberImp> me){
-      auto pub = publisher_.lock();
-      if(pub)
-      {
-        pub->Register(me);
-      }
-    }
-  private:
-    std::weak_ptr<IPublisher> publisher_;
-    Callback callback_{[](std::int32_t){}};
-};
-
-class Subscriber{
-  public:
-    using Callback = std::function<void(std::int32_t)>;
-    Subscriber(std::weak_ptr<IPublisher> publisher, Callback callback) : impl(std::make_shared<SubscriberImp>(publisher)){
-      impl->RegisterMe(impl);
-      impl->SetReceiveCallback(callback);
-    }
-
-  private:
-    std::shared_ptr<SubscriberImp> impl; // Created once and pointer passed around, when instance of this is copied or moved.
-};
-
-class Publisher : public IPublisher{
-  public:
-    void Send(std::int32_t data)override{
-      auto instance = subscriber_.lock();
-      if(instance)
-      {
-        instance->Receive(data);
-      }
-    }
-    void Register(std::weak_ptr<ISubscriber> subscriber)override{
-      subscriber_ = subscriber;
-    } 
-  private:
-    std::weak_ptr<ISubscriber> subscriber_;
-};
 
 class PubSubSpecFixture : public Test{
   protected:
