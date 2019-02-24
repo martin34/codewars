@@ -29,12 +29,11 @@ class SubscriberImp : public ISubscriber{
       callback_(data);
     }
     void RegisterMe(std::weak_ptr<SubscriberImp> me){
-      if(publisher_.expired())
-      {
-        return;
-      }
       auto pub = publisher_.lock();
-      pub->Register(me);
+      if(pub)
+      {
+        pub->Register(me);
+      }
     }
   private:
     std::weak_ptr<IPublisher> publisher_;
@@ -56,9 +55,10 @@ class Subscriber{
 class Publisher : public IPublisher{
   public:
     void Send(std::int32_t data)override{
-      if(!subscriber_.expired())
+      auto instance = subscriber_.lock();
+      if(instance)
       {
-        subscriber_.lock()->Receive(data);
+        instance->Receive(data);
       }
     }
     void Register(std::weak_ptr<ISubscriber> subscriber)override{
@@ -126,4 +126,9 @@ TEST_F(PubSubSpecFixture, WhenSubscriberDestructedBeforeSend)
   }
   publisher->Send(3);
   ASSERT_THAT(received_data_, Eq(false));
+}
+TEST_F(PubSubSpecFixture, WhenBindSubscriberToNotExistingPublisher)
+{
+  std::shared_ptr<Publisher> publisher{nullptr};
+  Subscriber subscriber(publisher, callback_);
 }
