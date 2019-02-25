@@ -1,11 +1,35 @@
 
 #include "pub_sub.h"
+#include <map>
+
+class Registry{
+  public:
+    static Registry& Get(){
+      if(!registry_)
+      {
+        registry_ = std::make_unique<Registry>();
+      }
+      return *registry_;
+    }
+    std::weak_ptr<SubscriberImp> GetSubscriber(Port port){
+      return subscriber_map_[port];
+    }
+    void Register(Port port, std::weak_ptr<SubscriberImp> subscriber)
+    {
+      subscriber_map_.clear();
+      subscriber_map_.emplace(port, subscriber);
+    }
+
+  private:
+    static std::unique_ptr<Registry> registry_;
+    std::map<Port, std::weak_ptr<SubscriberImp>> subscriber_map_{};
+};
+
+std::unique_ptr<Registry> Registry::registry_;
 
 class SubscriberImp : public ISubscriber{
   public:
     using Callback = std::function<void(std::int32_t)>;
-    SubscriberImp(std::weak_ptr<IPublisher> publisher) : publisher_(publisher){
-    }
     void SetReceiveCallback(Callback callback){
       callback_ = callback;
     }
@@ -13,19 +37,22 @@ class SubscriberImp : public ISubscriber{
     void Receive(std::int32_t data) override{
       callback_(data);
     }
-    void RegisterMe(std::weak_ptr<SubscriberImp> me){
-      auto pub = publisher_.lock();
-      if(pub)
-      {
-        pub->Register(me);
-      }
-    }
   private:
-    std::weak_ptr<IPublisher> publisher_;
     Callback callback_{[](std::int32_t){}};
 };
-Subscriber::Subscriber(std::weak_ptr<IPublisher> publisher, Callback callback)
-  : impl(std::make_shared<SubscriberImp>(publisher)){
-    impl->RegisterMe(impl);
+Subscriber::Subscriber(Port port, Callback callback)
+  : port_{port}, impl(std::make_shared<SubscriberImp>())
+{
     impl->SetReceiveCallback(callback);
-  }
+    Registry::Get().Register(port, impl);
+}
+
+Publisher::Publisher(Port port) : port_{port}{}
+void Publisher::Send(std::int32_t data){
+   auto sub = Registry::Get().GetSubscriber(port_);
+    auto instance = sub.lock();
+    if(instance)
+    {
+      instance->Receive(data);
+    }
+}

@@ -16,16 +16,27 @@ class PubSubSpecFixture : public Test{
 };
 TEST_F(PubSubSpecFixture, WhenSendingInt)
 {
-  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>();
-  Subscriber subscriber{publisher, callback_};
+  Port port{1};
+  Subscriber subscriber{port, callback_};
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
+  publisher->Send(3);
+  ASSERT_THAT(received_data_, Eq(true));
+  EXPECT_THAT(actual_data_, Eq(3));
+}
+TEST_F(PubSubSpecFixture, WhenSendingIntCreateSubcriberAfterPublisher)
+{
+  Port port{1};
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
+  Subscriber subscriber{port, callback_};
   publisher->Send(3);
   ASSERT_THAT(received_data_, Eq(true));
   EXPECT_THAT(actual_data_, Eq(3));
 }
 TEST_F(PubSubSpecFixture, WhenMovingSubsciber)
 {
-  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>();
-  Subscriber subscriber{publisher, callback_};
+  Port port{1};
+  Subscriber subscriber{port, callback_};
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
   Subscriber subscriber2(std::move(subscriber));
   publisher->Send(3);
   ASSERT_THAT(received_data_, Eq(true));
@@ -33,39 +44,44 @@ TEST_F(PubSubSpecFixture, WhenMovingSubsciber)
 }
 TEST_F(PubSubSpecFixture, WhenCopyingSubsciber)
 {
-  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>();
-  std::shared_ptr<Publisher> publisher2 = std::make_shared<Publisher>();
-  Subscriber subscriber(publisher, callback_);
+  Port port{1};
+  Subscriber subscriber{port, callback_};
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
   // Both subscriber have a pointer to the same impl instance. 
   // This is ok, as long as it is not possible to change the impl state after creation e. g. direct to a different publisher.
-  Subscriber subscriber2(subscriber); 
+  Subscriber subscriber2(subscriber);
   publisher->Send(3);
   ASSERT_THAT(received_data_, Eq(true));
   EXPECT_THAT(actual_data_, Eq(3));
 }
 TEST_F(PubSubSpecFixture, WhenCopyAssignmentOfSubsciber)
 {
-  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>();
-  std::shared_ptr<Publisher> publisher2 = std::make_shared<Publisher>();
-  Subscriber subscriber(publisher, callback_);
+  Port port{1};
+  Subscriber subscriber{port, callback_};
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
   // Both subscriber have a pointer to the same impl instance. 
   // This is ok, as long as it is not possible to change the impl state after creation e. g. direct to a different publisher.
-  Subscriber subscriber2 = subscriber; 
+  Subscriber subscriber2=subscriber;
   publisher->Send(3);
   ASSERT_THAT(received_data_, Eq(true));
   EXPECT_THAT(actual_data_, Eq(3));
 }
 TEST_F(PubSubSpecFixture, WhenSubscriberDestructedBeforeSend)
 {
-  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>();
+  Port port{1};
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
   {
-    Subscriber subscriber(publisher, callback_);
+    Subscriber subscriber{port, callback_};
   }
   publisher->Send(3);
   ASSERT_THAT(received_data_, Eq(false));
 }
 TEST_F(PubSubSpecFixture, WhenBindSubscriberToNotExistingPublisher)
 {
-  std::shared_ptr<Publisher> publisher{nullptr};
-  Subscriber subscriber(publisher, callback_);
+  Port port_sub{1};
+  Subscriber subscriber{port_sub, callback_};
+  Port port_pub{2};
+  std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port_pub);
 }
+
+// Only currently it is not possible to have more than one Subscriber

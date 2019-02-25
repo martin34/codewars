@@ -15,29 +15,27 @@ class IPublisher{
     virtual ~IPublisher(){}
 };
 
+using Port = std::int32_t;
 
 class SubscriberImp;
 class Subscriber{
   public:
     using Callback = std::function<void(std::int32_t)>;
-    Subscriber(std::weak_ptr<IPublisher> publisher, Callback callback); 
+    Subscriber(Port port, Callback callback); 
 
   private:
+    Port port_{};
     std::shared_ptr<SubscriberImp> impl; // Created once and pointer passed around, when instance of this is copied or moved.
 };
 
 class Publisher : public IPublisher{
   public:
-    void Send(std::int32_t data)override{
-      auto instance = subscriber_.lock();
-      if(instance)
-      {
-        instance->Receive(data);
-      }
-    }
+    Publisher(Port port);
+    void Send(std::int32_t data)override;
     void Register(std::weak_ptr<ISubscriber> subscriber)override{
       subscriber_ = subscriber;
     } 
   private:
+    Port port_{};
     std::weak_ptr<ISubscriber> subscriber_;
 };
