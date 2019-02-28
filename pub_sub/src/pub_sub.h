@@ -1,3 +1,6 @@
+#ifndef PUB_SUB_SRC_PUB_SUB_H_
+#define PUB_SUB_SRC_PUB_SUB_H_
+
 #include <cstdint>
 #include <memory>
 #include <functional>
@@ -39,3 +42,4 @@ class Publisher : public IPublisher{
     Port port_{};
     std::weak_ptr<ISubscriber> subscriber_;
 };
+#endif // PUB_SUB_SRC_PUB_SUB_H_

@@ -5,7 +5,7 @@ cc_library(
 )
 cc_test(
     name = "tests",
-    srcs = glob(["test/**/*.cpp"]),
+    srcs = glob(["test/**/*.cpp"]) + glob(["test/**/*.h"]),
         deps = [
         ":lib",
         "//third_party/googletest:gtest_main",

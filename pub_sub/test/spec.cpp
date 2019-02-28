@@ -2,20 +2,13 @@
 #include "gmock/gmock.h"
 
 #include "pub_sub/src/pub_sub.h"
+#include "pub_sub/test/fixture.h"
 
 using namespace testing;
 
-class PubSubSpecFixture : public Test{
-  protected:
-    std::int32_t actual_data_{};
-    bool received_data_{false};
-    Subscriber::Callback callback_{[this](std::int32_t data){
-      received_data_ = true;
-      actual_data_ = data;
-    }};
-};
-TEST_F(PubSubSpecFixture, WhenSendingInt)
+TEST_F(PubSubSpecFixtureInt32, WhenSendingInt)
 {
+  Init();
   Port port{1};
   Subscriber subscriber{port, callback_};
   std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
@@ -23,8 +16,9 @@ TEST_F(PubSubSpecFixture, WhenSendingInt)
   ASSERT_THAT(received_data_, Eq(true));
   EXPECT_THAT(actual_data_, Eq(3));
 }
-TEST_F(PubSubSpecFixture, WhenSendingIntCreateSubcriberAfterPublisher)
+TEST_F(PubSubSpecFixtureInt32, WhenSendingIntCreateSubcriberAfterPublisher)
 {
+  Init();
   Port port{1};
   std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
   Subscriber subscriber{port, callback_};
@@ -32,8 +26,9 @@ TEST_F(PubSubSpecFixture, WhenSendingIntCreateSubcriberAfterPublisher)
   ASSERT_THAT(received_data_, Eq(true));
   EXPECT_THAT(actual_data_, Eq(3));
 }
-TEST_F(PubSubSpecFixture, WhenMovingSubsciber)
+TEST_F(PubSubSpecFixtureInt32, WhenMovingSubsciber)
 {
+  Init();
   Port port{1};
   Subscriber subscriber{port, callback_};
   std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
@@ -42,8 +37,9 @@ TEST_F(PubSubSpecFixture, WhenMovingSubsciber)
   ASSERT_THAT(received_data_, Eq(true));
   EXPECT_THAT(actual_data_, Eq(3));
 }
-TEST_F(PubSubSpecFixture, WhenCopyingSubsciber)
+TEST_F(PubSubSpecFixtureInt32, WhenCopyingSubsciber)
 {
+  Init();
   Port port{1};
   Subscriber subscriber{port, callback_};
   std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
@@ -54,8 +50,9 @@ TEST_F(PubSubSpecFixture, WhenCopyingSubsciber)
   ASSERT_THAT(received_data_, Eq(true));
   EXPECT_THAT(actual_data_, Eq(3));
 }
-TEST_F(PubSubSpecFixture, WhenCopyAssignmentOfSubsciber)
+TEST_F(PubSubSpecFixtureInt32, WhenCopyAssignmentOfSubsciber)
 {
+  Init();
   Port port{1};
   Subscriber subscriber{port, callback_};
   std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
@@ -66,8 +63,9 @@ TEST_F(PubSubSpecFixture, WhenCopyAssignmentOfSubsciber)
   ASSERT_THAT(received_data_, Eq(true));
   EXPECT_THAT(actual_data_, Eq(3));
 }
-TEST_F(PubSubSpecFixture, WhenSubscriberDestructedBeforeSend)
+TEST_F(PubSubSpecFixtureInt32, WhenSubscriberDestructedBeforeSend)
 {
+  Init();
   Port port{1};
   std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port);
   {
@@ -76,12 +74,22 @@ TEST_F(PubSubSpecFixture, WhenSubscriberDestructedBeforeSend)
   publisher->Send(3);
   ASSERT_THAT(received_data_, Eq(false));
 }
-TEST_F(PubSubSpecFixture, WhenBindSubscriberToNotExistingPublisher)
+TEST_F(PubSubSpecFixtureInt32, WhenBindSubscriberToNotExistingPublisher)
 {
+  Init();
   Port port_sub{1};
   Subscriber subscriber{port_sub, callback_};
   Port port_pub{2};
   std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port_pub);
 }
-
+/* TEST_F(PubSubSpecFixtureData, WhenSendingStruct) */
+/* { */
+/*   Port port{1}; */
+/*   Subscriber subscriber{port, callback_}; */
+/*   std::shared_ptr<Publisher> publisher = std::make_shared<Publisher>(port); */
+/*   Data data{1}; */
+/*   publisher->Send(data); */
+/*   ASSERT_THAT(received_data_, Eq(true)); */
+/*   EXPECT_THAT(actual_data_, Eq(data)); */
+/* } */
 // Only currently it is not possible to have more than one Subscriber
