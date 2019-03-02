@@ -40,9 +40,9 @@ class SubscriberImp : public ISubscriber{
   private:
     Callback callback_{[](Serializable*){}};
 };
-Subscriber::Subscriber(Port port, Callback callback)
-  : port_{port}, impl(std::make_shared<SubscriberImp>())
-{
+void Subscriber::InitializeImpl(Port port, Callback callback){
+    port_ = port; 
+    impl = std::make_shared<SubscriberImp>();
     impl->SetReceiveCallback(callback);
     Registry::Get().Register(port, impl);
 }

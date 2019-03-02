@@ -16,7 +16,6 @@ class IntSerializer : public Serializable{
     IntSerializer operator=(IntSerializer const& parent){
       this->data_ = parent.Get();
       return *this;}
-    IntSerializer* Clone(){return this;}
     std::int32_t Get() const{
       return data_;
     }
@@ -50,23 +49,16 @@ class DataSerializer : public Serializable{
 template<typename SerializerType>
 class PubSubSpecFixture : public Test{
   protected:
+    using TypedCallback = std::function<void(SerializerType)>;
     SerializerType actual_data_{};
     bool received_data_{false};
-    void Init(){
-      callback_ = Subscriber::Callback{[this](Serializable* data){
-            received_data_ = true;
-            SerializerType* my_data{dynamic_cast<SerializerType*>(data)};
-            if(my_data)
-            {
-              actual_data_ = *my_data;
-            }
-            else
-            {
-              std::cerr << "Received invalid data" << std::endl;
-            }
-          }};
+    void TypedInit(){
+      typed_callback_ = TypedCallback{[this](SerializerType data){
+        received_data_ = true;
+        actual_data_ = data;
+      }};
     }
-    Subscriber::Callback callback_{[](Serializable* data){}};
+    TypedCallback typed_callback_{[](SerializerType data){}};
 };
 using PubSubSpecFixtureInt32 = PubSubSpecFixture<IntSerializer>;
 using PubSubSpecFixtureData = PubSubSpecFixture<DataSerializer>;

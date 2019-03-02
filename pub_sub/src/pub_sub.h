@@ -4,11 +4,11 @@
 #include <cstdint>
 #include <memory>
 #include <functional>
+#include <iostream>
 
 class Serializable{
   public:
     virtual ~Serializable() = default;
-    virtual Serializable* Clone() = 0;
 };
 
 class ISubscriber{
@@ -26,11 +26,35 @@ class IPublisher{
 
 using Port = std::int32_t;
 
+template<typename T>
+T GetConcreteType(Serializable* data)
+{
+  T* my_data{dynamic_cast<T*>(data)};
+  if(my_data)
+  {
+    return *my_data;
+  }
+  else
+  {
+    std::cerr << "Expected type of subscriber does not match received data type" << std::endl;
+    throw std::bad_cast();
+  }
+}
 class SubscriberImp;
 class Subscriber{
   public:
     using Callback = std::function<void(Serializable*)>;
-    Subscriber(Port port, Callback callback); 
+    Subscriber(Port port) : port_{port} {
+    }
+    void InitializeImpl(Port port, Callback callback);
+    template<typename T>
+    void AddCallback(std::function<void(T)> callback){
+      auto usercallback = [callback](Serializable* data){
+        auto instance = GetConcreteType<T>(data);
+        callback(instance);
+      };
+      InitializeImpl(port_, usercallback);
+    }
 
   private:
     Port port_{};
