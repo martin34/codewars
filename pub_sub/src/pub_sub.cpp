@@ -29,16 +29,16 @@ std::unique_ptr<Registry> Registry::registry_;
 
 class SubscriberImp : public ISubscriber{
   public:
-    using Callback = std::function<void(std::int32_t)>;
+    using Callback = std::function<void(Serializable*)>;
     void SetReceiveCallback(Callback callback){
       callback_ = callback;
     }
 
-    void Receive(std::int32_t data) override{
+    void Receive(Serializable* data) override{
       callback_(data);
     }
   private:
-    Callback callback_{[](std::int32_t){}};
+    Callback callback_{[](Serializable*){}};
 };
 Subscriber::Subscriber(Port port, Callback callback)
   : port_{port}, impl(std::make_shared<SubscriberImp>())
@@ -48,7 +48,7 @@ Subscriber::Subscriber(Port port, Callback callback)
 }
 
 Publisher::Publisher(Port port) : port_{port}{}
-void Publisher::Send(std::int32_t data){
+void Publisher::Send(Serializable* data){
    auto sub = Registry::Get().GetSubscriber(port_);
     auto instance = sub.lock();
     if(instance)

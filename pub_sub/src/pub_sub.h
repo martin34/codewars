@@ -5,15 +5,21 @@
 #include <memory>
 #include <functional>
 
+class Serializable{
+  public:
+    virtual ~Serializable() = default;
+    virtual Serializable* Clone() = 0;
+};
+
 class ISubscriber{
   public:
-    virtual void Receive(std::int32_t data)=0;
+    virtual void Receive(Serializable* data)=0;
     virtual ~ISubscriber(){}
 };
 
 class IPublisher{
   public:
-    virtual void Send(std::int32_t data)=0;
+    virtual void Send(Serializable* data)=0;
     virtual void Register(std::weak_ptr<ISubscriber> subscriber)=0;
     virtual ~IPublisher(){}
 };
@@ -23,7 +29,7 @@ using Port = std::int32_t;
 class SubscriberImp;
 class Subscriber{
   public:
-    using Callback = std::function<void(std::int32_t)>;
+    using Callback = std::function<void(Serializable*)>;
     Subscriber(Port port, Callback callback); 
 
   private:
@@ -34,7 +40,7 @@ class Subscriber{
 class Publisher : public IPublisher{
   public:
     Publisher(Port port);
-    void Send(std::int32_t data)override;
+    void Send(Serializable* data)override;
     void Register(std::weak_ptr<ISubscriber> subscriber)override{
       subscriber_ = subscriber;
     } 
