@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "csv/src/input.h"
+#include "csv/src/csv_file.h"
 
 using namespace ::testing;
 
@@ -30,86 +31,53 @@ TEST(CommandLineInterface, ConvertToStrings)
   std::transform(argv__.begin(), argv__.end(), argv.begin(), [](std::vector<char>& v){return &*v.begin();});
   int argc{5};
 
-  std::vector<std::string> actual = ConvertToStrings(argc, &*argv.begin());
-  std::vector<std::string> expect(arguments.begin(), arguments.end());
+  Lines actual = ConvertToStrings(argc, &*argv.begin());
+  Lines expect(arguments.begin(), arguments.end());
   EXPECT_THAT(actual, Eq(expect));
 }
 
-TEST(CsvColumnReplacer, WhenNoArgumentsThenReturnAndErrorMessage)
+TEST(RunnerSpec, WhenNoArgumentsThenReturnAndErrorMessage)
 {
-  std::vector<std::string> arguments;
+  Lines arguments;
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
   unit.Do();
   EXPECT_THAT(output_stream.str(), Eq(std::string{"Not enough input arguments"}));
 }
-TEST(CsvColumnReplacer, WhenNoInputFileThenReturnAndErrorMessage)
+TEST(RunnerSpec, WhenNoInputFileThenReturnAndErrorMessage)
 {
-  std::vector<std::string> arguments{"executable name", "data/no_file.csv", "foo_column", "replacement", "data/output.csv"};
+  Lines arguments{"executable name", "data/no_file.csv", "foo_column", "replacement", "csv/test/data/output.csv"};
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
   unit.Do();
   EXPECT_THAT(output_stream.str(), Eq(std::string{"Input file missing"}));
 }
-TEST(CsvColumnReplacer, WhenEmptyFileThenReturnAndErrorMessage)
+TEST(RunnerSpec, WhenEmptyFileThenReturnAndErrorMessage)
 {
-  std::vector<std::string> arguments{"executable name", "csv/test/data/empty_file.csv", "foo_column", "replacement", "data/output.csv"};
+  Lines arguments{"executable name", "csv/test/data/empty_file.csv", "foo_column", "replacement", "csv/test/data/output.csv"};
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
   unit.Do();
   EXPECT_THAT(output_stream.str(), Eq(std::string{"Input file is empty"}));
 }
-using Csv = std::vector<std::string>;
-
-std::vector<std::string> Split(const std::string& str, char delim = ' ')
+TEST(CsvFile, OpenEmptyFileThenGetEmptyVector)
 {
-    std::stringstream ss(str);
-    std::string token;
-    std::vector<std::string> output;
-    while (std::getline(ss, token, delim)) {
-        output.push_back(token);
-    }
-    return output;
+  auto empty_file_path = fs::absolute("csv/test/data/empty_file.csv");
+  CsvFile empty_file(empty_file_path);
+  auto lines = empty_file.GetLines();
+  EXPECT_THAT(lines.empty(), Eq(true));
 }
-Csv ChangeColumnOf(Csv const& in, std::string column, std::string replacement)
+TEST(RunnerSpec, WhenValidFileThenExpectValidOutput)
 {
-  std::vector<std::vector<std::string>> table;
-  std::transform(in.cbegin(), in.cend(), std::back_inserter(table), [](std::string const& line){
-      return Split(line, ',');});
-  auto const& headline = table.front();
-  for(auto v : headline)
-  {
-    std::cerr << v << ";";
-  }
-  std::cerr << std::endl;
-  auto col_count = std::distance(headline.cbegin(), std::find(headline.cbegin(), headline.cend(), column));
-  std::cerr << "col count: " << col_count << std::endl;
-  for(auto it = table.begin() + 1; it != table.end(); ++it)
-  {
-    auto column_it = it->begin();
-    std::advance(column_it, col_count);
-    *column_it = replacement;
-  }
-  
-  Csv output;
-  std::transform(table.cbegin(), table.cend(), std::back_inserter(output), [](auto const& line){
-      std::stringstream ss;
-      for(auto col : line)
-      {
-        ss << col << ',';
-      }
-      return ss.str();});
-
-  return output;
+  Lines arguments{"executable name", "csv/test/data/short_file.csv", "column_1", "replacement", "csv/test/data/short_output_file.csv"};
+  std::ostringstream output_stream;
+  Runner unit{arguments, output_stream};
+  unit.Do();
+  EXPECT_THAT(output_stream.str(), Eq(std::string{""}));
+  auto full_output_path = fs::absolute("data/short_output_file.csv");
+  CsvFile output(full_output_path);
+  ASSERT_THAT(output.Exists(), Eq(true));
+  auto lines = output.GetLines();
+  EXPECT_THAT(lines, Eq(Lines{{"column_0,column_1,column_2,column_3"},{"w,replacement,y,z"},{"11,replacement,12,14"}}));
 }
-TEST(CsvColumnReplacer, WhenVectorOfStringsChangeColumn)
-{
-  Csv csv{{"col0,col1,col2,col3"}, {"a,b,c,d"}, {"0,1,2,3"}};
-  std::string column{"col1"};
-  std::string replacement{"x"};
 
-  auto actual = ChangeColumnOf(csv, column, replacement);
-  
-  std::vector<std::string> expect{{"col0,col1,col2,col3"}, {"a,x,c,d"}, {"0,x,2,3"}};
-  EXPECT_THAT(actual, Eq(expect));
-}
