@@ -4,6 +4,7 @@
 #include <iterator>
 #include <algorithm>
 #include <iostream>
+#include <optional>
 
 CsvFileReader::CsvFileReader(fs::path const& file_path) : in_(file_path){}
 
@@ -54,18 +55,20 @@ Lines Split(const std::string& str, char delim)
   }
   return output;
 }
-
-Table CreateTable(Lines const& in)
-{
-  Table table;
-  std::transform(in.cbegin(), in.cend(), std::back_inserter(table), [](std::string const& line){
-      return Split(line, ',');});
-  return table;
-}
 bool TableIsEmpty(Table const& table)
 {
   return table.cbegin() == table.cend();
 }
+std::optional<Table> CreateTable(Lines const& in)
+{
+  Table table;
+  std::transform(in.cbegin(), in.cend(), std::back_inserter(table), [](std::string const& line){
+      return Split(line, ',');});
+  if(TableIsEmpty(table))
+    return {};
+  return table;
+}
+
 bool ColumnNameNotInHeadline(Lines const& headline, Lines::const_iterator col_to_replace)
 {
   return col_to_replace == headline.cend();
@@ -97,19 +100,19 @@ Lines JoinTableRows(Table const& table)
 
 Lines CreateCopyWithReplacedColumn(Lines const& in, std::string column_name, std::string replacement)
 {
-  Table table = CreateTable(in);
-  if(TableIsEmpty(table))
+  std::optional<Table> table = CreateTable(in);
+  if(!table)
   {
     return in;
   }
-  auto const& headline = table.front();
+  auto const& headline = table.value().front();
   auto column_name_in_headline = std::find(headline.cbegin(), headline.cend(), column_name);
   if(ColumnNameNotInHeadline(headline, column_name_in_headline))
   {
     return in;
   }
-  ReplaceColumnWithNameInTable(column_name_in_headline, replacement, headline, table);
-  Lines output =  JoinTableRows(table);
+  ReplaceColumnWithNameInTable(column_name_in_headline, replacement, headline, table.value());
+  Lines output =  JoinTableRows(table.value());
   return output;
 }
 
