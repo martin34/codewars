@@ -12,30 +12,28 @@ bool CsvFile::Exists(){
 }
 
 bool CsvFile::Empty(){
-  std::vector<std::string> lines;
   std::string tmp;
   while(std::getline(in_, tmp))
   {
     if(tmp.size() > 0)
     {
-      lines.push_back(tmp);
+      lines_.push_back(tmp);
     }
   }
-  return lines.empty();
+  return lines_.empty();
 }
 
 Lines CsvFile::GetLines()
 {
-  std::vector<std::string> lines;
   std::string tmp;
   while(std::getline(in_, tmp))
   {
     if(tmp.size() > 0)
     {
-      lines.push_back(tmp);
+      lines_.push_back(tmp);
     }
   }
-  return lines;
+  return lines_;
 }
 
 Lines Split(const std::string& str, char delim)
@@ -60,7 +58,6 @@ Lines CreateCopyWithReplacedColumn(Lines const& in, std::string column, std::str
     return in;
   }
   auto const& headline = table.front();
-  std::cerr << "Got lines " << headline.front() << std::endl;
   auto col_to_replace = std::find(headline.cbegin(), headline.cend(), column);
   if(col_to_replace == headline.cend())
   {
@@ -90,7 +87,7 @@ Lines CreateCopyWithReplacedColumn(Lines const& in, std::string column, std::str
 
 void WriteLines(fs::path const& output_file_path, Lines const& lines)
 {
-  std::ofstream output_file("/home/martin/Desktop/abc.csv");
+  std::ofstream output_file(output_file_path);
   for(auto const& line : lines)
   {
     output_file << line << std::endl;

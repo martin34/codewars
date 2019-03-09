@@ -1,7 +1,6 @@
 #include "input.h"
 #include "csv_file.h"
 #include  <filesystem>
-#include <iostream>
 
 namespace fs = std::filesystem;
 
@@ -39,8 +38,13 @@ void Runner::Do(){
     output_stream_ << std::string{"Input file is empty"};
     return;
   }
+  auto output_file_path = fs::absolute(fs::path{arguments_[4]});
+  if(fs::exists(output_file_path))
+  {
+    output_stream_ << std::string{"Output file already existing"};
+    return;
+  }
   auto lines = csv.GetLines();
   auto new_lines = CreateCopyWithReplacedColumn(lines, arguments_[2], arguments_[3]);
-  /* auto output_file_path = fs::absolute(fs::path{arguments_[4]}); */
-  /* WriteLines(output_file_path, new_lines); */
+  WriteLines(output_file_path, new_lines);
 }

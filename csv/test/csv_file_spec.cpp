@@ -64,3 +64,11 @@ TEST(CsvColumnReplacer, WhenEmptyWithThenEmpty)
   Lines expect{};
   EXPECT_THAT(actual, Eq(expect));
 }
+TEST(CsvFile, OpenEmptyFileThenGetEmptyVector)
+{
+  auto empty_file_path = fs::absolute("csv/test/data/empty_file.csv");
+  CsvFile empty_file(empty_file_path);
+  auto lines = empty_file.GetLines();
+  EXPECT_THAT(lines.empty(), Eq(true));
+}
+

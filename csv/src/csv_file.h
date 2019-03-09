@@ -20,6 +20,7 @@ class CsvFile
 
   private:
     std::ifstream in_;
+    std::vector<std::string> lines_;
 };
 
 Lines Split(const std::string& str, char delim = ' ');
