@@ -10,10 +10,10 @@ namespace fs = std::filesystem;
 using Lines = std::vector<std::string>;
 using Table = std::vector<Lines>;
 
-class CsvFile
+class CsvFileReader
 {
   public:
-    CsvFile(fs::path const& file_path);
+    CsvFileReader(fs::path const& file_path);
     bool Exists();
     bool Empty();
     Lines GetLines();
@@ -21,10 +21,12 @@ class CsvFile
   private:
     std::ifstream in_;
     std::vector<std::string> lines_;
+
+    void ReadFile();
 };
 
+void WriteLines(fs::path const& output_file_path, Lines const& lines);
 Lines Split(const std::string& str, char delim = ' ');
 Lines CreateCopyWithReplacedColumn(Lines const& in, std::string column, std::string replacement);
-void WriteLines(fs::path const& output_file_path, Lines const& lines);
 
 #endif // CSV_SRC_CSV_FILE_H_

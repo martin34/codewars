@@ -5,11 +5,12 @@
 #include <iterator>
 #include <algorithm>
 
+#include "test_data.h"
 #include "csv/src/csv_file.h"
 
 using namespace ::testing;
 
-TEST(CsvColumnReplacer, WhenVectorOfStringsChangeColumn)
+TEST(CreateCopyWithReplacedColumnSpec, WhenVectorOfStringsChangeColumn)
 {
   Lines csv{{"col0,col1,col2,col3"}, {"a,b,c,d"}, {"0,1,2,3"}};
   std::string column{"col1"};
@@ -20,7 +21,7 @@ TEST(CsvColumnReplacer, WhenVectorOfStringsChangeColumn)
   Lines expect{{"col0,col1,col2,col3"}, {"a,x,c,d"}, {"0,x,2,3"}};
   EXPECT_THAT(actual, Eq(expect));
 }
-TEST(CsvColumnReplacer, WhenVectorOfStringsDifferentLenghtChangeColumn)
+TEST(CreateCopyWithReplacedColumnSpec, WhenVectorOfStringsDifferentLenghtChangeColumn)
 {
   Lines csv{{"col0,col1,col2,col3"}, {"a,b,c"}, {"0,1,2,3"}};
   std::string column{"col1"};
@@ -31,7 +32,7 @@ TEST(CsvColumnReplacer, WhenVectorOfStringsDifferentLenghtChangeColumn)
   Lines expect{{"col0,col1,col2,col3"}, {"a,x,c"}, {"0,x,2,3"}};
   EXPECT_THAT(actual, Eq(expect));
 }
-TEST(CsvColumnReplacer, WhenVectorOfStringsOnlyHeadlineChangeColumn)
+TEST(CreateCopyWithReplacedColumnSpec, WhenVectorOfStringsOnlyHeadlineChangeColumn)
 {
   Lines csv{{"col0,col1,col2,col3"}};
   std::string column{"col1"};
@@ -42,7 +43,7 @@ TEST(CsvColumnReplacer, WhenVectorOfStringsOnlyHeadlineChangeColumn)
   Lines expect{{"col0,col1,col2,col3"}};
   EXPECT_THAT(actual, Eq(expect));
 }
-TEST(CsvColumnReplacer, WhenVectorOfStringsNoColumnWithNameThenDoNothing)
+TEST(CreateCopyWithReplacedColumnSpec, WhenVectorOfStringsNoColumnWithNameThenDoNothing)
 {
   Lines csv{{"col0,col1,col2,col3"}, {"a,b,c,d"}, {"0,1,2,3"}};
   std::string column{"not_existing_name"};
@@ -53,7 +54,7 @@ TEST(CsvColumnReplacer, WhenVectorOfStringsNoColumnWithNameThenDoNothing)
   Lines expect{{"col0,col1,col2,col3"}, {"a,b,c,d"}, {"0,1,2,3"}};
   EXPECT_THAT(actual, Eq(expect));
 }
-TEST(CsvColumnReplacer, WhenEmptyWithThenEmpty)
+TEST(CreateCopyWithReplacedColumnSpec, WhenEmptyWithThenEmpty)
 {
   Lines csv{};
   std::string column{"not_existing_name"};
@@ -64,11 +65,27 @@ TEST(CsvColumnReplacer, WhenEmptyWithThenEmpty)
   Lines expect{};
   EXPECT_THAT(actual, Eq(expect));
 }
-TEST(CsvFile, OpenEmptyFileThenGetEmptyVector)
+TEST(CsvFileReader, OpenEmptyFileThenGetEmptyVector)
 {
-  auto empty_file_path = fs::absolute("csv/test/data/empty_file.csv");
-  CsvFile empty_file(empty_file_path);
+  auto empty_file_path = GetEmptyCsvFileReaderPath();
+  CsvFileReader empty_file(empty_file_path);
   auto lines = empty_file.GetLines();
   EXPECT_THAT(lines.empty(), Eq(true));
 }
-
+TEST(CsvFileReader, ReadFileThenExpectContent)
+{
+  auto empty_file_path = GetShortCsvFileReaderPath();
+  CsvFileReader file(empty_file_path);
+  auto lines = file.GetLines();
+  Lines expected = GetShortCsvContnet();
+  EXPECT_THAT(lines, Eq(expected));
+}
+TEST(CsvFileReader, CheckIfExistsAndReadFileThenExpectContent)
+{
+  auto empty_file_path = GetShortCsvFileReaderPath();
+  CsvFileReader file(empty_file_path);
+  EXPECT_THAT(file.Exists(), Eq(true));
+  auto lines = file.GetLines();
+  Lines expected = GetShortCsvContnet();
+  EXPECT_THAT(lines, Eq(expected));
+}

@@ -1,8 +1,13 @@
-#include "input.h"
+#include "runner.h"
 #include "csv_file.h"
 #include  <filesystem>
 
 namespace fs = std::filesystem;
+
+const std::string Runner::ErrorStrings::invalid_args{"Not enough input arguments"};
+const std::string Runner::ErrorStrings::no_input_file{"Input file missing"};
+const std::string Runner::ErrorStrings::empty_input_file{"Input file is empty"};
+const std::string Runner::ErrorStrings::output_exits{"Output file already existing"};
 
 std::vector<std::string> ConvertToStrings(int argc, char** argv)
 {
@@ -23,25 +28,25 @@ Runner::Runner(std::vector<std::string> arguments, std::ostream & output_stream)
 void Runner::Do(){
   if(ArgumentsValid(arguments_))
   {
-    output_stream_ << std::string{"Not enough input arguments"};
+    output_stream_ << ErrorStrings::invalid_args;
     return;
   }
   auto input_file_path = fs::absolute(fs::path{arguments_[1]});
-  CsvFile csv{input_file_path};
+  CsvFileReader csv{input_file_path};
   if(!csv.Exists())
   {
-    output_stream_ << std::string{"Input file missing"};
+    output_stream_ << ErrorStrings::no_input_file;
     return;
   }
   if(csv.Empty())
   {
-    output_stream_ << std::string{"Input file is empty"};
+    output_stream_ << ErrorStrings::empty_input_file;
     return;
   }
   auto output_file_path = fs::absolute(fs::path{arguments_[4]});
   if(fs::exists(output_file_path))
   {
-    output_stream_ << std::string{"Output file already existing"};
+    output_stream_ << ErrorStrings::output_exits;
     return;
   }
   auto lines = csv.GetLines();

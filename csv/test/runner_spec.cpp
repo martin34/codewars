@@ -6,7 +6,8 @@
 #include <iterator>
 #include <algorithm>
 
-#include "csv/src/input.h"
+#include "test_data.h"
+#include "csv/src/runner.h"
 #include "csv/src/csv_file.h"
 
 using namespace ::testing;
@@ -45,7 +46,7 @@ TEST(RunnerSpec, WhenNoArgumentsThenReturnAndErrorMessage)
 
   unit.Do();
 
-  EXPECT_THAT(output_stream.str(), Eq(std::string{"Not enough input arguments"}));
+  EXPECT_THAT(output_stream.str(), Eq(Runner::ErrorStrings::invalid_args));
 }
 TEST(RunnerSpec, WhenNoInputFileThenReturnAndErrorMessage)
 {
@@ -55,32 +56,32 @@ TEST(RunnerSpec, WhenNoInputFileThenReturnAndErrorMessage)
 
   unit.Do();
 
-  EXPECT_THAT(output_stream.str(), Eq(std::string{"Input file missing"}));
+  EXPECT_THAT(output_stream.str(), Eq(Runner::ErrorStrings::no_input_file));
 }
 TEST(RunnerSpec, WhenEmptyFileThenReturnAndErrorMessage)
 {
-  Arguments arguments{"executable name", "csv/test/data/empty_file.csv", "foo_column", "replacement", "csv/test/data/output.csv"};
+  Arguments arguments{"executable name", GetEmptyCsvFileReaderPathRelative(), "foo_column", "replacement", "csv/test/data/output.csv"};
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
 
   unit.Do();
 
-  EXPECT_THAT(output_stream.str(), Eq(std::string{"Input file is empty"}));
+  EXPECT_THAT(output_stream.str(), Eq(Runner::ErrorStrings::empty_input_file));
 }
 TEST(RunnerSpec, WhenOutputFileAlreadyExistsThenReturnErrorMessage)
 {
-  Arguments arguments{"executable name", "csv/test/data/short_file.csv", "column_1", "replacement", "csv/test/data/short_file.csv"};
+  Arguments arguments{"executable name", GetShortCsvFileReaderPathRelative(), "column_1", "replacement", GetShortCsvFileReaderPathRelative()};
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
 
   unit.Do();
 
-  EXPECT_THAT(output_stream.str(), Eq(std::string{"Output file already existing"}));
+  EXPECT_THAT(output_stream.str(), Eq(Runner::ErrorStrings::output_exits));
 }
 TEST(RunnerSpec, WhenValidFileThenExpectValidOutput)
 {
   std::string relative_output_file_path{"csv/test/data/short_output_file.csv"};
-  Arguments arguments{"executable name", "csv/test/data/short_file.csv", "column_1", "replacement", relative_output_file_path};
+  Arguments arguments{"executable name", GetShortCsvFileReaderPathRelative(), "column_1", "replacement", relative_output_file_path};
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
 
@@ -88,7 +89,7 @@ TEST(RunnerSpec, WhenValidFileThenExpectValidOutput)
 
   EXPECT_THAT(output_stream.str(), Eq(std::string{""}));
   auto full_output_path = fs::absolute(relative_output_file_path);
-  CsvFile output(full_output_path);
+  CsvFileReader output(full_output_path);
   ASSERT_THAT(output.Exists(), Eq(true));
   auto lines = output.GetLines();
   EXPECT_THAT(lines, Eq(Lines{{"column_0,column_1,column_2,column_3"},{"w,replacement,y,z"},{"11,replacement,12,14"}}));
