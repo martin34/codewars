@@ -67,14 +67,14 @@ TEST(CreateCopyWithReplacedColumnSpec, WhenEmptyWithThenEmpty)
 }
 TEST(CsvFileReader, OpenEmptyFileThenGetEmptyVector)
 {
-  auto empty_file_path = GetEmptyCsvFileReaderPath();
+  auto empty_file_path = GetEmptyCsvFilePath();
   CsvFileReader empty_file(empty_file_path);
   auto lines = empty_file.GetLines();
   EXPECT_THAT(lines.empty(), Eq(true));
 }
 TEST(CsvFileReader, ReadFileThenExpectContent)
 {
-  auto empty_file_path = GetShortCsvFileReaderPath();
+  auto empty_file_path = GetShortCsvFilePath();
   CsvFileReader file(empty_file_path);
   auto lines = file.GetLines();
   Lines expected = GetShortCsvContnet();
@@ -82,7 +82,7 @@ TEST(CsvFileReader, ReadFileThenExpectContent)
 }
 TEST(CsvFileReader, CheckIfExistsAndReadFileThenExpectContent)
 {
-  auto empty_file_path = GetShortCsvFileReaderPath();
+  auto empty_file_path = GetShortCsvFilePath();
   CsvFileReader file(empty_file_path);
   EXPECT_THAT(file.Exists(), Eq(true));
   auto lines = file.GetLines();

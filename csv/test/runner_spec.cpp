@@ -60,7 +60,7 @@ TEST(RunnerSpec, WhenNoInputFileThenReturnAndErrorMessage)
 }
 TEST(RunnerSpec, WhenEmptyFileThenReturnAndErrorMessage)
 {
-  Arguments arguments{"executable name", GetEmptyCsvFileReaderPathRelative(), "foo_column", "replacement", "csv/test/data/output.csv"};
+  Arguments arguments{"executable name", GetEmptyCsvFilePathRelative(), "foo_column", "replacement", "csv/test/data/output.csv"};
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
 
@@ -70,7 +70,7 @@ TEST(RunnerSpec, WhenEmptyFileThenReturnAndErrorMessage)
 }
 TEST(RunnerSpec, WhenOutputFileAlreadyExistsThenReturnErrorMessage)
 {
-  Arguments arguments{"executable name", GetShortCsvFileReaderPathRelative(), "column_1", "replacement", GetShortCsvFileReaderPathRelative()};
+  Arguments arguments{"executable name", GetShortCsvFilePathRelative(), "column_1", "replacement", GetShortCsvFilePathRelative()};
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
 
@@ -81,7 +81,7 @@ TEST(RunnerSpec, WhenOutputFileAlreadyExistsThenReturnErrorMessage)
 TEST(RunnerSpec, WhenValidFileThenExpectValidOutput)
 {
   std::string relative_output_file_path{"csv/test/data/short_output_file.csv"};
-  Arguments arguments{"executable name", GetShortCsvFileReaderPathRelative(), "column_1", "replacement", relative_output_file_path};
+  Arguments arguments{"executable name", GetShortCsvFilePathRelative(), "column_1", "replacement", relative_output_file_path};
   std::ostringstream output_stream;
   Runner unit{arguments, output_stream};
 
