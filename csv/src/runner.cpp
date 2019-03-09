@@ -14,13 +14,10 @@ std::vector<std::string> ConvertToStrings(int argc, char** argv)
   }
   return strings;
 }
-bool ArgumentsValid(std::vector<std::string> const& arguments)
-{
-  return arguments.size() == 5;
-}
 
 Runner::Runner(std::vector<std::string> arguments, std::ostream & output_stream) : arguments_(arguments), output_stream_(output_stream){
 }
+
 void Runner::Do(){
   Prepare();
   if(input_file_ && output_file_path_)
@@ -30,6 +27,8 @@ void Runner::Do(){
     WriteLines(output_file_path_.value(), new_lines);
   }
 }
+
+bool ArgumentsValid(std::vector<std::string> const& arguments);
 void Runner::Prepare()
 {
   if(!ArgumentsValid(arguments_))
@@ -58,3 +57,9 @@ void Runner::Prepare()
   }
   output_file_path_ = output_file_path;
 }
+
+bool ArgumentsValid(std::vector<std::string> const& arguments)
+{
+  return arguments.size() == 5;
+}
+
