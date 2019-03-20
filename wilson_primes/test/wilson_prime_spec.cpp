@@ -46,8 +46,6 @@ std::uint64_t Factorial(std::uint32_t n)
   std::vector<std::uint64_t> v(std::max(min_size, n));
   std::iota(v.begin(), v.end(), 1);
   return std::accumulate(v.cbegin(), v.cend(), 1, std::multiplies<std::uint64_t>());
-  /* return std::accumulate(v.cbegin(), v.cend(), 1, [](std::uint64_t lhs, std::uint64_t rhs){std::uint64_t res{lhs * rhs}; */
-                                                                                           /* return res;}); */
 }
 struct TestParams
 {
@@ -71,7 +69,7 @@ INSTANTIATE_TEST_CASE_P(WhenFalse, FactorialSpec, Values(TestParams{0, 1},
 
 
 // P is a prime number
-// ((P-1)! + 1) / (P * P)
+//   ((P-1)! + 1) / (P * P)
 bool IsWilsonPrime(std::uint32_t n)
 {
   // Check if n is a prime number
@@ -80,9 +78,15 @@ bool IsWilsonPrime(std::uint32_t n)
   // Check if calc
   if(static_cast<std::int64_t>(n) - 1 <= 0)
     return false;
-  std::uint64_t dividend = Factorial(n-1) + 1;
+
+  std::uint32_t min_size{0};
+  // (P - 1)!
+  std::vector<std::uint64_t> v(std::max(min_size, n - 1));
+  std::iota(v.begin(), v.end(), 1);
   std::uint64_t divisor = static_cast<std::uint64_t>(n) * static_cast<std::uint64_t>(n);
-  return !IsDivisibleBy(dividend, divisor);
+  auto res = std::accumulate(v.cbegin(), v.cend(), 1, [divisor](std::uint64_t lhs, std::uint64_t rhs){return (lhs * rhs) % divisor;});
+
+  return res == divisor - 1;
 }
 
 class IsWilsonPrimeSpec : public TestWithParam<int> {};
@@ -98,4 +102,4 @@ TEST_P(IsWilsonPrimeSpecWhenTrue, WhenTrue)
 
 INSTANTIATE_TEST_CASE_P(WhenFalse, IsWilsonPrimeSpec, Values(0, 1, 2, 3, 4));
 INSTANTIATE_TEST_CASE_P(WhenFalse2, IsWilsonPrimeSpec, Range(6, 11));
-INSTANTIATE_TEST_CASE_P(WhenTrue, IsWilsonPrimeSpecWhenTrue, Values(5, 563));
+INSTANTIATE_TEST_CASE_P(WhenTrue, IsWilsonPrimeSpecWhenTrue, Values(5, 13, 563));
