@@ -69,24 +69,20 @@ INSTANTIATE_TEST_CASE_P(WhenFalse, FactorialSpec, Values(TestParams{0, 1},
 
 
 // P is a prime number
-//   ((P-1)! + 1) / (P * P)
+//   ((P-1)! + 1) mod (P * P) = 0
 bool IsWilsonPrime(std::uint32_t n)
 {
   // Check if n is a prime number
   if(!IsPrime(n))
     return false;
-  // Check if calc
-  if(static_cast<std::int64_t>(n) - 1 <= 0)
-    return false;
 
-  std::uint32_t min_size{0};
-  // (P - 1)!
-  std::vector<std::uint64_t> v(std::max(min_size, n - 1));
+  // res = (P - 1)! mod (P * P)
+  std::int64_t min_size{0};
+  std::vector<std::uint64_t> v(std::max(min_size, static_cast<std::int64_t>(n) - 1));
   std::iota(v.begin(), v.end(), 1);
   std::uint64_t divisor = static_cast<std::uint64_t>(n) * static_cast<std::uint64_t>(n);
   auto res = std::accumulate(v.cbegin(), v.cend(), 1, [divisor](std::uint64_t lhs, std::uint64_t rhs){return (lhs * rhs) % divisor;});
-
-  return res == divisor - 1;
+  return res + 1 == divisor;
 }
 
 class IsWilsonPrimeSpec : public TestWithParam<int> {};
