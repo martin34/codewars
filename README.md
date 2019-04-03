@@ -7,3 +7,6 @@
 1. Build with debug symbols: bazel build ... --compilation_mode=dbg -s
 2. start gdb
 3. list, run, break, unitl, step, next, finish, continue, print, ... (https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf)
+
+## Cool things to try
+* https://github.com/google/benchmark
