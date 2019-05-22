@@ -1,1 +1,3 @@
 build --cxxopt='-std=c++2a'
+build --cxxopt='-Wall'
+#build --cxxopt='-Werror'
