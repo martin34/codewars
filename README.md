@@ -10,3 +10,7 @@
 
 ## Cool things to try
 * https://github.com/google/benchmark
+
+## Hack to switch compiler in bazel 
+bazel clean --expunge
+export CC=<compiler-binary>
