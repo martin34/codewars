@@ -1,3 +1,5 @@
 build --cxxopt='-std=c++2a'
 build --cxxopt='-Wall'
+build --cxxopt='-Wpedantic'
+build --cxxopt='-Wextra'
 #build --cxxopt='-Werror'
