@@ -11,3 +11,4 @@
 [Smashing the Stack for Fun and Profit](http://insecure.org/stf/smashstack.html)
 [Exploiting Format String Vulnerabilities](http://crypto.stanford.edu/cs155/papers/formatstring-1.2.pdf)
 [Basic Integer Overflows](http://phrack.org/issues/60/10.html)
+

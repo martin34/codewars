@@ -1,4 +1,4 @@
-#include <string.h>
+// Compile example: gcc -fno-stack-protector -ggdb buffer_overflow.c
 #include <stdio.h>
 
 void Authenticate(char* key)
