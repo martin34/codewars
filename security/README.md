@@ -22,3 +22,52 @@ forgery (CSRF)</a>)</li><li><a href="http://cwe.mitre.org/top25/" target="_blank
 software errors</a> - A
 little dated, but still relevant; here's the <a href="http://cwe.mitre.org/top25/#Listing" target="_blank" rel="noopener nofollow">brief
 listing</a>.</li>
+
+#### SQL Injection 
+
+Data e. g. user input is interpreted as code. 
+
+Countermeasures 
+
+* Sanitze the input e. g. blacklist, whitelist (more safe than blacklisting, but less flexible)
+* prepared statements
+
+Additionally you should have different layers of devense e. g. 
+
+* Limit privileges
+* Encryped sensitive data --> it is not usable if it is exposed
+
+#### Session hijacking
+
+Attacker obtains cockie (with session identifier) and uses it as identifier to an server.
+
+Points of attack:
+
+* Compromise the server
+* Predict the gererated cookie --> random, long
+* Network based attacks e. g. Sniff the network, DNS cache poisoning = trick the user to send the cookie to the attacker (use https)
+
+Defend in depth e. g. 
+* use additional hidden fields or use referer attribute to check if previous page is reasonable
+* timeout 
+* delete cookie as soon as seesion ends from users machine
+
+Non-defense:
+* Store IP address for session | False positive, because of WIFI, 3G and DHCP IP change | False negative e. g. using a NAT box and having the same IP
+
+#### Cross-site Request Forgery
+
+Scenario:
+User is logged in to bank account and cookie is obtained.
+He serves in the internet and visits an other page. The attacker page contains a html tag, which causes the browser to perfrom a transaction (could be hided as an image, ...).
+Because of the cookie, no authentication is required.
+The request comes from the users browser with the correct cookie.
+Could be also a spam email sent by the browser.
+
+Protections:
+
+* Check the referer field (request comes from a trusted site) | Problem: not all browser send it
+* Include a secret in every link/form --> hard to guess for the attacker
+
+**It is possible to alter the cookie via JAVA Script. --> Browsers implement same orgin policy: scripts can only access content with the same origin (domain name)**
+
