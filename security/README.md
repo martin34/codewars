@@ -69,5 +69,20 @@ Protections:
 * Check the referer field (request comes from a trusted site) | Problem: not all browser send it
 * Include a secret in every link/form --> hard to guess for the attacker
 
+#### Cross-site scripting
+
 **It is possible to alter the cookie via JAVA Script. --> Browsers implement same orgin policy: scripts can only access content with the same origin (domain name)**
+Cross-site scripting attacks tick the browser to execute the attacker script as it would come from a different website. --> access to sensitive data
+
+Two types:
+
+1. Stored XSS attack: Malicous scriped is injected to the server e. g. by uploading data with browser (server fails to block content with java script content)
+2. Reflected XSS attack: User visits attacker website, in response attacker script and link to attacked website is sent back. User clicks on the link. The attacked website echos back the user input, with the attackers script and the script is executed. This echoing could be part of the functionality e. g. user does a search query and server answers with the input search query and the result. This echoing is the vulnerbility.
+
+Protection:
+
+* Sanitize the input e. g. remove all scrip tags (this is hard to do, because there are various ways and some are browser specific) or better white list
+
+Additional example:
+Ruby on rails has good support for exchanging yaml files. It is possible to encode any ruby code in a yaml file. The yaml interpreter can be tricked to execute this code. --> Framework error, input needs to be checked or whitelisted 
 
