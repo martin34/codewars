@@ -4,4 +4,4 @@ bazel-out
 bazel-testlogs
 bazel-bin
 compile_commands.json
-third_party/bazel-compilation-database-0.3.1/
+third_party/bazel-compilation-database-0.3.4/
