@@ -82,7 +82,7 @@ bool IsWilsonPrime(std::uint32_t n)
   std::iota(v.begin(), v.end(), 1);
   std::uint64_t divisor = static_cast<std::uint64_t>(n) * static_cast<std::uint64_t>(n);
   auto res = std::accumulate(v.cbegin(), v.cend(), 1, [divisor](std::uint64_t lhs, std::uint64_t rhs){return (lhs * rhs) % divisor;});
-  return res + 1 == divisor;
+  return res + 1U == divisor;
 }
 
 class IsWilsonPrimeSpec : public TestWithParam<int> {};
