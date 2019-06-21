@@ -41,7 +41,7 @@ protected:
       actual_data_ = data;
     }};
   }
-  TypedCallback typed_callback_{[](SerializerType data) {}};
+  TypedCallback typed_callback_{[](SerializerType) {}};
 };
 using PubSubSpecFixtureInt32t = PubSubSpecFixture<Serializer<std::int32_t>>;
 using PubSubSpecFixtureData = PubSubSpecFixture<Serializer<Data>>;
