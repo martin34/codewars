@@ -7,27 +7,22 @@
 
 #include <stdexcept>
 
-class Guesser
-{
+class Guesser {
 public:
-    Guesser(int number, int lives)
-            : number(number), lives(lives)
-    { }
-    bool guess(int n)
-    {
-        if(lives<=0)
-        {
-            throw std::runtime_error("Dead");
-        }
-        bool correct = n == number;
-        if(!correct)
-        {
-            --lives;
-        }
-        return correct;
+  Guesser(int number, int lives) : number(number), lives(lives) {}
+  bool guess(int n) {
+    if (lives <= 0) {
+      throw std::runtime_error("Dead");
     }
+    bool correct = n == number;
+    if (!correct) {
+      --lives;
+    }
+    return correct;
+  }
+
 private:
-    int number, lives;
+  int number, lives;
 };
 
-#endif //CODEWARS_GUESSER_H
+#endif // CODEWARS_GUESSER_H
