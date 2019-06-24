@@ -258,6 +258,9 @@ Methods:
 * Every user has its own command reader/processor process --> different user can't access other users session
 * does not trust executables like /bin/ls, but implements it own directory listing --> small attack surface
 
+#### Real world study
+www.bsimm.com
+
 ## Security testing
 ### Static analysis and symbolic execution
 
@@ -302,3 +305,90 @@ Methods:
 
 * Testing
 * Auditing
+* Static analysis
+
+#### Flow anlysis
+
+Specifiy parts of pogram, which get untrasted data and parts which need trusted. Analysis will find possible parts, between both, which should not exist.
+Label trusted parts, untrusted parts and sanitiscers. The probramm will find possible problems.
+
+#### Symbolic execution
+
+Symbolic executor tries to follow all possible path to find bugs. This is very time and resource consuming, but can help to find bugs. 
+--> Important addition for sanitzer part of the program?
+
+Examples:
+
+* KLEE (LLVM, free)
+* Mergepoint (used for LINUX)
+* SAGE (Microsoft)
+
+#### Penetration Testing and fuzz testing
+
+Resources:
+
+
+<li><a href="http://www.rand.org/pubs/reports/R609-1/index2.html" target="_blank" rel="noopener nofollow">Ware report</a> - introduced the idea of penetration testing, as well as many
+other foundational ideas in systems security</li>
+<li><a href="http://www.iacertification.org/cpt_certified_penetration_tester.html" target="_blank" rel="noopener nofollow">CPT (pen testing) certification</a> - establish your credentials as a pen tester</li>
+<li><a href="https://www.defcon.org/html/links/dc-ctf.html" target="_blank" rel="noopener nofollow">Defcon CTF contest</a> - be the first to find vulnerabilities in other competitors'
+systems and patch them in your own</li>
+
+Pentration:
+
+Analyce a complete programm/system for secirity problems. 
+Seperate/specialized team with specialized tools. 
+Given similar rights/knowledge a attacker could have.
+Tester needs to know a lot about the target domain e. g. web, ... including common weaknesses, misconfigurations and designs.
+"70 %" is about messing with parameters e. g. urls.
+"10 %" default passwords.
+"10 %" about hidden files and directories.
+"10 %" about others e. g. bypass authentication , replay, insecure web services, accessable configuration pages.
+
+Advantage: 
+"Real" security issues are found --> feel good factor.
+
+Disadvantage:
+If no problems are found, it does not mean that there are none. 
+Not all problems will be found (probably).
+
+Tools:
+
+<li><a href="http://nmap.org/" target="_blank" rel="noopener nofollow">NMAP</a> - "network mapper" scans network to find what's
+connected to it</li>
+<li><a href="https://code.google.com/p/zaproxy/" target="_blank" rel="noopener nofollow">Zap</a>
+- web proxy and automatic vulnerability scanner</li>
+<li><a href="http://portswigger.net/burp" target="_blank" rel="noopener nofollow">Burp suite</a> - Several pen testing tools (some versions are free)</li>
+<li><a href="http://www.offensive-security.com/metasploit-unleashed/Main_Page" target="_blank" rel="noopener nofollow">Metasploit</a> - customizable platform for developing, testing, and using
+exploit code.</li>
+<li><a href="http://www.kali.org/" target="_blank" rel="noopener nofollow">Kali</a> - Linux distribution with pre-installed pen testing tools.</li>
+
+Fuzz testing:
+
+Generate random input und test the system e. g. for memery error, non-termination, ...
+Complements functional testing e. g. derive input from legitimate tests.
+
+Different kinds:
+
+* Black box testing 
+* Grammer based; operator defines grammer, more likely to cover big parts of the program, than black box testing
+* White box testing; Tool generates input, based on program analysis, often easy to use and computational expensive
+
+Often file based or network based.
+
+Fuzzing in combination with address sanitizers (ASAN) or memory checkers e. g. valgrind makes it easier to find the bug. The program terminates at the place of the bug e. g. buffer overflow and not later e. g. when overwritten memory is reused.
+
+
+Tools:
+
+SAGE (Microsoft) uses symbolic execution to generate fuzzing input.
+
+<li><a href="https://github.com/aoh/radamsa" target="_blank" rel="noopener nofollow">Radamsa</a>
+- mutation-based black-box fuzzer</li>
+<li><a href="https://github.com/ouspg/blab" target="_blank" rel="noopener nofollow">Blab</a>
+- grammar-based fuzzer</li>
+<li><a href="http://lcamtuf.coredump.cx/afl/" target="_blank" rel="noopener nofollow">American Fuzzy Lop (AFL)</a> - mutation-based, white-box fuzzer, observers the noraml program flow and mutates the recored inputs</li>
+<li><a href="http://caca.zoy.org/wiki/zzuf" target="_blank" rel="noopener nofollow">CERT basic fuzzing framework (Zzuf)</a> - found many high-profile bugs</li>
+<li><a href="https://github.com/OpenRCE/sulley" target="_blank" rel="noopener nofollow">Sulley</a> - lots of extras to manage fuzzing as part of pen testing</li>
+<li><a href="http://resources.infosecinstitute.com/intro-to-fuzzing/" target="_blank" rel="noopener nofollow">SPIKE</a> - network fuzzing framework</li>
+
