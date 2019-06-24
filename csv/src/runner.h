@@ -14,6 +14,7 @@ std::vector<std::string> ConvertToStrings(int argc, char **argv);
 class Runner {
 public:
   Runner(std::vector<std::string> arguments, std::ostream &output_stream);
+
   void Do();
 
   struct ErrorStrings {
