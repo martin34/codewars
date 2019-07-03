@@ -1,0 +1,182 @@
+# Cryptography
+
+" the art of writing or solving codes"
+
+Goals of modern cryptography:
+
+* Data integrity, authentication, protocols, ...
+* The public-key setting
+* Foundations e. g. number theory to systems e. g. distributed e-cash
+
+Examples for usages:
+
+* password (hashing)
+* secure credit-card transations
+* ecripted WiFi
+* digitally signed software updates
+* Bitcoins
+
+Book recommendation: Introduction to Modern Cryptography (ISBN-13: 978-1466570269)
+
+## Content:
+
+1. Introduction and Classical Cryptography
+1. Computational Secrecy and Principles of Modern Cryptography
+1. Private-Key Encryption
+1. Message Authentication Codes
+1. Number Theory
+1. Key Exchange and Public-Key Encryption
+1. Digital Signatures
+
+## Introduction and Classical Cryptography
+
+Historically focused on secure communication.
+Based on exchangeing a secret key in advance 
+--> Private-key cryptography (also secret-key, shared-key, symmetric-key) 
+
+Two users share secret key in advance. 
+Senser encryptes message using the key before sending. 
+Receiver can decode the message with the key.
+
+Goal: Nobaody shall be able to see content, without the key.
+
+Also applicable for encrypthing hard drive and so on.
+
+Method needs three fundamental algorithms:
+
+1. Generate key (Gen k)
+1. Encrypte c <-- Enc<sub>k</sub>(m)
+1. Decrypte m := Dec<sub>k</sub>(c)
+
+<-- Output may be influenced by random values
+:=  Deterministic output
+
+For every encryptions Dec<sub>k</sub>(Enc<sub>k</sub>(m)) = m needs to be true
+
+25 = 35 mod 10; 25 mod 10 = 5 = 35 mod 10
+
+25 ≠ [35 mod 10]; 5 = [35 mod 10]
+
+### Formal definition of simple code
+
+Shift each letter in the alphabet by k (wrap around at the end).
+--> Enc<sub>1</sub>(abc) --> bcd
+
+* Gen: choose uniform k ∈ {0, ..., 25}
+* Enc<sub>k</sub>(m<sub>1</sub>...m<sub>t</sub>): output c<sub>1</sub>...c<sub>t</sub>, where c<sub>i</sub> := [m<sub>i</sub> + k mod 26]
+* Dec<sub>k</sub>(c<sub>1</sub>...c<sub>t</sub>): output m<sub>1</sub>...m<sub>t</sub> := [c<sub>i</sub> - k mod 26]
+
+ Is this secure?
+There are 26 possibilities --> easily possible to try all and choose the one, which results in proper text
+If the attacker knows the encryption method. This should be always assumed.
+--> The only secret is the key --> the key must be chosen random, to keep the secret **(Kerckoff's principle)**
+
+Lession learned:
+Key space must be large enough to prevent brute force attacks
+
+We increase the key space by using an string as an key:
+```
+s =   "seeyouatnoon"
+key = "spyspyspyspyspy"
+res = ""
+
+for i,e in enumerate(s):
+    small_letters_ascii_offset = 97
+    number_in_alphabet = ord(e) - small_letters_ascii_offset
+    k_number_in_alphabet = ord(key[i]) - small_letters_ascii_offset
+    v = (number_in_alphabet + k_number_in_alphabet) % 26
+    print("v: {}, k: {} = {}".format(number_in_alphabet, k_number_in_alphabet, v))
+    encoded_ascii = v + small_letters_ascii_offset
+    res += str(chr(encoded_ascii))
+
+print(res)
+```
+Now we have a very large key space e. g. with 14 character key 26<sup>14</sup> about 2<sup>66</sup>
+But if we look at every 14th character and combine this with the plaintext letter frequencies, we can find the key. For example the most common character in the encrypted text most likely corresponds with the most frequently occouring carracter in the encrypted text. 
+
+Lession learned:
+Key space is not enough to withstand clever attacks
+--> It would be nice to prove, that a code is secure
+
+## Core Principles of modern crypto
+
+* Definitions (formal)
+  Precise, mathematical model and defintion of what security means
+* Assumptions
+  Clearly stated and unambigous
+* Proof of security
+  Move away form design-break-patch
+ --> Proof is always relative to definition and assumtions
+
+## Perfect Secrecy
+
+Definitions have two parts:
+1. Thread model
+2. Security guarantee/goal
+
+#### Probability review
+
+Random variable: Variable that takes on (discrete) values with certain probabilities
+
+Probability distribution must be between 0 and 1. All values sum to 1.
+
+Event: A particular occurrence in some experiemnt; Pr[E] = probability of event E
+
+Conditional probability: Probability that one event occurs assuming some other event occurred; Pr[A | B] = Pr[A and B]/Pr[B]
+
+Two random variables are independent if for all x, y: Pr[X=x | Y=y] = Pr[X=x]; The value of y does not influence the x.
+
+Law of total probability: say E<sub>1</sub>, ..., E<sub>n</sub> are a partition of all possibilities (one and only one of them has to occur). Then for any A: Pr[A] = Σ<sub>i</sub>Pr[A and E<sub>1</sub>] = Σ<sub>i</sub>Pr[A | E<sub>i</sub>] * Pr[E<sub>i</sub>] 
+
+
+### Private-key encryption
+
+Share key between users. Use key for encryption and decryptions.
+
+Example for thread models:
+
+* Ciphertext-only attack: One ciphertext or many known to the attacker?
+* Known-plaintext attack: Attacker knows plaintext and encrypted version e. g. attacker knows that the first exchanged message is "Hello"
+* Chosen-plaintext attack: Attacker can obtain encryted version for any string
+* Chosen-ciphertext attack: Aditionally to chosen-plaintext attack the attacker can decrypt certain things
+
+Security goal for thread model Ciphertext-only attack with one ciphertext:
+Regardless of any prior information the attacker has about the plaintext, the ciphertext should leak no additional information about the plaintext.
+
+**M**: Message space
+**K**: key space
+**C**: ciphertext space
+
+M: a random variable denoting the value of the message
+K: random variable denoting the key; Key generation (Gen) algorithm determines K --> Gen defines the probability distribution for K
+
+Assumption:
+Random variables M and K are independet
+
+Encrypting a message defines a distribution on the ciphertext.
+C: random value denoting the value for the ciphertext
+
+Expample for shift cipher:
+k element of {0, ... 25}, Pr[K=k] = 1/26
+Assume: Pr[M = 'a'] = 0.27, Pr[M = 'z'] = 0.3
+--> Pr[C = 'b'] = Pr[M = 'a'] * Pr[K = 1] + Pr[M = 'z'] * Pr[K=2] = 0.7 * (1/26) + 0.3 * (1/26) = 1/26
+
+**Definition for perfect secrecy**:
+For Pr[C = c] > 0
+Pr[M = m | C = c] = Pr[M = m]  --> Seeing a encrypted message c, does not change the knowledge of the attacker about m
+
+Expample with shift cipher and distribution:
+Pr[M = 'one'] = 0.5, Pr[M = 'ten'] = 0.5
+take m = 'ten' and c = 'rqh' 
+Pr[M = 'ten' | C = 'rqh'] = 0 ≠ Pr[M = 'ten] 
+Because there is no possible shift from 'ten' to 'rqh'
+--> Shift cipher does not meet perfect secrecy
+
+Review of bayes's theorem:
+Pr[A | B] = Pr[B | A] * Pr[A]/Pr[B]
+
+--> How can we construct a perfectly secret scheme?
+
+#### The One-Time Pad
+
+Let **M**={0,1}<sup>n</sup>
