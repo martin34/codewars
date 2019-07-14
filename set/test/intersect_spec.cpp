@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include "gtest/gtest.h"
 
 #include <string>
 #include <vector>
@@ -10,15 +10,14 @@ using namespace ::testing;
 
 using strings = std::vector<std::string>;
 
-struct TestParameter
-{
+struct TestParameter {
   strings first, second, expect;
 };
 
-class GetSortedElementsOfFirstInSecondSpec : public TestWithParam<TestParameter> {};
+class GetSortedElementsOfFirstInSecondSpec
+    : public TestWithParam<TestParameter> {};
 
-TEST_P(GetSortedElementsOfFirstInSecondSpec, WhenTrue)
-{
+TEST_P(GetSortedElementsOfFirstInSecondSpec, WhenTrue) {
   auto first = GetParam().first;
   auto second = GetParam().second;
   auto expect = GetParam().expect;
@@ -26,12 +25,13 @@ TEST_P(GetSortedElementsOfFirstInSecondSpec, WhenTrue)
   EXPECT_THAT(res, Eq(expect));
 }
 
-INSTANTIATE_TEST_CASE_P(Foo, GetSortedElementsOfFirstInSecondSpec, Values(
-      TestParameter{strings{"abc"}, strings{"abc"}, strings{"abc"}},
-      TestParameter{strings{"abc"}, strings{}, strings{}},
-      TestParameter{strings{}, strings{"abc"}, strings{}},
-      TestParameter{strings{"abc", "def"}, strings{"abc"}, strings{"abc"}},
-      TestParameter{strings{"abc", "def", "hij"}, strings{"abc", "hij"}, strings{"abc", "hij"}},
-      TestParameter{strings{"hij", "def", "abc"}, strings{"hij", "abc"}, strings{"abc", "hij"}}
-      ));
-
+INSTANTIATE_TEST_CASE_P(
+    Foo, GetSortedElementsOfFirstInSecondSpec,
+    Values(TestParameter{strings{"abc"}, strings{"abc"}, strings{"abc"}},
+           TestParameter{strings{"abc"}, strings{}, strings{}},
+           TestParameter{strings{}, strings{"abc"}, strings{}},
+           TestParameter{strings{"abc", "def"}, strings{"abc"}, strings{"abc"}},
+           TestParameter{strings{"abc", "def", "hij"}, strings{"abc", "hij"},
+                         strings{"abc", "hij"}},
+           TestParameter{strings{"hij", "def", "abc"}, strings{"hij", "abc"},
+                         strings{"abc", "hij"}}));
