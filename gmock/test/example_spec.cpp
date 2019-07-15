@@ -79,6 +79,20 @@ TEST(GMockExampleSpec, CheckForCustomType) {
               Eq(MyOptional{true}));
 }
 
+// Function with compatible signature to mock method
+// Usefull to do more complex things
+// There is also InvokeWithoutArgs
+MyOptional DoSomething(std::string const &foo) {
+  EXPECT_THAT(foo, Eq("some text"));
+  return MyOptional{};
+}
+TEST(GMockExampleSpec, Invoke) {
+  MockParameterServer server;
+  EXPECT_CALL(server, GetValueIfAvailable(_))
+      .WillRepeatedly(Invoke(DoSomething));
+  server.GetValueIfAvailable("some text");
+}
+
 int main(int argc, char **argv) {
   // The following line must be executed to initialize Google Mock
   // (and Google Test) before running the tests.
