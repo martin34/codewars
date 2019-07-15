@@ -1,4 +1,4 @@
-# Cryptography
+#Cryptography
 
 " the art of writing or solving codes"
 
@@ -53,21 +53,33 @@ Method needs three fundamental algorithms:
 
 For every encryptions Dec<sub>k</sub>(Enc<sub>k</sub>(m)) = m needs to be true
 
-25 = 35 mod 10; 25 mod 10 = 5 = 35 mod 10
+25 = 35 mod 10;
+25 mod 10 = 5 = 35 mod 10
 
-25 ≠ [35 mod 10]; 5 = [35 mod 10]
+    25 ≠ [35 mod 10];
+5 = [35 mod 10]
 
-### Formal definition of simple code
+    ## #Formal definition of simple code
 
-Shift each letter in the alphabet by k (wrap around at the end).
---> Enc<sub>1</sub>(abc) --> bcd
+        Shift each letter in the alphabet by
+        k(wrap around at the end)
+            .-- > Enc<sub> 1 < / sub >
+    (abc)-- > bcd
 
-* Gen: choose uniform k ∈ {0, ..., 25}
-* Enc<sub>k</sub>(m<sub>1</sub>...m<sub>t</sub>): output c<sub>1</sub>...c<sub>t</sub>, where c<sub>i</sub> := [m<sub>i</sub> + k mod 26]
-* Dec<sub>k</sub>(c<sub>1</sub>...c<sub>t</sub>): output m<sub>1</sub>...m<sub>t</sub> := [c<sub>i</sub> - k mod 26]
+                      *Gen
+    : choose uniform k ∈ {0, ..., 25} *
+      Enc<sub> k</ sub>(m<sub> 1 < / sub > ... m<sub> t</ sub>)
+    : output c<sub> 1 <
+    / sub > ... c<sub> t</ sub>,
+    where c<sub> i</ sub>
+    : = [m<sub> i</ sub> + k mod 26] * Dec<sub> k</ sub>(c<sub> 1 < / sub >
+                                                         ... c<sub> t</ sub>)
+    : output m<sub> 1 <
+        / sub > ... m<sub> t</ sub>
+    : = [c<sub> i</ sub> - k mod 26]
 
- Is this secure?
-There are 26 possibilities --> easily possible to try all and choose the one, which results in proper text
+      Is this secure
+      ? There are 26 possibilities-- > easily possible to try all and choose the one, which results in proper text
 If the attacker knows the encryption method. This should be always assumed.
 --> The only secret is the key --> the key must be chosen random, to keep the secret **(Kerckoff's principle)**
 
@@ -409,3 +421,32 @@ This method is restriced to messages witch are exactly l blocks of length n long
 This can be inproved. 
 e. g. include the message length (number of blocks l) as content of the first block of the message.
 There are also ways to remove the n * l length restriction.
+
+### Hash functions
+
+Maps arbitrary length inputs to a short fixed-length output (digest).
+
+MAC can be used to safely transmit the digest or the encoded verion (t). Rest of the message is transimitted with an unsafe channel. --> Receiver is able to detect any change in the payload and therefore detect attacks.
+
+HMAC: Can be viewed following the above apporach and exploiting certain probabilities of MD5 (do not use anymore), SHA1 and SHA2 to efficiently compute the combination of MAC and digest.
+
+## Secrecy + Integrity
+
+--> Encrypt and authenticate 
+Sender and receiver share to keys. First is used for encryption and add a authentication code. 
+But the tag t can leak information. E. g. if the MAC is determinisitc (which it is often) the attacker can determine if the message was send multiple times.
+--> Encrypt then authenticate --> if encryption is CPA secure and MAC is secure --> combination is secure
+Additionally it is not feasable for an attacker to generate any new valid ciphertext, even if he observed ciphertexts before (or even with chosen plaintext attacks). This is called **authenticated encryption scheme**. Authenticated encryption schemes with CPA secure encruption is also chosen ciphertext secure.
+
+Other ways of achieving security and integrity are possible. 
+
+## Secure sessions
+
+Session: Period of time over which the two parties are willing to maintain state.
+Even with a security and integrity as discribed above (authenticated encryption) a number of attacks are possible:
+
+* Replay attack
+* Re-order attack (deliver messages in different orders)
+* Reflection attack (play message back to sender)
+
+These and other can be prevented easily using counters and identity, before the encryption. --> Secure session
