@@ -450,3 +450,105 @@ Even with a security and integrity as discribed above (authenticated encryption)
 * Reflection attack (play message back to sender)
 
 These and other can be prevented easily using counters and identity, before the encryption. --> Secure session
+
+#Number theory
+
+This is important for public-key cryptography. All this basics will be covered in the following.
+
+## Algorithmic number theory
+
+Mainly about necessary computations.
+
+Length of the binary repesentation of an integer with respect to the biggest number a: ||a|| = O(log(a)); a = 2<sup>||a||</sup>
+
+Efficient computations:
+
+* Integer addition / subtraction / multiplication / division with remainder
+* Modular addition / subtraction / multiplication / reduction
+* (Modular) exponentiation (good illustriation of a non-trivial algorithm)
+
+Also combination of the above. 
+
+### Exponentiation
+
+Compute a<sup>b</sup>
+Size of result: ||a|| = O(b * ||a||) --> just writing down the answer takes exponential time!
+
+Compute [a<sup>b</sup> mod N] 
+Size of result: < ||N||
+How to do it efficient: 
+
+exp(a, b, N){
+    // assume b >= 0
+    ans = 1;
+    for (i = 1; i <= b; i++)
+      ans = [ans * a mod N];
+    return ans
+}
+--> Runtime is polynomial in b and not in ||b|| --> Not efficient enough
+
+
+exp(a, b, N){
+    // assume b >= 0
+    x = a, t = 1;
+    while (b > 0) {
+      if (b odd)
+        t = [t * x mod N], b = b - 1 x = [x<sup> 2 < / sup > mod N], b = b / 2;
+    }
+    return t;
+} 
+--> Running time is polynomial in ||a||, ||b||, ||N||
+
+## Notion of Groups
+
+Provides a way of reasoning about objects that share the same mathematical structure.
+
+[Abelian group](https://en.wikipedia.org/wiki/Abelian_group)
+
+Order of a group is the number of elements in the group (we only consider finite groups).
+
+Computations in groups:
+
+* Assume it is possible to efficiently recognize group elements
+* Assume the group operation can be computed efficiently --> Group exponentation can be computed efficiently
+
+Expample:
+Z<sub>n</sub> = {0, ..., N-1} under addition modlulo N
+--> Identity is 0 (Neutral element)
+--> Inverse of a is [-a mod N] 
+--> Associativity, commutativity obvious
+--> Order N
+What happens if we consider multiplication modulo N?
+--> 1 would be the identity
+--> but e. g. 0 and 2 have no inverse --> would not be a group
+--> say b is invertable modulo N if there is an element, b<sup>-1</sup>, such that b * b<sup>-1</sup> = 1 mod N (if such a b<sup>-1</sup> exists, it is unique modulo N
+--> define "division by b" = "multiplication by b<sup>-1</sup>" (only defined if be is invertable modulo N)
+Theorem: b is invertiable modulo N if and only if the greatest common devidor of g, N = 1 (This can be computed efficiently)
+--> if Z'<sup>N</sup> = invertible elements between 1 and N-1 under multiplication modulo N --> group (closure is not obvious)
+
+### Ferman's little theorem
+
+Let G be a finite group of order m. Then for any g element G, it holds that g<sup>m</sup>=1
+
+--> can be used to come up with efficient solution for certain problems. 
+
+### Hard problems
+
+Example: Factoring a number
+This is not hard for every number. It is easy for even number and numbers divisible by 3
+The hardest numbers to factor are those that are products of two, equal-length primes
+
+Related problem: RSA problem
+For now N=pq with p and q distinct, odd primes
+
+### Cyclic groups
+
+Let G be a finite group of order m (written multiplicatively)
+Let g be a element of G
+Consider the set {g<sup>0</sup>, g<sup>1</sup>, ...}
+We know g<sup>m</sup> = 1 = g<sup>0</sup>, so the set has <= m elements
+In this case, we say g is a generator of G
+If G has a generator, we say G is cyclic
+
+Important examples:
+Theorem: Any group of prime order is cyclic, and every non-identity elements is a generator
