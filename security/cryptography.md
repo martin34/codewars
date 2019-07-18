@@ -552,3 +552,48 @@ If G has a generator, we say G is cyclic
 
 Important examples:
 Theorem: Any group of prime order is cyclic, and every non-identity elements is a generator
+Theorem: If p is prime, then Z<sup>*</sup><sub>p</sub> is cyclic (of order p-1) --> g**i mod 11
+
+Uniform sampling:
+Choose exponent uniformly and use g<sup>exponent</sup> (g is the generator)
+
+Discrete-logarithm problem
+Cyclic group G of order m and generator g
+--> {g<sup>0</sup>, g<sup>1</sup>, ..., g<sup>m-1</sup>} = G
+For every h element G, there is a unique x element Z<sub>m</sub> s. t. g<sup>x</sup> = h
+--> log<sub>g</sub>h shall be the discrete logarithm of h with respect to g (in the group G)
+The discrete-logarithm problem is solving log<sub>g</sub>h for a given g and h. 
+The discrete-logarithm assumption in G: Solving the discrete log problem in G is hard (not possible in polynomial time)
+--> You can design a group-generation algorithm, which takes the security parameter n as an input and outputs a cyclic group G, its order G (with |q| = n) and a generator g
+
+[Diffie-Hellman](https://de.wikipedia.org/wiki/Diffie-Hellman-Schl%C3%BCsselaustausch#Diffie-Hellman-Problem) problems
+Fix group G with generator g
+Define DH<sub>g</sub>(h1, h2) = DH(g<sup>x</sup>, g<sup>y</sup>) = g<sup>(xy)</sup>
+e. g.: In Z<sub>11</sub><sup>∗</sup>, what is DH<sub>2</sub>(5,8)?
+--> log<sub>2</sub>5=4 and log<sub>⁡</sub>8=3, so DH<sub>2</sub>(5,8)= 2<sup>1</sup>2 = 4 mod 11
+--> if discrite log is hard --> DH is hard (Computional Diffie-Hellman problem)
+--> it is even hard to distinguish the correct answer of DH<sub>g</sub>(h1, h2) form a uniform element of G (Decisional-Diffie-Hellman-Problem)
+For cryptographic applications it is best to choose prime-order groups, because otherwise the problem is "easier" to solve.
+
+Group selection for crypto:
+
+* Prime-order subgroup of an elliptic curve group
+* Prime-order subgroup of Z<sup>*</sup><sub>p</sub>  ...
+
+### Parameter Choice for crypto
+
+We discussed two classes of crypto assumption:
+Factoring based and dlog based
+
+These problems are assumed to be hard. But still we need to choose the parameter appropriately to reach our security goals.
+e. g. does faktoring of modulus of length n take 2<sup>n</sup> time? 
+
+Goal: Rough idea how parameters are calculated.
+
+Example recommendation by NIST (112 bit security):
+
+* Factoring: 2048 bit modulus
+* Dlog, order-q subgroup of Z<sup>*</sup><sub>p</sub>: ||q|| = 224, ||p|| = 2048
+* Dlog, elliptic-curve group of order q: ||q|| = 224
+
+--> Much longer than for symmetric-key algorithms (one of the reasons why public-key crypto is less efficient then symmetric-key crypto)
