@@ -597,3 +597,142 @@ Example recommendation by NIST (112 bit security):
 * Dlog, elliptic-curve group of order q: ||q|| = 224
 
 --> Much longer than for symmetric-key algorithms (one of the reasons why public-key crypto is less efficient then symmetric-key crypto)
+
+## Public-key cryptography
+
+Problems with private key encryption:
+
+* How to share a secret private key in the first place? This is hard, but it can be done e. g. if both parties are at the same location or use a trusted courier.
+* Key-management problem in big organization e. g. every user needs to have a distinct key with each other user --> n<sup>2</sup> keys have to be stored.
+* No support for "open systems": How to securely communicate with someone without a prior relationship e. g. sending an e-mail.
+
+--> This can be solved with the key idea of "asymmetry" (easy to compute, hard to revert).
+--> This can be used to enable a key exchange --> communicating via a open channel and thereby negotiate a private key. --> Even if the attacker observes the whole negotiation (transcript), the attacker shall not be able to distinguish the real key from a random string. This strong guarantee is necessary to fullfill the assumptions of private key crypto. It necessary to have a stronger guarantee to make sure that the key is not negotiated with an attacker.
+
+### Diffie-Hellman Key exchange
+
+Basic Decisional Diffie-Hellman problem discribed above.
+
+Party 1: Generate cyclic group (G, q, g) and an choose a uniform exponent x. Compute the group element h<sub>1</sub> = g<sup>x</sup> and send the group parameter and h<sub>1</sub> to Party 2.
+Party 2: Choose a uniform parameter y and send h<sub>2</sub> = g<sup>y</sup> to Party 1.
+Party 2: Genrates key 1 with k<sub>1</sub> = h<sub>2</sub><sup>x</sup> = g<sup>yx</sup>
+Party 1: Genrates key 2 with k<sub>2</sub> = h<sub>1</sub><sup>y</sup> = g<sup>xy</sup>
+(Minor detail: the to parties do not share a key after the described step, they share a group element. The key is acquired by hashing the group element)
+
+In practice the group parameters are fixed in advance and standardised.
+Computing the key from the transcript is exactly the computional Diffie-Hellman problem.
+Distinguishing k from a uniform group element is the decisional Diffie-Hellman problem. --> if DDH is hard --> key-exchange is protocol is secure for the group generation algorithm.
+
+### The public-key setting
+
+A party generates a pair of keys: a public key pk and a private key sk.
+Public key is widely disseminated.
+Private key is kept secret and shared with no one (only used by the generating party).
+
+Public key distribution
+User generates pk and sk. Users shares pk with other user directly or via a third party e. g. public repository.
+--> Attacker can get public key
+
+Primitives
+![](public-vs-private-key.png)
+
+--> Public keys can be distributed over public (but authenticated) channels
+--> Each users stores a sk, pk and N pk's of other users (pk's can be also stored in a central place)
+--> Even parties without prior relationshop can find each others public key (applicable for open systems)
+
+Public key crypto is about 2-3 orders of magnitude slower than private-key crypto.
+
+#### How to ensure secrecy with public-key setting
+
+The user with the public key (or the attacker) is able to encrypt messages using the public key. But he is not able to decrypt the message (only via trying to encypt all possible messages and comparing the encypted versions). 
+No deterministic public-key encryption scheme can be secure against chosen plaintext attack (CPA). This implies security for encypting multiple messages.
+
+Chosen-ciphertext attacks
+Bigger problems in public-key setting than in private key setting, because almost anybody can be a valid sender (anybody nows pk).
+Related concern: malleability 
+
+#### Hybrid encryption
+
+Public key is used to share a private with the first message (or first part of the message).
+This is more efficient than pure public key encryption.
+
+#### Discrete-Log-Based Public-Key Encryption
+
+[Elgamal encryption](https://de.wikipedia.org/wiki/Elgamal-Verschl%C3%BCsselungsverfahren#Beschreibung) --> CPA secure
+Normally used as hybrid encryption to enable encryption of arbitrary messages.
+--> it is not secure against chosen-ciphertext attacks, because attacker can chance ciphertext without getting noticed. If an appropriate private key encryption scheme is used, then it is chosen-ciphertext secure --> DHIES/[ECIES](https://de.wikipedia.org/wiki/Elliptic_Curve_Integrated_Encryption_Scheme)
+
+#### RSA Problem 
+
+--> google 
+
+### Digital Signatures
+
+Mechanism to provide integrity in public key setting. 
+
+How/Why is it used?
+Sender signs message. Receiver verifies it, to make sure that the message was really sent by the correct sender.
+Example for usage: Distribute software patches. Clients need to verify, if the patch is valid (not introduced by an attacker).
+Problem with MAC in the setting above: Each client would have the key k and would therefore be able to construced valid packages and distribute it to an other client. Alternative: Each client gets it own key. This would be possible, but now the companiy needs to manage all the keys and its harder to distribute the keys.
+
+Differences to MAC:
+
+* Public verifiablity: Everyone with the public key can verify the signature. --> Transferablility (can forward a signature to someone else)
+* Non-repudiation: Imagine a contract signed by two parties. With MAC it would be impossible for a third party to verify the signature, if one party refuses to cooperate. With digital signatures it can be verified with the public key.
+
+How does it work?
+Generate a public and a private key. 
+Use the public key to generate a signature. 
+Use the private key to verify the signature.
+
+Hash and sign paradigm
+First hash the message and then use the sign algo for the hash. Makes it easy to sign arbitrary lenght messages.
+Also makes it faster.
+
+Example:
+
+* RSA-FDH
+* DSS 
+
+### Public Key Infrastructure
+
+Attacker can insert "wrong" keys and values to public key storages or intersect the communication with the public repository.
+
+Idea:
+Use signatures for secret key distribution. 
+
+Certificate authority signs the identity and key combination (this is called a certificate).
+--> Users can verify the signature and ensure that the public key is from a trusted source.
+
+In practice there is a small set of certificate authorities. The public keys of these authorities are distributed with browser, operating system and so on. (Can be viewed and edited in browsers: Preferences, Certificates).
+This is basically the base of the security of the modern internet.
+
+Other possibilities to distribute public keys:
+
+* Meet in person, share public keys and issue certificates --> Web of trust 
+* Public key repository, store certificates in a public repository e. g. MIT PGP --> Search public key for identity and evaluate if stored certificates are trustworthy
+
+Problems in practice:
+
+* if one certifacate authority used by the browser is compromised, everything is vulnerable
+* if a users changes his private key (e. g. because the old was compromised) he needs to tell this to the world. This a hard in practice. 
+
+## SSL/TLS
+
+Example problem:
+How to send your credit card infos securely.
+
+High lever:
+
+1. Handshake protocol to establish a shared key between the two parties
+2. Record layer to use the shared key for secure communication
+
+# Learn more
+
+* More proof for security: Random-oracle model
+* Design of modern stream ciphers, block ciphers and hash functions
+* Cryptography from minimal assumptions (theoretical background; one way functions)
+* Algorithms for factoring and computing discrete logarithms
+* More on public keys and signatures
+
+More: www.iacr.org
