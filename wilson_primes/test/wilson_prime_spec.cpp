@@ -1,28 +1,11 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include <algorithm>
-#include <functional>
 #include <numeric>
 
+#include "wilson_primes/src/wilson_prime.h"
+
 using namespace ::testing;
-
-inline bool IsDivisibleBy(std::uint64_t dividend, std::uint64_t divisor) {
-  return dividend % divisor;
-}
-
-bool IsPrime(std::uint32_t n) {
-  std::int64_t min_size = 0;
-  std::int64_t max_size{static_cast<std::int64_t>(n) - 3};
-  std::size_t size = std::max(min_size, max_size);
-  std::vector<std::uint32_t> possilbe_divisors(size);
-  std::iota(possilbe_divisors.begin(), possilbe_divisors.end(), 2);
-  for (auto const i : possilbe_divisors) {
-    if (!IsDivisibleBy(n, i))
-      return false;
-  }
-  return true;
-}
 
 class IsPrimeSpecWhenTrue : public TestWithParam<int> {};
 TEST_P(IsPrimeSpecWhenTrue, WhenTrue) {
@@ -57,27 +40,6 @@ INSTANTIATE_TEST_CASE_P(WhenFalse, FactorialSpec,
                         Values(TestParams{0, 1}, TestParams{1, 1},
                                TestParams{2, 2}, TestParams{3, 6},
                                TestParams{4, 24}, TestParams{5, 120}));
-
-// P is a prime number
-//   ((P-1)! + 1) mod (P * P) = 0
-bool IsWilsonPrime(std::uint32_t n) {
-  // Check if n is a prime number
-  if (!IsPrime(n))
-    return false;
-
-  // res = (P - 1)! mod (P * P)
-  std::int64_t min_size{0};
-  std::vector<std::uint64_t> v(
-      std::max(min_size, static_cast<std::int64_t>(n) - 1));
-  std::iota(v.begin(), v.end(), 1);
-  std::uint64_t divisor =
-      static_cast<std::uint64_t>(n) * static_cast<std::uint64_t>(n);
-  auto res = std::accumulate(v.cbegin(), v.cend(), 1,
-                             [divisor](std::uint64_t lhs, std::uint64_t rhs) {
-                               return (lhs * rhs) % divisor;
-                             });
-  return res + 1U == divisor;
-}
 
 class IsWilsonPrimeSpec : public TestWithParam<int> {};
 TEST_P(IsWilsonPrimeSpec, WhenFalse) {
