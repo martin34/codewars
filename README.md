@@ -8,5 +8,6 @@
 2. start gdb
 3. list, run, break, unitl, step, next, finish, continue, print, ... (https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf)
 
-## Cool things to try
+## Benchmark
 * https://github.com/google/benchmark
+* Example: `bazel run //wilson_primes:benchmark`
