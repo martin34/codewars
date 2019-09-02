@@ -10,8 +10,8 @@ cc_test(
     srcs = glob(["test/**/*.cpp"]) + glob(["test/**/*.h"]),
         deps = [
         ":lib",
-        "//third_party/googletest:gtest_main",
-        "//third_party/googletest:gtest_sample_lib",
+        "@googletest//:gtest_main",
+        "@googletest//:gtest_sample_lib",
     ],
     data = [":test/data/empty_file.csv",":test/data/short_file.csv"],
     # data = glob(["data/empty_file.csv"]),
