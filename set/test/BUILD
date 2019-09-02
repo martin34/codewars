@@ -3,7 +3,7 @@ cc_test(
     srcs = ["intersect_spec.cpp"],
     deps = [
         "//set/src:lib",
-        "//third_party/googletest:gtest_main",
-        "//third_party/googletest:gtest_sample_lib",
+        "@googletest//:gtest_main",
+        "@googletest//:gtest_sample_lib",
     ],
 )
