@@ -3,3 +3,5 @@ build --cxxopt='-Wall'
 build --cxxopt='-Wpedantic'
 build --cxxopt='-Wextra'
 build --cxxopt='-Werror'
+# Enable cpp-20 features
+build --action_env='CC=gcc-8'
