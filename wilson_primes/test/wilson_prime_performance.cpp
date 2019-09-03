@@ -6,7 +6,7 @@ static void BM_IsPrime(benchmark::State &state) {
   // Perform setup here
   for (auto _ : state) {
     // This code gets timed
-    IsPrime(state.range(0));
+    v2::IsPrime(state.range(0));
   }
 }
 // Register the function as a benchmark

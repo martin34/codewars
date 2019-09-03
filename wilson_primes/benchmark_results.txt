@@ -1,0 +1,146 @@
+### v1 with opt
+
+----------------------------------------------------------------
+Benchmark                      Time             CPU   Iterations
+----------------------------------------------------------------
+BM_IsPrime/2                1.82 ns         1.82 ns    411609500
+BM_IsPrime/4                21.3 ns         21.3 ns     31310919
+BM_IsPrime/8                24.6 ns         24.6 ns     28390898
+BM_IsPrime/16               27.3 ns         27.3 ns     25508155
+BM_IsPrime/32               38.8 ns         38.7 ns     18463008
+BM_IsPrime/64               59.2 ns         59.2 ns     11691810
+BM_IsPrime/128               111 ns          111 ns      6043524
+BM_IsPrime/256               191 ns          191 ns      3770629
+BM_IsPrime/512               368 ns          368 ns      2013534
+BM_IsPrime/1024              655 ns          655 ns      1031306
+BM_IsPrime/2048             1385 ns         1385 ns       503873
+BM_IsPrime/4096             2699 ns         2699 ns       252738
+BM_IsPrime/8192             5008 ns         5008 ns       138479
+BM_IsPrime/16384           11462 ns        11462 ns        62648
+BM_IsPrime/32768           22315 ns        22315 ns        30552
+BM_IsPrime/65536           45271 ns        45271 ns        15447
+BM_IsPrime/131072          98406 ns        97154 ns         7316
+BM_IsPrime/262144         202507 ns       202502 ns         3341
+BM_IsPrime/524288         377898 ns       377824 ns         1816
+BM_IsPrime/1048576        731994 ns       731989 ns          941
+BM_IsPrime/2097152       1531425 ns      1531426 ns          470
+BM_IsPrime/4194304       3031217 ns      3030104 ns          233
+BM_IsPrime/8388608      16047361 ns     16046021 ns           43
+BM_IsPrime/16777216     32181864 ns     32180423 ns           23
+BM_IsPrime/33554432     72294430 ns     72293979 ns           11
+BM_IsPrime/67108864    127871990 ns    127867414 ns            5
+BM_IsPrime/134217728   254121780 ns    254107624 ns            3
+BM_IsPrime/268435456   527871609 ns    527866620 ns            1
+BM_IsPrime/536870912  1115245342 ns   1114157799 ns            1
+BM_IsPrime/1000000000 1945953608 ns   1943677572 ns            1
+
+### v1 without opt
+
+----------------------------------------------------------------
+Benchmark                      Time             CPU   Iterations
+----------------------------------------------------------------
+BM_IsPrime/2                 116 ns          116 ns      5255724
+BM_IsPrime/4                 167 ns          167 ns      4258442
+BM_IsPrime/8                 209 ns          209 ns      3297565
+BM_IsPrime/16                302 ns          301 ns      2295347
+BM_IsPrime/32                456 ns          456 ns      1539581
+BM_IsPrime/64                791 ns          791 ns       879764
+BM_IsPrime/128              1444 ns         1443 ns       486084
+BM_IsPrime/256              2675 ns         2672 ns       264947
+BM_IsPrime/512              5204 ns         5203 ns       132630
+BM_IsPrime/1024            10480 ns        10468 ns        68985
+BM_IsPrime/2048            20405 ns        20379 ns        34605
+BM_IsPrime/4096            41350 ns        41350 ns        17230
+BM_IsPrime/8192            81264 ns        81264 ns         8335
+BM_IsPrime/16384          163431 ns       163421 ns         4339
+BM_IsPrime/32768          341943 ns       341938 ns         1973
+BM_IsPrime/65536          647783 ns       647772 ns         1069
+BM_IsPrime/131072        1320322 ns      1320243 ns          529
+BM_IsPrime/262144        2555648 ns      2555480 ns          268
+BM_IsPrime/524288        5346770 ns      5346771 ns          135
+BM_IsPrime/1048576      11435771 ns     11387964 ns           61
+BM_IsPrime/2097152      21026698 ns     21019852 ns           33
+BM_IsPrime/4194304      42176191 ns     42176421 ns           17
+BM_IsPrime/8388608      98520415 ns     98502134 ns            7
+BM_IsPrime/16777216    196988523 ns    196988303 ns            4
+BM_IsPrime/33554432    387863040 ns    387863342 ns            2
+BM_IsPrime/67108864    786623478 ns    786492814 ns            1
+BM_IsPrime/134217728  1473911285 ns   1473910819 ns            1
+BM_IsPrime/268435456  3011589766 ns   3011557549 ns            1
+BM_IsPrime/536870912  6110141277 ns   6110151731 ns            1
+BM_IsPrime/1000000000 11160773039 ns   11158141805 ns            1
+
+### v2 with opt
+
+----------------------------------------------------------------
+Benchmark                      Time             CPU   Iterations
+----------------------------------------------------------------
+BM_IsPrime/2                2.09 ns         2.09 ns    333567105
+BM_IsPrime/4                2.02 ns         2.02 ns    343197388
+BM_IsPrime/8                2.02 ns         2.02 ns    343988142
+BM_IsPrime/16               2.02 ns         2.02 ns    343694907
+BM_IsPrime/32               2.04 ns         2.04 ns    345112054
+BM_IsPrime/64               2.02 ns         2.02 ns    344228263
+BM_IsPrime/128              2.03 ns         2.03 ns    343676554
+BM_IsPrime/256              2.03 ns         2.03 ns    345393187
+BM_IsPrime/512              2.04 ns         2.04 ns    337851358
+BM_IsPrime/1024             2.08 ns         2.08 ns    342509973
+BM_IsPrime/2048             2.14 ns         2.14 ns    312348275
+BM_IsPrime/4096             2.03 ns         2.03 ns    345555744
+BM_IsPrime/8192             2.03 ns         2.03 ns    344549926
+BM_IsPrime/16384            2.03 ns         2.03 ns    338643758
+BM_IsPrime/32768            2.03 ns         2.03 ns    338114410
+BM_IsPrime/65536            2.06 ns         2.06 ns    344266430
+BM_IsPrime/131072           2.17 ns         2.17 ns    334560827
+BM_IsPrime/262144           2.03 ns         2.03 ns    343680862
+BM_IsPrime/524288           2.03 ns         2.03 ns    342795585
+BM_IsPrime/1048576          2.04 ns         2.04 ns    344184236
+BM_IsPrime/2097152          2.03 ns         2.03 ns    343577094
+BM_IsPrime/4194304          2.03 ns         2.03 ns    346132259
+BM_IsPrime/8388608          2.03 ns         2.03 ns    345469487
+BM_IsPrime/16777216         2.03 ns         2.03 ns    345996040
+BM_IsPrime/33554432         2.03 ns         2.03 ns    344425006
+BM_IsPrime/67108864         2.03 ns         2.03 ns    345455396
+BM_IsPrime/134217728        2.04 ns         2.04 ns    344641285
+BM_IsPrime/268435456        2.17 ns         2.17 ns    342602303
+BM_IsPrime/536870912        2.04 ns         2.04 ns    322697273
+BM_IsPrime/1000000000       2.18 ns         2.18 ns    336667447
+
+### v2 without opt
+
+----------------------------------------------------------------
+Benchmark                      Time             CPU   Iterations
+----------------------------------------------------------------
+BM_IsPrime/2                6.17 ns         6.17 ns    104845716
+BM_IsPrime/4                6.88 ns         6.88 ns     98109566
+BM_IsPrime/8                6.87 ns         6.87 ns    100631189
+BM_IsPrime/16               6.88 ns         6.88 ns     96849514
+BM_IsPrime/32               6.88 ns         6.88 ns    101210291
+BM_IsPrime/64               6.85 ns         6.85 ns    101982267
+BM_IsPrime/128              6.87 ns         6.87 ns    100327029
+BM_IsPrime/256              6.84 ns         6.84 ns     98511336
+BM_IsPrime/512              6.85 ns         6.85 ns     99790609
+BM_IsPrime/1024             6.87 ns         6.87 ns     97918665
+BM_IsPrime/2048             6.88 ns         6.88 ns    101726582
+BM_IsPrime/4096             6.87 ns         6.87 ns    100362165
+BM_IsPrime/8192             6.87 ns         6.87 ns     97893923
+BM_IsPrime/16384            7.04 ns         7.03 ns    101335949
+BM_IsPrime/32768            6.90 ns         6.90 ns     99636990
+BM_IsPrime/65536            6.87 ns         6.87 ns    101411158
+BM_IsPrime/131072           6.89 ns         6.89 ns     98792673
+BM_IsPrime/262144           6.83 ns         6.83 ns     98762325
+BM_IsPrime/524288           6.87 ns         6.87 ns     99297835
+BM_IsPrime/1048576          6.91 ns         6.91 ns    100765975
+BM_IsPrime/2097152          6.87 ns         6.87 ns     99507885
+BM_IsPrime/4194304          6.85 ns         6.85 ns    101448739
+BM_IsPrime/8388608          6.88 ns         6.88 ns     98178302
+BM_IsPrime/16777216         6.85 ns         6.85 ns     98505977
+BM_IsPrime/33554432         6.87 ns         6.87 ns     99661789
+BM_IsPrime/67108864         6.86 ns         6.86 ns    100235575
+BM_IsPrime/134217728        6.89 ns         6.89 ns     98080609
+BM_IsPrime/268435456        6.90 ns         6.90 ns    101676010
+BM_IsPrime/536870912        6.87 ns         6.87 ns    101424256
+BM_IsPrime/1000000000       6.89 ns         6.89 ns    101238327
+
+--> v2 good for multiples of 2, even if number is very big. 
+--> extend benchmark to use a better input e. g. peseudo random numbers
