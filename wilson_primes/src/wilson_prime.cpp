@@ -4,6 +4,9 @@
 #include <functional>
 #include <numeric>
 
+bool IsPrime(std::uint32_t n) { return v1::IsPrime(n); }
+
+namespace v1 {
 bool IsPrime(std::uint32_t n) {
   std::int64_t min_size = 0;
   std::int64_t max_size{static_cast<std::int64_t>(n) - 3};
@@ -16,6 +19,28 @@ bool IsPrime(std::uint32_t n) {
   }
   return true;
 }
+} // namespace v1
+namespace v2 {
+/// From: https://www.geeksforgeeks.org/c-program-to-check-prime-number/
+bool IsPrime(std::uint32_t n) {
+  // Corner cases
+  if (n <= 1)
+    return false;
+  if (n <= 3)
+    return true;
+
+  // This is checked so that we can skip
+  // middle five numbers in below loop
+  if (n % 2 == 0 || n % 3 == 0)
+    return false;
+
+  for (int i = 5; i * i <= n; i = i + 6)
+    if (n % i == 0 || n % (i + 2) == 0)
+      return false;
+
+  return true;
+}
+} // namespace v2
 
 bool IsWilsonPrime(std::uint32_t n) {
   // Check if n is a prime number

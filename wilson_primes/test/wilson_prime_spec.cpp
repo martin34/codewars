@@ -9,15 +9,26 @@ using namespace ::testing;
 
 class IsPrimeSpecWhenTrue : public TestWithParam<int> {};
 TEST_P(IsPrimeSpecWhenTrue, WhenTrue) {
-  EXPECT_THAT(IsPrime(GetParam()), Eq(true));
+  EXPECT_THAT(v1::IsPrime(GetParam()), Eq(true));
 }
 INSTANTIATE_TEST_CASE_P(WhenTrue, IsPrimeSpecWhenTrue,
-                        Values(0, 1, 2, 3, 5, 7, 11, 13));
+                        Values(2, 3, 5, 7, 11, 13));
 class IsPrimeSpecWhenFalse : public TestWithParam<int> {};
 TEST_P(IsPrimeSpecWhenFalse, WhenTrue) {
-  EXPECT_THAT(IsPrime(GetParam()), Eq(false));
+  EXPECT_THAT(v1::IsPrime(GetParam()), Eq(false));
 }
 INSTANTIATE_TEST_CASE_P(WhenFalse, IsPrimeSpecWhenFalse,
+                        Values(4, 6, 8, 9, 10, 12, 14, 15, 16));
+
+TEST_P(IsPrimeSpecWhenTrue, v2_WhenTrue) {
+  EXPECT_THAT(v2::IsPrime(GetParam()), Eq(true));
+}
+INSTANTIATE_TEST_CASE_P(v2_WhenTrue, IsPrimeSpecWhenTrue,
+                        Values(2, 3, 5, 7, 11, 13));
+TEST_P(IsPrimeSpecWhenFalse, v2_WhenTrue) {
+  EXPECT_THAT(v2::IsPrime(GetParam()), Eq(false));
+}
+INSTANTIATE_TEST_CASE_P(v2_WhenFalse, IsPrimeSpecWhenFalse,
                         Values(4, 6, 8, 9, 10, 12, 14, 15, 16));
 
 std::uint64_t Factorial(std::uint32_t n) {
