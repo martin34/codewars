@@ -3,18 +3,18 @@ cc_library(
     srcs = glob([
         "src/*.h",
         "src/*.cpp",
-        ]),
+    ]),
     deps = [],
 )
 
 cc_test(
     name = "spec",
     srcs = [
-        "test/some_class_spec.cpp"
-        ],
+        "test/some_class_spec.cpp",
+    ],
     deps = [
+        ":lib",
         "@googletest//:gtest_main",
         "@googletest//:gtest_sample_lib",
-        ":lib",
-        ]
+    ],
 )
