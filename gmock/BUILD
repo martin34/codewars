@@ -1,7 +1,7 @@
 cc_test(
     name = "tests",
     srcs = glob(["test/**/*.cpp"]),
-        deps = [
+    deps = [
         "@googletest//:gtest_main",
         "@googletest//:gtest_sample_lib",
     ],
