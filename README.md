@@ -11,3 +11,6 @@
 ## Benchmark
 * https://github.com/google/benchmark
 * Example: `bazel run //wilson_primes:benchmark`
+
+## Compiler explorer
+https://godbolt.org/
