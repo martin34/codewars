@@ -75,17 +75,15 @@ private:
 // Shall contain simple logic like
 // lhs.MostValuableScore() -> TwoPairs/Pair/Flush/...
 // lhs.GetHighestCard()
-bool operator<(const Hand &lhs, const Hand &rhs) {
-  return lhs.GetMostValuableScore() < rhs.GetMostValuableScore();
-}
-bool operator>(const Hand &lhs, const Hand &rhs) { return rhs < lhs; }
+bool operator<(const Hand &lhs, const Hand &rhs);
+inline bool operator>(const Hand &lhs, const Hand &rhs) { return rhs < lhs; }
 inline bool operator<=(const Hand &lhs, const Hand &rhs) {
   return !(lhs > rhs);
 }
 inline bool operator>=(const Hand &lhs, const Hand &rhs) {
   return !(lhs < rhs);
 }
-bool operator==(const Hand &lhs, const Hand &rhs) {
+inline bool operator==(const Hand &lhs, const Hand &rhs) {
   return !(lhs < rhs) && !(rhs < lhs);
 }
 
