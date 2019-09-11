@@ -4,61 +4,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "card_deck.h"
 #include "pocker.h"
-
-namespace pocker {
-
-class CardDeck {
-public:
-  CardDeck() {
-    constexpr std::initializer_list<Suit> all_suits = {Heart, Tile, Clover,
-                                                       Pike};
-    constexpr std::initializer_list<FaceValue> all_face_values = {
-        Two,  Three, Four, Five,  Six,  Seven, Eight,
-        Nine, Ten,   Jack, Queen, King, Ace};
-
-    for (auto s : all_suits) {
-      for (auto f : all_face_values) {
-        cards.push_back({s, f});
-      }
-    }
-  }
-  Card Draw(Card card) {
-    auto it = std::find(cards.begin(), cards.end(), card);
-    if (it != cards.end()) {
-      cards.erase(it);
-    } else {
-      throw std::logic_error("Card not in card deck");
-    }
-    --counter;
-    return card;
-  }
-  std::int32_t CardsLeft() { return counter; }
-  std::vector<Card> GetAllCards() { return cards; }
-
-private:
-  std::vector<Card> cards;
-  std::int32_t counter{52};
-};
-
-bool operator<(const Card &lhs, const Card &rhs) {
-  bool smaller = lhs.face_value < rhs.face_value;
-  if (lhs.face_value == rhs.face_value) {
-    smaller = lhs.suit < rhs.suit;
-  }
-  return smaller;
-}
-inline bool operator>(const Card &lhs, const Card &rhs) { return rhs < lhs; }
-inline bool operator<=(const Card &lhs, const Card &rhs) {
-  return !(lhs > rhs);
-}
-inline bool operator>=(const Card &lhs, const Card &rhs) {
-  return !(lhs < rhs);
-}
-inline bool operator==(const Card &lhs, const Card &rhs) {
-  return !(lhs < rhs) && !(rhs < lhs);
-}
-} // namespace pocker
 
 namespace {
 using namespace testing;
@@ -122,4 +69,5 @@ TEST(CardDeckSpeck, DrawSameCardTwice) {
   std::ignore = deck.Draw(expected_card);
   EXPECT_THROW(deck.Draw(expected_card2), std::logic_error);
 }
+
 } // namespace
