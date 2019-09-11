@@ -1,13 +1,32 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "card_deck.h"
 #include "pocker.h"
 
 namespace {
 
 using namespace testing;
 using namespace pocker;
-
+Hand DrawHighCardHand() {
+  return Hand{{Heart, Ace},
+              {Tile, Queen},
+              {Clover, Ten},
+              {Pike, Eight},
+              {Heart, {Six}}};
+}
+Hand DrawHandWithPair() {
+  return Hand{
+      {Tile, Ace}, {Clover, Ace}, {Pike, Queen}, {Heart, Ten}, {Tile, Eight}};
+}
+Hand DrawHandWithThreeOfAKind() {
+  return Hand{
+      {Tile, Ace}, {Clover, Ace}, {Pike, Ace}, {Heart, Ten}, {Tile, Eight}};
+}
+Hand DrawHandWithFourOfAKind() {
+  return Hand{
+      {Tile, Ace}, {Clover, Ace}, {Pike, Ace}, {Heart, Ace}, {Tile, Eight}};
+}
 TEST(PlayerScoreSpec, WhenSameHand) {
   Hand one{
       {Pike, Two}, {Tile, Six}, {Clover, Three}, {Pike, Ace}, {Heart, Four}};
@@ -15,37 +34,19 @@ TEST(PlayerScoreSpec, WhenSameHand) {
       {Heart, Two}, {Tile, Six}, {Clover, Three}, {Pike, Ace}, {Heart, Four}};
   EXPECT_THAT(one, Eq(two));
 }
-TEST(PlayerScoreSpec, WhenPairs) {
-  Hand one{
-      {Pike, Two}, {Tile, Two}, {Clover, Three}, {Pike, Ace}, {Heart, Four}};
-  Hand two{
-      {Heart, Two}, {Tile, Six}, {Clover, Three}, {Pike, Ace}, {Heart, Four}};
+TEST(HandComparison, WhenHighCardVsPair) {
+  auto one = DrawHandWithPair();
+  auto two = DrawHighCardHand();
   EXPECT_THAT(one, Gt(two));
 }
-
-class PlayerScoreSpecParameterized
-    : public TestWithParam<std::pair<Hand, Hand>> {};
-
-TEST_P(PlayerScoreSpecParameterized, WhenHandOneLoses) {
-  EXPECT_THAT(GetParam().first, Lt(GetParam().second));
+TEST(HandComparison, WhenPairVsThreeOfAKind) {
+  auto one = DrawHandWithPair();
+  auto two = DrawHandWithThreeOfAKind();
+  EXPECT_THAT(one, Lt(two));
 }
-
-INSTANTIATE_TEST_CASE_P(_, PlayerScoreSpecParameterized,
-                        Values(
-                            // clang-format off
-      // WhenPairsReversed
-      std::pair<Hand, Hand> {
-      {{Pike, Two}, {Tile, Six}, {Clover, Three}, {Pike, Ace}, {Heart, Four}},
-      {{Heart, Two}, {Tile, Two}, {Heart, Three},{Pike, Ace}, {Heart, Four}}},
-      // WhenPairsAndThreeOfAKind
-      std::pair<Hand, Hand> {
-      {{Pike, Two}, {Tile, Two}, {Clover, Three}, {Pike, Ace}, {Heart, Four}},
-      {{Heart, Two}, {Tile, Six}, {Clover, Six}, {Pike, Six}, {Heart, Four}}},
-      // WhenThreeOfAKindAndFourOfAKind
-      std::pair<Hand, Hand> {
-      {{Heart, Three}, {Tile, Six}, {Clover, Six}, {Pike, Six}, {Heart, Four}},
-      {{Pike, Two}, {Tile, Two}, {Clover, Three}, {Heart, Two}, {Clover, Two}}}
-                            // clang-format on
-                            ));
-
+TEST(HandComparison, WhenThreeOfAKindVsFourOfAKind) {
+  auto one = DrawHandWithThreeOfAKind();
+  auto two = DrawHandWithFourOfAKind();
+  EXPECT_THAT(one, Lt(two));
+}
 } // namespace
