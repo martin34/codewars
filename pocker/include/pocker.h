@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+#include <ostream>
 #include <vector>
 
 namespace pocker {
@@ -19,14 +21,17 @@ enum FaceValue {
   King,
   Ace
 };
+std::ostream &operator<<(std::ostream &os, const FaceValue &p);
 
 enum Suit { Heart, Tile, Clover, Pike };
+std::ostream &operator<<(std::ostream &os, const Suit &p);
 
 struct Card {
   Card(Suit suit, FaceValue face_value) : suit(suit), face_value(face_value) {}
   Suit suit;
   FaceValue face_value;
 };
+std::ostream &operator<<(std::ostream &os, const Card &p);
 
 enum Score {
   HighCard,
@@ -43,33 +48,17 @@ enum Score {
 
 class Hand {
 public:
-  Hand(Card c0, Card c1, Card c2, Card c3, Card c4)
-      : hand{c0, c1, c2, c3, c4} {}
-
-  Score GetMostValuableScore() const {
-    auto highest_score = HighCard;
-    for (auto const &card : hand) {
-      int count{};
-      for (auto const &others : hand) {
-        if (card.face_value == others.face_value) {
-          ++count;
-        }
-      }
-      if (count == 2) {
-        highest_score = OnePair;
-      }
-      if (count == 3) {
-        highest_score = ThreeOfAKind;
-      }
-      if (count == 4) {
-        highest_score = FourOfAKind;
-      }
-    }
-    return highest_score;
+  Hand(Card c0, Card c1, Card c2, Card c3, Card c4) : hand{c0, c1, c2, c3, c4} {
+    std::sort(hand.begin(), hand.end(), [](Card const &lhs, Card const &rhs) {
+      return lhs.face_value < rhs.face_value;
+    });
   }
+
+  Score GetMostValuableScore() const;
 
 private:
   std::vector<Card> hand;
+  friend std::ostream &operator<<(std::ostream &os, const Hand &p);
 };
 
 // Shall contain simple logic like
