@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <optional>
 #include <ostream>
 #include <vector>
 
@@ -55,8 +56,14 @@ public:
   }
 
   Score GetMostValuableScore() const;
+  std::optional<Card> GetFirstTieBreaker(Score) const;
 
 private:
+  bool HasPair() const;
+  bool HasThreeOfAKind() const;
+  bool HasFourOfAKind() const;
+  bool HasStraight() const;
+
   std::vector<Card> hand;
   friend std::ostream &operator<<(std::ostream &os, const Hand &p);
 };
