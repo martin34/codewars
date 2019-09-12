@@ -3,7 +3,17 @@
 
 namespace pocker {
 Score Hand::GetMostValuableScore() const {
-  auto highest_score = HighCard;
+  if (HasFourOfAKind())
+    return FourOfAKind;
+  if (HasStraight())
+    return Straight;
+  if (HasThreeOfAKind())
+    return ThreeOfAKind;
+  if (HasPair())
+    return OnePair;
+  return HighCard;
+}
+bool Hand::HasPair() const {
   for (auto const &card : hand) {
     int count{};
     for (auto const &others : hand) {
@@ -11,16 +21,41 @@ Score Hand::GetMostValuableScore() const {
         ++count;
       }
     }
-    if (count == 2) {
-      highest_score = OnePair;
-    }
-    if (count == 3) {
-      highest_score = ThreeOfAKind;
-    }
-    if (count == 4) {
-      highest_score = FourOfAKind;
+    if (count >= 2) {
+      return true;
     }
   }
+  return false;
+}
+bool Hand::HasThreeOfAKind() const {
+  for (auto const &card : hand) {
+    int count{};
+    for (auto const &others : hand) {
+      if (card.face_value == others.face_value) {
+        ++count;
+      }
+    }
+    if (count >= 3) {
+      return true;
+    }
+  }
+  return false;
+}
+bool Hand::HasFourOfAKind() const {
+  for (auto const &card : hand) {
+    int count{};
+    for (auto const &others : hand) {
+      if (card.face_value == others.face_value) {
+        ++count;
+      }
+    }
+    if (count >= 4) {
+      return true;
+    }
+  }
+  return false;
+}
+bool Hand::HasStraight() const {
   auto begin = hand.cbegin();
   auto next = hand.cbegin();
   std::advance(next, 1);
@@ -32,12 +67,39 @@ Score Hand::GetMostValuableScore() const {
     }
   }
   if (consecutive_face_value_count == 4) {
-    highest_score = Straight;
+    return true;
   }
-  return highest_score;
+  return false;
 }
+std::optional<Card> Hand::GetFirstTieBreaker(Score score) const {
+  if (OnePair == score) {
+    for (auto const &card : hand) {
+      int count{};
+      for (auto const &others : hand) {
+        if (card.face_value == others.face_value) {
+          ++count;
+          if (count == 2) {
+            return card;
+          }
+        }
+      }
+    }
+    return {};
+  }
+  return hand.back();
+}
+
 bool operator<(const Hand &lhs, const Hand &rhs) {
-  return lhs.GetMostValuableScore() < rhs.GetMostValuableScore();
+  if (lhs.GetMostValuableScore() < rhs.GetMostValuableScore()) {
+    return true;
+  } else if (lhs.GetMostValuableScore() == rhs.GetMostValuableScore()) {
+    return lhs.GetFirstTieBreaker(rhs.GetMostValuableScore())
+               .value()
+               .face_value < rhs.GetFirstTieBreaker(lhs.GetMostValuableScore())
+                                 .value()
+                                 .face_value;
+  }
+  return false;
 }
 std::ostream &operator<<(std::ostream &os, const Card &p) {
   os << p.suit << " " << p.face_value;

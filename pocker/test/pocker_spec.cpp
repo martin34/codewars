@@ -8,14 +8,22 @@ namespace {
 
 using namespace testing;
 using namespace pocker;
-Hand DrawHighCardHand() {
-  return Hand{{Heart, Ace},
-              {Tile, Queen},
-              {Clover, Ten},
-              {Pike, Eight},
-              {Heart, {Six}}};
+Hand DrawHandWithHighHightCard() {
+  return Hand{
+      {Heart, Ace}, {Tile, Queen}, {Clover, Ten}, {Pike, Eight}, {Heart, Six}};
 }
-Hand DrawHandWithPair() {
+Hand DrawHandWithLowHightCard() {
+  return Hand{
+      {Heart, Two}, {Tile, Six}, {Clover, Three}, {Pike, King}, {Heart, Four}};
+}
+Hand DrawHandWithLowPair() {
+  return Hand{{Tile, Seven},
+              {Clover, Seven},
+              {Pike, Queen},
+              {Heart, Ten},
+              {Tile, Eight}};
+}
+Hand DrawHandWithHighPair() {
   return Hand{
       {Tile, Ace}, {Clover, Ace}, {Pike, Queen}, {Heart, Ten}, {Tile, Eight}};
 }
@@ -38,13 +46,24 @@ TEST(PlayerScoreSpec, WhenSameHand) {
       {Heart, Two}, {Tile, Six}, {Clover, Three}, {Pike, Ace}, {Heart, Four}};
   EXPECT_THAT(one, Eq(two));
 }
-TEST(HandComparison, WhenHighCardVsPair) {
-  auto one = DrawHandWithPair();
-  auto two = DrawHighCardHand();
+
+TEST(PlayerScoreSpec, WhenHandsWithHighCard) {
+  auto one = DrawHandWithHighHightCard();
+  auto two = DrawHandWithLowHightCard();
   EXPECT_THAT(one, Gt(two));
 }
+TEST(HandComparison, WhenHighCardVsPair) {
+  auto one = DrawHandWithLowPair();
+  auto two = DrawHandWithHighHightCard();
+  EXPECT_THAT(one, Gt(two));
+}
+TEST(HandComparison, WhenHandsWithPair) {
+  auto one = DrawHandWithLowPair();
+  auto two = DrawHandWithHighPair();
+  EXPECT_THAT(one, Lt(two));
+}
 TEST(HandComparison, WhenPairVsThreeOfAKind) {
-  auto one = DrawHandWithPair();
+  auto one = DrawHandWithLowPair();
   auto two = DrawHandWithThreeOfAKind();
   EXPECT_THAT(one, Lt(two));
 }
