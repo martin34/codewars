@@ -27,6 +27,10 @@ Hand DrawHandWithFourOfAKind() {
   return Hand{
       {Tile, Ace}, {Clover, Ace}, {Pike, Ace}, {Heart, Ace}, {Tile, Eight}};
 }
+Hand DrawHandWithStraight() {
+  return Hand{
+      {Tile, Ace}, {Clover, Queen}, {Pike, King}, {Heart, Ten}, {Tile, Jack}};
+}
 TEST(PlayerScoreSpec, WhenSameHand) {
   Hand one{
       {Pike, Two}, {Tile, Six}, {Clover, Three}, {Pike, Ace}, {Heart, Four}};
@@ -47,6 +51,16 @@ TEST(HandComparison, WhenPairVsThreeOfAKind) {
 TEST(HandComparison, WhenThreeOfAKindVsFourOfAKind) {
   auto one = DrawHandWithThreeOfAKind();
   auto two = DrawHandWithFourOfAKind();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenStraightVsFourOfAKind) {
+  auto one = DrawHandWithStraight();
+  auto two = DrawHandWithFourOfAKind();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenThreeOfAKindVsStraight) {
+  auto one = DrawHandWithThreeOfAKind();
+  auto two = DrawHandWithStraight();
   EXPECT_THAT(one, Lt(two));
 }
 } // namespace
