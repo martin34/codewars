@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 
 #include "card_deck.h"
-#include "pocker.h"
+#include "hand.h"
 
 namespace {
 

@@ -1,18 +1,27 @@
-#include "pocker.h"
-#include <string>
+#include "hand.h"
+#include <algorithm>
 
 namespace pocker {
+
+Hand::Hand(Card c0, Card c1, Card c2, Card c3, Card c4)
+    : hand{c0, c1, c2, c3, c4} {
+  std::sort(hand.begin(), hand.end(), [](Card const &lhs, Card const &rhs) {
+    return lhs.face_value < rhs.face_value;
+  });
+}
+
 Score Hand::GetMostValuableScore() const {
   if (HasFourOfAKind())
-    return FourOfAKind;
+    return Score{Score::FourOfAKind};
   if (HasStraight())
-    return Straight;
+    return Score{Score::Straight};
   if (HasThreeOfAKind())
-    return ThreeOfAKind;
+    return Score{Score::ThreeOfAKind};
   if (HasPair())
-    return OnePair;
-  return HighCard;
+    return Score{Score::OnePair, GetACardFromPair()};
+  return Score{Score::HighCard, hand.back()};
 }
+
 bool Hand::HasPair() const {
   for (auto const &card : hand) {
     int count{};
@@ -71,56 +80,37 @@ bool Hand::HasStraight() const {
   }
   return false;
 }
-std::optional<Card> Hand::GetFirstTieBreaker(Score score) const {
-  if (OnePair == score) {
-    for (auto const &card : hand) {
-      int count{};
-      for (auto const &others : hand) {
-        if (card.face_value == others.face_value) {
-          ++count;
-          if (count == 2) {
-            return card;
-          }
+Card Hand::GetACardFromPair() const {
+  for (auto const &card : hand) {
+    int count{};
+    for (auto const &others : hand) {
+      if (card.face_value == others.face_value) {
+        ++count;
+        if (count == 2) {
+          return card;
         }
       }
     }
-    return {};
   }
-  return hand.back();
+  std::logic_error{"No Pair found"};
+  return {Heart, Two};
 }
 
 bool operator<(const Hand &lhs, const Hand &rhs) {
-  if (lhs.GetMostValuableScore() < rhs.GetMostValuableScore()) {
+  auto lhs_score = lhs.GetMostValuableScore();
+  auto rhs_score = rhs.GetMostValuableScore();
+  if (lhs_score < rhs_score) {
     return true;
-  } else if (lhs.GetMostValuableScore() == rhs.GetMostValuableScore()) {
-    return lhs.GetFirstTieBreaker(rhs.GetMostValuableScore())
-               .value()
-               .face_value < rhs.GetFirstTieBreaker(lhs.GetMostValuableScore())
-                                 .value()
-                                 .face_value;
+  } else if (lhs_score == rhs_score) {
+    return lhs_score.GetFirstTieBreaker().value().face_value <
+           rhs_score.GetFirstTieBreaker().value().face_value;
   }
   return false;
-}
-std::ostream &operator<<(std::ostream &os, const Card &p) {
-  os << p.suit << " " << p.face_value;
-  return os;
 }
 std::ostream &operator<<(std::ostream &os, const Hand &obj) {
   for (auto const &o : obj.hand) {
     os << o << "; ";
   }
-  return os;
-}
-std::ostream &operator<<(std::ostream &os, const FaceValue &p) {
-  const std::vector<std::string> suit_string{
-      "Two",  "Three", "Four", "Five",  "Six",  "Seven", "Eight",
-      "Nine", "Ten",   "Jack", "Queen", "King", "Ace"};
-  os << suit_string.at(p);
-  return os;
-}
-std::ostream &operator<<(std::ostream &os, const Suit &p) {
-  const std::vector<std::string> suit_string{"Heart", "Tile", "Clover", "Pike"};
-  os << suit_string.at(p);
   return os;
 }
 } // namespace pocker
