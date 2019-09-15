@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "pocker.h"
+#include "card.h"
 
 namespace pocker {
 
