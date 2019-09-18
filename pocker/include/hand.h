@@ -14,11 +14,7 @@ public:
   Score GetMostValuableScore() const;
 
 private:
-  bool HasPair() const;
   Card GetACardFromPair() const;
-  bool HasThreeOfAKind() const;
-  bool HasFourOfAKind() const;
-  bool HasStraight() const;
 
   std::vector<Card> hand;
   friend std::ostream &operator<<(std::ostream &os, const Hand &p);

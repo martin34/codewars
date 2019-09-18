@@ -1,5 +1,7 @@
-#include "hand.h"
 #include <algorithm>
+#include <numeric>
+
+#include "hand.h"
 
 namespace pocker {
 
@@ -11,75 +13,32 @@ Hand::Hand(Card c0, Card c1, Card c2, Card c3, Card c4)
 }
 
 Score Hand::GetMostValuableScore() const {
-  if (HasFourOfAKind())
+  std::vector<std::underlying_type<FaceValue>::type> face_values;
+  std::transform(hand.cbegin(), hand.cend(), std::back_inserter(face_values),
+                 [](auto const &card) { return card.face_value; });
+
+  std::vector<std::underlying_type<FaceValue>::type> diff;
+  std::adjacent_difference(face_values.cbegin(), face_values.cend(),
+                           std::back_inserter(diff));
+
+  auto zeros = std::count(std::next(diff.cbegin()), diff.cend(),
+                          std::underlying_type<FaceValue>::type{0});
+
+  auto ones = std::count(std::next(diff.cbegin()), diff.cend(),
+                         std::underlying_type<FaceValue>::type{1});
+
+  if (zeros == 3)
     return Score{Score::FourOfAKind};
-  if (HasStraight())
+  if (ones == 4)
     return Score{Score::Straight};
-  if (HasThreeOfAKind())
+  if (zeros == 2)
     return Score{Score::ThreeOfAKind};
-  if (HasPair())
+  if (zeros == 1) {
     return Score{Score::OnePair, GetACardFromPair()};
+  }
   return Score{Score::HighCard, hand.back()};
 }
 
-bool Hand::HasPair() const {
-  for (auto const &card : hand) {
-    int count{};
-    for (auto const &others : hand) {
-      if (card.face_value == others.face_value) {
-        ++count;
-      }
-    }
-    if (count >= 2) {
-      return true;
-    }
-  }
-  return false;
-}
-bool Hand::HasThreeOfAKind() const {
-  for (auto const &card : hand) {
-    int count{};
-    for (auto const &others : hand) {
-      if (card.face_value == others.face_value) {
-        ++count;
-      }
-    }
-    if (count >= 3) {
-      return true;
-    }
-  }
-  return false;
-}
-bool Hand::HasFourOfAKind() const {
-  for (auto const &card : hand) {
-    int count{};
-    for (auto const &others : hand) {
-      if (card.face_value == others.face_value) {
-        ++count;
-      }
-    }
-    if (count >= 4) {
-      return true;
-    }
-  }
-  return false;
-}
-bool Hand::HasStraight() const {
-  auto begin = hand.cbegin();
-  auto next = hand.cbegin();
-  std::advance(next, 1);
-  auto end = hand.cend();
-  std::int32_t consecutive_face_value_count{};
-  for (; next != end && begin != end; ++begin, ++next) {
-    if ((*next).face_value == ((*begin).face_value + 1)) {
-      ++consecutive_face_value_count;
-    }
-  }
-  if (consecutive_face_value_count == 4) {
-    return true;
-  }
-  return false;
-}
 Card Hand::GetACardFromPair() const {
   for (auto const &card : hand) {
     int count{};
