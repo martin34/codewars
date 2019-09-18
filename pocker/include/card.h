@@ -5,7 +5,7 @@
 
 namespace pocker {
 
-enum FaceValue {
+enum FaceValue : std::int32_t {
   Two,
   Three,
   Four,
