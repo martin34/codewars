@@ -27,11 +27,22 @@ Hand DrawHandWithHighPair() {
   return Hand{
       {Tile, Ace}, {Clover, Ace}, {Pike, Queen}, {Heart, Ten}, {Tile, Eight}};
 }
-Hand DrawHandWithThreeOfAKind() {
+Hand DrawLowHandWithThreeOfAKind() {
+  return Hand{{Tile, Three},
+              {Clover, Three},
+              {Pike, Three},
+              {Heart, Ten},
+              {Tile, Eight}};
+}
+Hand DrawHighHandWithThreeOfAKind() {
   return Hand{
       {Tile, Ace}, {Clover, Ace}, {Pike, Ace}, {Heart, Ten}, {Tile, Eight}};
 }
-Hand DrawHandWithFourOfAKind() {
+Hand DrawLowHandWithFourOfAKind() {
+  return Hand{
+      {Tile, Two}, {Clover, Two}, {Pike, Two}, {Heart, Two}, {Tile, Eight}};
+}
+Hand DrawHighHandWithFourOfAKind() {
   return Hand{
       {Tile, Ace}, {Clover, Ace}, {Pike, Ace}, {Heart, Ace}, {Tile, Eight}};
 }
@@ -64,22 +75,32 @@ TEST(HandComparison, WhenHandsWithPair) {
 }
 TEST(HandComparison, WhenPairVsThreeOfAKind) {
   auto one = DrawHandWithLowPair();
-  auto two = DrawHandWithThreeOfAKind();
+  auto two = DrawLowHandWithThreeOfAKind();
   EXPECT_THAT(one, Lt(two));
 }
 TEST(HandComparison, WhenThreeOfAKindVsFourOfAKind) {
-  auto one = DrawHandWithThreeOfAKind();
-  auto two = DrawHandWithFourOfAKind();
+  auto one = DrawLowHandWithThreeOfAKind();
+  auto two = DrawLowHandWithFourOfAKind();
   EXPECT_THAT(one, Lt(two));
 }
 TEST(HandComparison, WhenStraightVsFourOfAKind) {
   auto one = DrawHandWithStraight();
-  auto two = DrawHandWithFourOfAKind();
+  auto two = DrawLowHandWithFourOfAKind();
   EXPECT_THAT(one, Lt(two));
 }
 TEST(HandComparison, WhenThreeOfAKindVsStraight) {
-  auto one = DrawHandWithThreeOfAKind();
+  auto one = DrawLowHandWithThreeOfAKind();
   auto two = DrawHandWithStraight();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenTwoHandsWithThreeOfAKind) {
+  auto one = DrawLowHandWithThreeOfAKind();
+  auto two = DrawHighHandWithThreeOfAKind();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenTwoHandsWithFourOfAKind) {
+  auto one = DrawLowHandWithFourOfAKind();
+  auto two = DrawHighHandWithFourOfAKind();
   EXPECT_THAT(one, Lt(two));
 }
 } // namespace
