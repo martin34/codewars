@@ -1,6 +1,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include <iostream>
+
 #include "card_deck.h"
 #include "hand.h"
 
@@ -57,6 +59,14 @@ Hand DrawHighHandWithFourOfAKind() {
 Hand DrawHandWithStraight() {
   return Hand{
       {Tile, Ace}, {Clover, Queen}, {Pike, King}, {Heart, Ten}, {Tile, Jack}};
+}
+Hand DrawLowHandWithFullHouse() {
+  return Hand{
+      {Tile, Two}, {Clover, Two}, {Pike, Two}, {Heart, Ten}, {Tile, Ten}};
+}
+Hand DrawHighHandWithFullHouse() {
+  return Hand{
+      {Tile, Ace}, {Clover, Ace}, {Pike, Ace}, {Heart, King}, {Tile, King}};
 }
 TEST(PlayerScoreSpec, WhenSameHand) {
   Hand one{
@@ -149,6 +159,21 @@ TEST(HandComparison, WhenHandsWithTwoEqualPairsHighCardWins) {
 TEST(HandComparison, WhenHandWithOnePairVsTwoPairs) {
   auto one = DrawHandWithHighPair();
   auto two = DrawLowHandWithTwoPairs();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenHandWithThreeOfAKindVsFullHouse) {
+  auto one = DrawHighHandWithThreeOfAKind();
+  auto two = DrawLowHandWithFullHouse();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenHandWithFourOfAKindVsFullHouse) {
+  auto one = DrawHighHandWithFullHouse();
+  auto two = DrawLowHandWithFourOfAKind();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenHandWithTwoFullHouse) {
+  auto one = DrawLowHandWithFullHouse();
+  auto two = DrawHighHandWithFullHouse();
   EXPECT_THAT(one, Lt(two));
 }
 } // namespace
