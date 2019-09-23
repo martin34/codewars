@@ -22,6 +22,9 @@ private:
   std::optional<Score> GetThreeOfAKind() const;
   std::optional<Score> GetStraight() const;
   std::optional<Score> GetFourOfAKind() const;
+  std::optional<Score> GetFullHouse() const;
+  std::vector<FaceValueTypeVector::const_iterator>
+  GetSecondCardOfPairPositions() const;
 
   std::vector<Card> hand_;
   FaceValueTypeVector face_value_adjacent_diff_{};

@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 #include <numeric>
 
 #include "hand.h"
@@ -29,6 +28,10 @@ Score Hand::GetMostValuableScore() const {
   auto four_of_a_kind = GetFourOfAKind();
   if (four_of_a_kind) {
     return four_of_a_kind.value();
+  }
+  auto full_house = GetFullHouse();
+  if (full_house) {
+    return full_house.value();
   }
   auto straight = GetStraight();
   if (straight) {
@@ -66,20 +69,41 @@ std::optional<Score> Hand::GetStraight() const {
 }
 
 std::optional<Score> Hand::GetFourOfAKind() const {
-
-  auto zeros = std::count(std::next(face_value_adjacent_diff_.cbegin()),
-                          face_value_adjacent_diff_.cend(),
-                          std::underlying_type<FaceValue>::type{0});
-  if (zeros != 3) {
+  auto second_card_of_pair_positions = GetSecondCardOfPairPositions();
+  if (second_card_of_pair_positions.size() != 3) {
     return {};
   }
-  auto position_with_card = std::find(face_value_adjacent_diff_.cbegin(),
-                                      face_value_adjacent_diff_.cend(), 0);
-  auto distance =
-      std::distance(face_value_adjacent_diff_.cbegin(), position_with_card);
+  std::vector<FaceValueTypeVector::difference_type> distance_between_pairs;
+  auto first = second_card_of_pair_positions.cbegin();
+  auto second = std::next(second_card_of_pair_positions.cbegin());
+  for (; first != second_card_of_pair_positions.cend() &&
+         second != second_card_of_pair_positions.cend();
+       ++first, ++second) {
+    distance_between_pairs.push_back(std::distance(*first, *second));
+  }
+  if ((distance_between_pairs.front() != 1) ||
+      (distance_between_pairs.back() != 1)) {
+    return {};
+  }
+
+  auto distance = std::distance(face_value_adjacent_diff_.cbegin(),
+                                second_card_of_pair_positions.front());
   auto card = hand_.cbegin();
   std::advance(card, distance);
   return std::optional{Score{Score::FourOfAKind, *card}};
+}
+
+std::optional<Score> Hand::GetFullHouse() const {
+  auto second_card_of_pair_positions = GetSecondCardOfPairPositions();
+  if (second_card_of_pair_positions.size() != 3) {
+    return {};
+  }
+  auto three_of_a_kind = GetThreeOfAKind();
+  if (!three_of_a_kind) {
+    return {};
+  }
+  return std::optional{Score{Score::FullHouse,
+                             three_of_a_kind.value().GetTieBreakers().front()}};
 }
 
 FaceValueTypeVector::const_iterator
@@ -139,15 +163,8 @@ std::optional<Score> Hand::GetTwoPairs() const {
   //   Value: 1 1  2  3  3 | 2  3 3  4 4 | 2 2  4 4  5
   //    Diff: 1 0 -1 -1 -0 | 2 -1 0 -1 0 | 2 0 -2 0 -1
   // Pattern:   0  x  x  0 |    x 0  x 0 |   0  x 0  x
-  auto zero_it = std::next(face_value_adjacent_diff_.cbegin());
-  std::vector<FaceValueTypeVector::const_iterator> zero_iterators;
-  while (zero_it != face_value_adjacent_diff_.cend()) {
-    zero_it =
-        std::find(zero_it, face_value_adjacent_diff_.cend(), FaceValueType{0});
-    if (zero_it != face_value_adjacent_diff_.cend()) {
-      zero_iterators.push_back(zero_it++);
-    }
-  }
+
+  auto zero_iterators = GetSecondCardOfPairPositions();
   if (zero_iterators.size() != 2) {
     return {};
   }
@@ -193,5 +210,19 @@ std::ostream &operator<<(std::ostream &os, const Hand &obj) {
     os << o << "; ";
   }
   return os;
+}
+
+std::vector<FaceValueTypeVector::const_iterator>
+Hand::GetSecondCardOfPairPositions() const {
+  auto zero_it = std::next(face_value_adjacent_diff_.cbegin());
+  std::vector<FaceValueTypeVector::const_iterator> zero_iterators;
+  while (zero_it != face_value_adjacent_diff_.cend()) {
+    zero_it =
+        std::find(zero_it, face_value_adjacent_diff_.cend(), FaceValueType{0});
+    if (zero_it != face_value_adjacent_diff_.cend()) {
+      zero_iterators.push_back(zero_it++);
+    }
+  }
+  return zero_iterators;
 }
 } // namespace pocker
