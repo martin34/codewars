@@ -1,3 +1,5 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
 cc_library(
     name = "pocker_lib",
     srcs = glob([
@@ -10,10 +12,9 @@ cc_library(
 
 cc_test(
     name = "pocker_spec",
-    srcs = [
-        "test/card_deck_spec.cpp",
-        "test/pocker_spec.cpp",
-    ],
+    srcs = glob([
+        "test/*.cpp",
+    ]),
     deps = [
         ":pocker_lib",
         "@googletest//:gtest_main",
