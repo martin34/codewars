@@ -27,6 +27,15 @@ Hand::Hand(Card c0, Card c1, Card c2, Card c3, Card c4)
 }
 
 Score Hand::GetMostValuableScore() const {
+  auto flush = GetFlush();
+  auto straight = GetStraight();
+  if (flush && straight) {
+    auto high_card = flush.value().GetTieBreakers().front();
+    if (high_card.face_value == Ace) {
+      return Score{Score::RoyalFlush, high_card};
+    }
+    return Score{Score::StraightFlush, high_card};
+  }
   auto four_of_a_kind = GetFourOfAKind();
   if (four_of_a_kind) {
     return four_of_a_kind.value();
@@ -35,11 +44,9 @@ Score Hand::GetMostValuableScore() const {
   if (full_house) {
     return full_house.value();
   }
-  auto flush = GetFlush();
   if (flush) {
     return flush.value();
   }
-  auto straight = GetStraight();
   if (straight) {
     return straight.value();
   }
