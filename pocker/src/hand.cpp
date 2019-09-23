@@ -47,6 +47,18 @@ std::optional<Score> GetThreeOfAKind(std::int32_t zeros,
   std::advance(card, distance);
   return std::optional{Score{Score::ThreeOfAKind, *card}};
 }
+std::optional<Score> GetPair(std::int32_t zeros,
+                             FaceValueTypeVector const &diff,
+                             std::vector<Card> hand) {
+  if (zeros != 1) {
+    return {};
+  }
+  auto position_with_card = std::find(diff.cbegin(), diff.cend(), 0);
+  auto distance = std::distance(diff.cbegin(), position_with_card);
+  auto card = hand.cbegin();
+  std::advance(card, distance);
+  return std::optional{Score{Score::OnePair, *card}};
+}
 Score Hand::GetMostValuableScore() const {
   FaceValueTypeVector face_values;
   std::transform(hand.cbegin(), hand.cend(), std::back_inserter(face_values),
@@ -71,26 +83,11 @@ Score Hand::GetMostValuableScore() const {
   if (three_of_a_kind) {
     return three_of_a_kind.value();
   }
-  if (zeros == 1) {
-    return Score{Score::OnePair, GetACardFromPair()};
+  auto pair = GetPair(zeros, diff, hand);
+  if (pair) {
+    return pair.value();
   }
   return Score{Score::HighCard, hand.back()};
-}
-
-Card Hand::GetACardFromPair() const {
-  for (auto const &card : hand) {
-    int count{};
-    for (auto const &others : hand) {
-      if (card.face_value == others.face_value) {
-        ++count;
-        if (count == 2) {
-          return card;
-        }
-      }
-    }
-  }
-  std::logic_error{"No Pair found"};
-  return {Heart, Two};
 }
 
 bool operator<(const Hand &lhs, const Hand &rhs) {
