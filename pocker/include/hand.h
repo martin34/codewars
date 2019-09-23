@@ -10,6 +10,7 @@ namespace pocker {
 class Hand {
 public:
   using FaceValueType = std::underlying_type<FaceValue>::type;
+  using SuitType = std::underlying_type<Suit>::type;
   using FaceValueTypeVector = std::vector<FaceValueType>;
   Hand(Card c0, Card c1, Card c2, Card c3, Card c4);
 
@@ -21,6 +22,7 @@ private:
   std::optional<Score> GetTwoPairs() const;
   std::optional<Score> GetThreeOfAKind() const;
   std::optional<Score> GetStraight() const;
+  std::optional<Score> GetFlush() const;
   std::optional<Score> GetFourOfAKind() const;
   std::optional<Score> GetFullHouse() const;
   std::vector<FaceValueTypeVector::const_iterator>
