@@ -1,5 +1,7 @@
 #include <algorithm>
+#include <iterator>
 #include <numeric>
+#include <set>
 
 #include "hand.h"
 
@@ -33,6 +35,10 @@ Score Hand::GetMostValuableScore() const {
   if (full_house) {
     return full_house.value();
   }
+  auto flush = GetFlush();
+  if (flush) {
+    return flush.value();
+  }
   auto straight = GetStraight();
   if (straight) {
     return straight.value();
@@ -56,6 +62,17 @@ bool operator<(const Hand &lhs, const Hand &rhs) {
   auto lhs_score = lhs.GetMostValuableScore();
   auto rhs_score = rhs.GetMostValuableScore();
   return lhs_score < rhs_score;
+}
+
+std::optional<Score> Hand::GetFlush() const {
+  std::set<SuitType> suit_values;
+  std::transform(hand_.cbegin(), hand_.cend(),
+                 std::inserter(suit_values, suit_values.begin()),
+                 [](auto v) { return v.suit; });
+  if (suit_values.size() == 1) {
+    return Score{Score::Flush, hand_.back()};
+  }
+  return {};
 }
 
 std::optional<Score> Hand::GetStraight() const {

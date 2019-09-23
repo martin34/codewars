@@ -68,6 +68,14 @@ Hand DrawHighHandWithFullHouse() {
   return Hand{
       {Tile, Ace}, {Clover, Ace}, {Pike, Ace}, {Heart, King}, {Tile, King}};
 }
+Hand DrawLowHandWithFlush() {
+  return Hand{
+      {Tile, Two}, {Tile, Seven}, {Tile, Six}, {Tile, Three}, {Tile, Five}};
+}
+Hand DrawHighHandWithFlush() {
+  return Hand{
+      {Tile, Ace}, {Tile, King}, {Tile, Jack}, {Tile, Queen}, {Tile, Nine}};
+}
 TEST(PlayerScoreSpec, WhenSameHand) {
   Hand one{
       {Pike, Two}, {Tile, Six}, {Clover, Three}, {Pike, Ace}, {Heart, Four}};
@@ -174,6 +182,21 @@ TEST(HandComparison, WhenHandWithFourOfAKindVsFullHouse) {
 TEST(HandComparison, WhenHandWithTwoFullHouse) {
   auto one = DrawLowHandWithFullHouse();
   auto two = DrawHighHandWithFullHouse();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenHandWithFlushVsStraight) {
+  auto one = DrawHandWithStraight();
+  auto two = DrawLowHandWithFlush();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenHandWithFlushVsFullHouse) {
+  auto one = DrawHighHandWithFlush();
+  auto two = DrawLowHandWithFullHouse();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenTwoHandsWithFlush) {
+  auto one = DrawLowHandWithFlush();
+  auto two = DrawHighHandWithFlush();
   EXPECT_THAT(one, Lt(two));
 }
 } // namespace
