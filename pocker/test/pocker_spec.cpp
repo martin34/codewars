@@ -71,6 +71,12 @@ TEST(PlayerScoreSpec, WhenHandsWithHighCard) {
   auto two = DrawHandWithLowHightCard();
   EXPECT_THAT(one, Gt(two));
 }
+TEST(PlayerScoreSpec, WhenHandsWithHighCardAlmostSame) {
+  Hand one{{Pike, Two}, {Tile, Six}, {Clover, Ten}, {Pike, Ace}, {Heart, King}};
+  Hand two{
+      {Heart, Three}, {Tile, Six}, {Clover, Ten}, {Pike, Ace}, {Heart, King}};
+  EXPECT_THAT(one, Lt(two));
+}
 TEST(HandComparison, WhenHighCardVsPair) {
   auto one = DrawHandWithLowPair();
   auto two = DrawHandWithHighHightCard();
@@ -129,6 +135,13 @@ TEST(HandComparison, WhenHandsWithTwoPairs) {
 TEST(HandComparison, WhenHandsWithTwoPairsSameHighPair) {
   auto one =
       Hand{{Heart, Ace}, {Pike, Ace}, {Heart, King}, {Heart, Two}, {Tile, Two}};
+  auto two =
+      Hand{{Tile, Ace}, {Clover, Ace}, {Pike, King}, {Heart, Ten}, {Tile, Ten}};
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenHandsWithTwoEqualPairsHighCardWins) {
+  auto one = Hand{
+      {Heart, Ace}, {Pike, Ace}, {Heart, Four}, {Clover, Ten}, {Pike, Ten}};
   auto two =
       Hand{{Tile, Ace}, {Clover, Ace}, {Pike, King}, {Heart, Ten}, {Tile, Ten}};
   EXPECT_THAT(one, Lt(two));
