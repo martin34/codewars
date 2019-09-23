@@ -23,10 +23,11 @@ std::optional<Score> GetStraight(FaceValueTypeVector const &diff,
   auto ones = std::count(std::next(diff.cbegin()), diff.cend(),
                          std::underlying_type<FaceValue>::type{1});
   if (ones == 4) {
-    return std::optional{Score{Score::Straight, hand.back()}};
+    return std::optional{Score{Score::Straight, hand.back(), hand.at(3)}};
   }
   return {};
 }
+
 std::optional<Score> GetFourOfAKind(std::int32_t zeros,
                                     FaceValueTypeVector const &diff,
                                     std::vector<Card> const &hand) {
@@ -39,6 +40,7 @@ std::optional<Score> GetFourOfAKind(std::int32_t zeros,
   std::advance(card, distance);
   return std::optional{Score{Score::FourOfAKind, *card}};
 }
+
 FaceValueTypeVector::const_iterator
 FindPattern(FaceValueTypeVector::const_iterator begin,
             FaceValueTypeVector::const_iterator end,
@@ -52,12 +54,8 @@ FindPattern(FaceValueTypeVector::const_iterator begin,
                            });
   return match;
 }
-std::optional<Score> GetThreeOfAKind(std::int32_t zeros,
-                                     FaceValueTypeVector const &diff,
+std::optional<Score> GetThreeOfAKind(FaceValueTypeVector const &diff,
                                      std::vector<Card> const &hand) {
-  if (zeros != 2) {
-    return {};
-  }
   //   Value: 1 1 1  3  4 | 2  3 3 3  4 | 2  3  4 4 4
   //    Diff: 1 0 0 -2 -1 | 2 -1 0 0 -1 | 2 -1 -1 0 0
   // Pattern:   0 0  x  x |    x 0 0  x |    x  x 0 0
@@ -80,6 +78,20 @@ std::optional<Score> GetThreeOfAKind(std::int32_t zeros,
   auto card = hand.cbegin();
   std::advance(card, distance);
   return std::optional{Score{Score::ThreeOfAKind, *card}};
+}
+
+Card GetCardNotPartOfPair(
+    std::vector<Card> hand,
+    FaceValueTypeVector::difference_type distance_two_second_high_pair_card,
+    FaceValueTypeVector::difference_type distance_two_second_low_pair_card) {
+  std::vector<bool> not_part_of_pair{true, true, true, true, true};
+  not_part_of_pair[distance_two_second_high_pair_card] = false;
+  not_part_of_pair[distance_two_second_high_pair_card - 1] = false;
+  not_part_of_pair[distance_two_second_low_pair_card] = false;
+  not_part_of_pair[distance_two_second_low_pair_card - 1] = false;
+  auto v = std::find(not_part_of_pair.cbegin(), not_part_of_pair.cend(), true);
+  auto dist = std::distance(not_part_of_pair.cbegin(), v);
+  return hand[dist];
 }
 std::optional<Score> GetTwoPairs(FaceValueTypeVector const &diff,
                                  std::vector<Card> hand) {
@@ -109,8 +121,15 @@ std::optional<Score> GetTwoPairs(FaceValueTypeVector const &diff,
   auto distance_to_low_pair =
       std::distance(diff.cbegin(), zero_iterators.front());
   std::advance(low_pair_card, distance_to_low_pair);
-  return std::optional{Score{Score::TwoPairs, *high_pair_card, *low_pair_card}};
+
+  Score score{Score::TwoPairs};
+  score.AddNextTieBreaker(*high_pair_card);
+  score.AddNextTieBreaker(*low_pair_card);
+  score.AddNextTieBreaker(
+      GetCardNotPartOfPair(hand, distance_to_high_pair, distance_to_low_pair));
+  return score;
 }
+
 std::optional<Score> GetPair(std::int32_t zeros,
                              FaceValueTypeVector const &diff,
                              std::vector<Card> hand) {
@@ -123,6 +142,7 @@ std::optional<Score> GetPair(std::int32_t zeros,
   std::advance(card, distance);
   return std::optional{Score{Score::OnePair, *card}};
 }
+
 Score Hand::GetMostValuableScore() const {
   FaceValueTypeVector face_values;
   std::transform(hand.cbegin(), hand.cend(), std::back_inserter(face_values),
@@ -143,7 +163,7 @@ Score Hand::GetMostValuableScore() const {
   if (straight) {
     return straight.value();
   }
-  auto three_of_a_kind = GetThreeOfAKind(zeros, diff, hand);
+  auto three_of_a_kind = GetThreeOfAKind(diff, hand);
   if (three_of_a_kind) {
     return three_of_a_kind.value();
   }
@@ -155,27 +175,13 @@ Score Hand::GetMostValuableScore() const {
   if (pair) {
     return pair.value();
   }
-  return Score{Score::HighCard, hand.back(), hand.at(3)};
+  return Score(Score::HighCard, hand.crbegin(), hand.crend());
 }
 
 bool operator<(const Hand &lhs, const Hand &rhs) {
   auto lhs_score = lhs.GetMostValuableScore();
   auto rhs_score = rhs.GetMostValuableScore();
-  if (lhs_score < rhs_score) {
-    return true;
-  } else if (lhs_score == rhs_score) {
-    auto lhs_first_tie_breaker =
-        lhs_score.GetFirstTieBreaker().value().face_value;
-    auto rhs_first_tie_breaker =
-        rhs_score.GetFirstTieBreaker().value().face_value;
-    if (lhs_first_tie_breaker == rhs_first_tie_breaker) {
-      return lhs_score.GetSecondTieBreaker().value().face_value <
-             rhs_score.GetSecondTieBreaker().value().face_value;
-    }
-    return lhs_score.GetFirstTieBreaker().value().face_value <
-           rhs_score.GetFirstTieBreaker().value().face_value;
-  }
-  return false;
+  return lhs_score < rhs_score;
 }
 std::ostream &operator<<(std::ostream &os, const Hand &obj) {
   for (auto const &o : obj.hand) {
