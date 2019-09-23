@@ -1,8 +1,6 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include <iostream>
-
 #include "card_deck.h"
 #include "hand.h"
 
@@ -75,6 +73,14 @@ Hand DrawLowHandWithFlush() {
 Hand DrawHighHandWithFlush() {
   return Hand{
       {Tile, Ace}, {Tile, King}, {Tile, Jack}, {Tile, Queen}, {Tile, Nine}};
+}
+Hand DrawLowHandWithStraightFlush() {
+  return Hand{
+      {Tile, Two}, {Tile, Three}, {Tile, Four}, {Tile, Six}, {Tile, Five}};
+}
+Hand DrawHandWithRoyalFlush() {
+  return Hand{
+      {Heart, Ace}, {Heart, King}, {Heart, Queen}, {Heart, Jack}, {Heart, Ten}};
 }
 TEST(PlayerScoreSpec, WhenSameHand) {
   Hand one{
@@ -197,6 +203,16 @@ TEST(HandComparison, WhenHandWithFlushVsFullHouse) {
 TEST(HandComparison, WhenTwoHandsWithFlush) {
   auto one = DrawLowHandWithFlush();
   auto two = DrawHighHandWithFlush();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenFourOfAKindVsStraightFlush) {
+  auto one = DrawHighHandWithFourOfAKind();
+  auto two = DrawLowHandWithStraightFlush();
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenStraightFlushVsRoyalFlush) {
+  auto one = DrawLowHandWithStraightFlush();
+  auto two = DrawHandWithRoyalFlush();
   EXPECT_THAT(one, Lt(two));
 }
 } // namespace
