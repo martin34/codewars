@@ -21,12 +21,19 @@ public:
   Score(Score::ScoreType type) : type_{type} {}
   Score(Score::ScoreType type, Card first_tie_breaker)
       : type_{type}, first_tie_breaker_{first_tie_breaker} {}
+  Score(Score::ScoreType type, Card first_tie_breaker, Card second_tie_breaker)
+      : type_{type}, first_tie_breaker_{first_tie_breaker},
+        second_tie_breaker_{second_tie_breaker} {}
   ScoreType GetType() const { return type_; };
   std::optional<Card> GetFirstTieBreaker() const { return first_tie_breaker_; };
+  std::optional<Card> GetSecondTieBreaker() const {
+    return second_tie_breaker_;
+  };
 
 private:
   ScoreType type_;
   std::optional<Card> first_tie_breaker_{};
+  std::optional<Card> second_tie_breaker_{};
 };
 inline bool operator<(const Score &lhs, const Score &rhs) {
   return lhs.GetType() < rhs.GetType();
