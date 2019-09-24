@@ -7,5 +7,6 @@ cc_library(
     visibility = [
         ":__subpackages__",
         "//csv:__pkg__",
+        "//pocker:__subpackages__",
     ],
 )

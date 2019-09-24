@@ -11,6 +11,9 @@ cc_library(
     ),
     hdrs = glob(["include/*.h"]),
     strip_include_prefix = "include",
+    deps = [
+        "//utils/string",
+    ],
 )
 
 cc_binary(
