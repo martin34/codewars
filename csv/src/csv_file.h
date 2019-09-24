@@ -25,7 +25,6 @@ private:
 };
 
 void WriteLines(fs::path const &output_file_path, Lines const &lines);
-Lines Split(const std::string &str, char delim = ' ');
 Lines CreateCopyWithReplacedColumn(Lines const &in, std::string column,
                                    std::string replacement);
 

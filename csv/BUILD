@@ -1,8 +1,11 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
 cc_library(
     name = "lib",
     srcs = glob(["src/**/*.cpp"]),
     hdrs = glob(["src/**/*.h"]),
     linkopts = ["-lstdc++fs"],
+    deps = ["//utils/string"],
 )
 
 exports_files(glob(["test/data/*.csv"]))
