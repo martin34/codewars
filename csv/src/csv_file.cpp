@@ -6,6 +6,8 @@
 #include <optional>
 #include <string>
 
+#include "utils/string/split.h"
+
 CsvFileReader::CsvFileReader(fs::path const &file_path) : in_(file_path) {}
 
 bool CsvFileReader::Exists() { return in_.is_open(); }
@@ -65,8 +67,9 @@ Lines CreateCopyWithReplacedColumn(Lines const &in, std::string column_name,
 bool TableIsEmpty(Table const &table);
 std::optional<Table> CreateTable(Lines const &in) {
   Table table;
-  std::transform(in.cbegin(), in.cend(), std::back_inserter(table),
-                 [](std::string const &line) { return Split(line, ','); });
+  std::transform(
+      in.cbegin(), in.cend(), std::back_inserter(table),
+      [](std::string const &line) { return utils::Split(line, ','); });
   if (TableIsEmpty(table))
     return {};
   return table;
@@ -103,14 +106,4 @@ bool TableIsEmpty(Table const &table) { return table.cbegin() == table.cend(); }
 bool ColumnNameNotInHeadline(Lines const &headline,
                              Lines::const_iterator col_to_replace) {
   return col_to_replace == headline.cend();
-}
-
-Lines Split(const std::string &str, char delim) {
-  std::stringstream ss(str);
-  std::string token;
-  Lines output;
-  while (std::getline(ss, token, delim)) {
-    output.push_back(token);
-  }
-  return output;
 }
