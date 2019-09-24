@@ -47,4 +47,7 @@ inline bool operator>=(const Hand &lhs, const Hand &rhs) {
 inline bool operator==(const Hand &lhs, const Hand &rhs) {
   return !(lhs < rhs) && !(rhs < lhs);
 }
+inline bool operator!=(const Hand &lhs, const Hand &rhs) {
+  return !(lhs == rhs);
+}
 } // namespace pocker
