@@ -215,4 +215,12 @@ TEST(HandComparison, WhenStraightFlushVsRoyalFlush) {
   auto two = DrawHandWithRoyalFlush();
   EXPECT_THAT(one, Lt(two));
 }
+
+TEST(foo, bar) {
+  Hand one{
+      {Clover, Two}, {Tile, Five}, {Pike, Five}, {Clover, Ten}, {Tile, Jack}};
+  Hand two{
+      {Pike, Two}, {Clover, Three}, {Pike, Six}, {Clover, Six}, {Pike, Eight}};
+  EXPECT_THAT(one, Lt(two));
+}
 } // namespace
