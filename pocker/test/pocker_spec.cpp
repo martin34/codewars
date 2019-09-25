@@ -111,6 +111,23 @@ TEST(HandComparison, WhenHandsWithPair) {
   auto two = DrawHandWithHighPair();
   EXPECT_THAT(one, Lt(two));
 }
+TEST(HandComparison, WhenHandsWithPairs) {
+  Hand one{
+      {Clover, Two}, {Tile, Five}, {Pike, Five}, {Clover, Ten}, {Tile, Jack}};
+  Hand two{
+      {Pike, Two}, {Clover, Three}, {Pike, Six}, {Clover, Six}, {Pike, Eight}};
+  EXPECT_THAT(one, Lt(two));
+}
+TEST(HandComparison, WhenHandsWithEqualPairs) {
+  Hand one{
+      {Pike, Three}, {Tile, Five}, {Heart, Five}, {Tile, Six}, {Clover, Seven}};
+  Hand two{{Heart, Two},
+           {Tile, Three},
+           {Clover, Five},
+           {Pike, Five},
+           {Clover, Jack}};
+  EXPECT_THAT(one, Lt(two));
+}
 TEST(HandComparison, WhenPairVsThreeOfAKind) {
   auto one = DrawHandWithLowPair();
   auto two = DrawLowHandWithThreeOfAKind();
@@ -213,14 +230,6 @@ TEST(HandComparison, WhenFourOfAKindVsStraightFlush) {
 TEST(HandComparison, WhenStraightFlushVsRoyalFlush) {
   auto one = DrawLowHandWithStraightFlush();
   auto two = DrawHandWithRoyalFlush();
-  EXPECT_THAT(one, Lt(two));
-}
-
-TEST(foo, bar) {
-  Hand one{
-      {Clover, Two}, {Tile, Five}, {Pike, Five}, {Clover, Ten}, {Tile, Jack}};
-  Hand two{
-      {Pike, Two}, {Clover, Three}, {Pike, Six}, {Clover, Six}, {Pike, Eight}};
   EXPECT_THAT(one, Lt(two));
 }
 } // namespace

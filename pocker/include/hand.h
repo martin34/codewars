@@ -25,8 +25,12 @@ private:
   std::optional<Score> GetFlush() const;
   std::optional<Score> GetFourOfAKind() const;
   std::optional<Score> GetFullHouse() const;
-  std::vector<FaceValueTypeVector::const_iterator>
-  GetSecondCardOfPairPositions() const;
+  std::vector<std::vector<Card>::const_iterator> GetSecondCardOfPairs() const;
+  std::vector<Card>::const_iterator GetCardPartOfPair(
+      FaceValueTypeVector::const_iterator second_card_of_pair_position) const;
+  std::vector<Card> GetCardsNotPartOfPair(
+      std::vector<std::vector<Card>::const_iterator> second_cards_of_pair)
+      const;
 
   std::vector<Card> hand_;
   FaceValueTypeVector face_value_adjacent_diff_{};
