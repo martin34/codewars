@@ -6,8 +6,8 @@
 #include <iterator>
 #include <string>
 
-#include "csv/src/csv_file.h"
-#include "csv/src/runner.h"
+#include "csv/csv_file.h"
+#include "csv/runner.h"
 #include "test_data.h"
 
 using namespace ::testing;
