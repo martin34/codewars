@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "card_deck.h"
-#include "hand.h"
+#include "pocker/card_deck.h"
+#include "pocker/hand.h"
 
 namespace {
 

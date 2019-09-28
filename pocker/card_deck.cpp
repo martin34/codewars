@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "card_deck.h"
+#include "pocker/card_deck.h"
 
 namespace pocker {
 

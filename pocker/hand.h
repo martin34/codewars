@@ -4,8 +4,8 @@
 #include <ostream>
 #include <vector>
 
-#include "card.h"
-#include "score.h"
+#include "pocker/card.h"
+#include "pocker/score.h"
 
 namespace pocker {
 class Hand {

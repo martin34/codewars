@@ -1,9 +1,10 @@
 #pragma once
 
-#include "card.h"
 #include <algorithm>
 #include <optional>
 #include <vector>
+
+#include "pocker/card.h"
 
 namespace pocker {
 class Score {

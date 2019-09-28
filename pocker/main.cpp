@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "hand.h"
-#include "parser.h"
+#include "pocker/hand.h"
+#include "pocker/parser.h"
 
 int main(int argc, char *argv[]) {
   std::ignore = argc;
