@@ -1,7 +1,7 @@
 #ifndef CSV_SRC_RUNNER_H_
 #define CSV_SRC_RUNNER_H_
 
-#include "csv/src/csv_file.h"
+#include "csv/csv_file.h"
 #include <filesystem>
 #include <optional>
 #include <string>
