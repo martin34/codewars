@@ -2,9 +2,9 @@ load("@rules_cc//cc:defs.bzl", "cc_test")
 
 cc_test(
     name = "test",
-    srcs = ["test.cpp"],
+    srcs = glob(["*.cpp"]) + glob(["*.h"]),
     deps = [
-        "//delete_n_th_repetition",
+        "//pub_sub",
         "@googletest//:gtest_main",
         "@googletest//:gtest_sample_lib",
     ],

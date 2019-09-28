@@ -1,20 +1,9 @@
-cc_library(
-    name = "lib",
-    srcs = glob([
-        "src/*.h",
-        "src/*.cpp",
-    ]),
-    deps = [],
-)
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
-cc_test(
-    name = "spec",
-    srcs = [
-        "test/some_class_spec.cpp",
-    ],
-    deps = [
-        ":lib",
-        "@googletest//:gtest_main",
-        "@googletest//:gtest_sample_lib",
-    ],
+cc_library(
+    name = "simple_cpp",
+    srcs = ["some_class.cpp"],
+    hdrs = ["some_class.h"],
+    visibility = ["//simple_cpp/test:__pkg__"],
+    deps = [],
 )

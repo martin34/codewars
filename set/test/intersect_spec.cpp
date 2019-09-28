@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "set/src/intersect.h"
+#include "set/intersect.h"
 
 using namespace ::testing;
 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "replace_vowel/src/replace_vowel.h"
+#include "replace_vowel/replace_vowel.h"
 
 using namespace ::testing;
 

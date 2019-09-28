@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "threads/src/simple_threading.h"
+#include "threads/simple_threading.h"
 
 using namespace ::testing;
 

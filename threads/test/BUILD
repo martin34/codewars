@@ -1,3 +1,5 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
 cc_test(
     name = "tests",
     srcs = [
@@ -5,7 +7,7 @@ cc_test(
         "simple_threading_spec.cpp",
     ],
     deps = [
-        "//threads/src:lib",
+        "//threads",
         "@googletest//:gtest_main",
         "@googletest//:gtest_sample_lib",
     ],

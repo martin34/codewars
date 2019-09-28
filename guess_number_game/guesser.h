@@ -1,7 +1,3 @@
-//
-// Created by martin on 09.01.19.
-//
-
 #ifndef CODEWARS_GUESSER_H
 #define CODEWARS_GUESSER_H
 
