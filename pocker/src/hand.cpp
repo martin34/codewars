@@ -10,8 +10,7 @@ namespace pocker {
 
 using FaceValueType = Hand::FaceValueType;
 using FaceValueTypeVector = Hand::FaceValueTypeVector;
-constexpr FaceValueType DontCareValue =
-    std::numeric_limits<FaceValueType>::max();
+using HandIteratorConst = Hand::HandIteratorConst;
 
 Hand::Hand(Card c0, Card c1, Card c2, Card c3, Card c4)
     : hand_{c0, c1, c2, c3, c4} {
@@ -188,8 +187,7 @@ std::ostream &operator<<(std::ostream &os, const Hand &obj) {
   return os;
 }
 
-std::vector<std::vector<Card>::const_iterator>
-Hand::GetSecondCardOfPairs() const {
+std::vector<HandIteratorConst> Hand::GetSecondCardOfPairs() const {
   auto zero_it = std::next(face_value_adjacent_diff_.cbegin());
   std::vector<FaceValueTypeVector::const_iterator> zero_iterators;
   while (zero_it != face_value_adjacent_diff_.cend()) {
@@ -199,7 +197,7 @@ Hand::GetSecondCardOfPairs() const {
       zero_iterators.push_back(zero_it++);
     }
   }
-  std::vector<std::vector<Card>::const_iterator> cards_part_of_pair;
+  std::vector<HandIteratorConst> cards_part_of_pair;
   for (auto const it : zero_iterators) {
     cards_part_of_pair.push_back(GetCardPartOfPair(it));
   }
@@ -207,14 +205,13 @@ Hand::GetSecondCardOfPairs() const {
 }
 
 std::vector<Card> Hand::GetCardsNotPartOfPair(
-    std::vector<std::vector<Card>::const_iterator> second_cards_of_pair) const {
+    std::vector<HandIteratorConst> second_cards_of_pair) const {
   std::vector<Card> non_par_cards;
-  std::vector<std::vector<Card>::const_iterator> first_card_of_pair;
+  std::vector<HandIteratorConst> first_card_of_pair;
   for (auto const v : second_cards_of_pair) {
     first_card_of_pair.push_back(std::prev(v));
   }
-  std::vector<std::vector<Card>::const_iterator> cards_of_pairs(
-      second_cards_of_pair);
+  std::vector<HandIteratorConst> cards_of_pairs(second_cards_of_pair);
   for (auto const v : first_card_of_pair) {
     cards_of_pairs.push_back(v);
   }
@@ -227,7 +224,7 @@ std::vector<Card> Hand::GetCardsNotPartOfPair(
   return non_par_cards;
 }
 
-std::vector<Card>::const_iterator Hand::GetCardPartOfPair(
+HandIteratorConst Hand::GetCardPartOfPair(
     FaceValueTypeVector::const_iterator second_card_of_pair_position) const {
   auto distance = std::distance(face_value_adjacent_diff_.cbegin(),
                                 second_card_of_pair_position);
