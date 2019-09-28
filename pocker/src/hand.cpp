@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <numeric>
 #include <set>
@@ -114,51 +115,31 @@ std::optional<Score> Hand::GetFullHouse() const {
   if (second_cards_of_pairs.size() != 3) {
     return {};
   }
-  auto three_of_a_kind = GetThreeOfAKind();
-  if (!three_of_a_kind) {
-    return {};
-  }
-  return std::optional{Score{Score::FullHouse,
-                             three_of_a_kind.value().GetTieBreakers().front()}};
+  auto it =
+      std::adjacent_find(second_cards_of_pairs.cbegin(),
+                         second_cards_of_pairs.cend(), [](auto lhs, auto rhs) {
+                           return (*lhs).face_value == (*rhs).face_value;
+                         });
+  return std::optional{Score{Score::FullHouse, **it}};
 }
 
-FaceValueTypeVector::const_iterator
-FindPattern(FaceValueTypeVector::const_iterator begin,
-            FaceValueTypeVector::const_iterator end,
-            FaceValueTypeVector::const_iterator pbegin,
-            FaceValueTypeVector::const_iterator pend) {
-  auto match = std::search(begin, end, pbegin, pend,
-                           [](auto const &value, auto const &pattern_value) {
-                             return ((pattern_value == DontCareValue) &&
-                                     (pattern_value != 0)) ||
-                                    (value == pattern_value);
-                           });
-  return match;
-}
 std::optional<Score> Hand::GetThreeOfAKind() const {
-  //   Value: 1 1 1  3  4 | 2  3 3 3  4 | 2  3  4 4 4
-  //    Diff: 1 0 0 -2 -1 | 2 -1 0 0 -1 | 2 -1 -1 0 0
-  // Pattern:   0 0  x  x |    x 0 0  x |    x  x 0 0
-  std::vector<FaceValueTypeVector> patterns{
-      FaceValueTypeVector{0, 0, DontCareValue, DontCareValue},
-      FaceValueTypeVector{0, DontCareValue, DontCareValue, 0},
-      FaceValueTypeVector{DontCareValue, DontCareValue, 0, 0}};
-  auto match = face_value_adjacent_diff_.cend();
-  for (auto const &pattern : patterns) {
-    auto tmp_match = FindPattern(std::next(face_value_adjacent_diff_.cbegin()),
-                                 face_value_adjacent_diff_.cend(),
-                                 pattern.cbegin(), pattern.cend());
-    if (tmp_match != face_value_adjacent_diff_.cend()) {
-      match = tmp_match;
-    }
-  }
-  if (match == face_value_adjacent_diff_.cend()) {
+  auto zero_iterators = GetSecondCardOfPairs();
+  if (zero_iterators.size() != 2) {
     return {};
   }
-  auto distance = std::distance(face_value_adjacent_diff_.cbegin(), match);
-  auto card = hand_.cbegin();
-  std::advance(card, distance);
-  return std::optional{Score{Score::ThreeOfAKind, *card}};
+
+  auto first_card_one = *std::prev(zero_iterators.front());
+  auto first_card_two = *std::prev(zero_iterators.back());
+  auto second_card_one = *zero_iterators.front();
+  auto second_card_two = *zero_iterators.back();
+  FaceValueTypeVector v{first_card_two.face_value, second_card_one.face_value,
+                        second_card_two.face_value};
+  for (auto const i : v) {
+    if (i != first_card_one.face_value)
+      return {};
+  }
+  return std::optional{Score{Score::ThreeOfAKind, first_card_one}};
 }
 
 std::optional<Score> Hand::GetTwoPairs() const {

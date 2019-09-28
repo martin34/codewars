@@ -15,9 +15,19 @@ bool operator<(const Score &lhs, const Score &rhs) {
       if ((*lhs_tie_breakers_it).face_value <
           (*rhs_tie_breakers_it).face_value) {
         return true;
+      } else if ((*lhs_tie_breakers_it).face_value >
+                 (*rhs_tie_breakers_it).face_value) {
+        return false;
       }
     }
   }
   return false;
+}
+std::ostream &operator<<(std::ostream &os, const Score::ScoreType &p) {
+  const std::vector<std::string> suit_string{
+      "HighCard", "OnePair",   "TwoPairs",    "ThreeOfAKind",  "Straight",
+      "Flush",    "FullHouse", "FourOfAKind", "StraightFlush", "RoyalFlush"};
+  os << suit_string.at(p);
+  return os;
 }
 } // namespace pocker

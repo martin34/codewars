@@ -52,4 +52,5 @@ inline bool operator>=(const Score &lhs, const Score &rhs) {
 inline bool operator==(const Score &lhs, const Score &rhs) {
   return !(lhs < rhs) && !(rhs < lhs);
 }
+std::ostream &operator<<(std::ostream &os, const Score::ScoreType &p);
 } // namespace pocker

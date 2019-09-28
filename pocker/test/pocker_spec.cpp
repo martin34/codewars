@@ -54,7 +54,11 @@ Hand DrawHighHandWithFourOfAKind() {
   return Hand{
       {Tile, Ace}, {Clover, Ace}, {Pike, Ace}, {Heart, Ace}, {Tile, Eight}};
 }
-Hand DrawHandWithStraight() {
+Hand DrawLowHandWithStraight() {
+  return Hand{
+      {Tile, Nine}, {Clover, Queen}, {Pike, King}, {Heart, Ten}, {Tile, Jack}};
+}
+Hand DrawHighHandWithStraight() {
   return Hand{
       {Tile, Ace}, {Clover, Queen}, {Pike, King}, {Heart, Ten}, {Tile, Jack}};
 }
@@ -82,6 +86,86 @@ Hand DrawHandWithRoyalFlush() {
   return Hand{
       {Heart, Ace}, {Heart, King}, {Heart, Queen}, {Heart, Jack}, {Heart, Ten}};
 }
+
+TEST(HandComparison, WhenHighCardVsPair) {
+  auto one = DrawHandWithLowPair();
+  auto two = DrawHandWithHighHightCard();
+  EXPECT_THAT(one, Gt(two));
+  EXPECT_THAT(two, Not(Gt(one)));
+}
+TEST(HandComparison, WhenPairVsThreeOfAKind) {
+  auto one = DrawHandWithHighPair();
+  auto two = DrawLowHandWithThreeOfAKind();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenHandWithOnePairVsTwoPairs) {
+  auto one = DrawHandWithHighPair();
+  auto two = DrawLowHandWithTwoPairs();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenTwoPairsVsThreeOfAKind) {
+  auto one = DrawLowHandWithTwoPairs();
+  auto two = DrawLowHandWithThreeOfAKind();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenThreeOfAKindVsFourOfAKind) {
+  auto one = DrawHighHandWithThreeOfAKind();
+  auto two = DrawLowHandWithFourOfAKind();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenStraightVsFourOfAKind) {
+  auto one = DrawHighHandWithStraight();
+  auto two = DrawLowHandWithFourOfAKind();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenThreeOfAKindVsStraight) {
+  auto one = DrawLowHandWithThreeOfAKind();
+  auto two = DrawLowHandWithStraight();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenHandWithThreeOfAKindVsFullHouse) {
+  auto one = DrawHighHandWithThreeOfAKind();
+  auto two = DrawLowHandWithFullHouse();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenHandWithFourOfAKindVsFullHouse) {
+  auto one = DrawHighHandWithFullHouse();
+  auto two = DrawLowHandWithFourOfAKind();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenHandWithFlushVsStraight) {
+  auto one = DrawHighHandWithStraight();
+  auto two = DrawLowHandWithFlush();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenHandWithFlushVsFullHouse) {
+  auto one = DrawHighHandWithFlush();
+  auto two = DrawLowHandWithFullHouse();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenFourOfAKindVsStraightFlush) {
+  auto one = DrawHighHandWithFourOfAKind();
+  auto two = DrawLowHandWithStraightFlush();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+TEST(HandComparison, WhenStraightFlushVsRoyalFlush) {
+  auto one = DrawLowHandWithStraightFlush();
+  auto two = DrawHandWithRoyalFlush();
+  EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
+}
+
 TEST(PlayerScoreSpec, WhenSameHand) {
   Hand one{
       {Pike, Two}, {Tile, Six}, {Clover, Three}, {Pike, Ace}, {Heart, Four}};
@@ -94,22 +178,21 @@ TEST(PlayerScoreSpec, WhenHandsWithHighCard) {
   auto one = DrawHandWithHighHightCard();
   auto two = DrawHandWithLowHightCard();
   EXPECT_THAT(one, Gt(two));
+  EXPECT_THAT(two, Not(Gt(one)));
 }
 TEST(PlayerScoreSpec, WhenHandsWithHighCardAlmostSame) {
   Hand one{{Pike, Two}, {Tile, Six}, {Clover, Ten}, {Pike, Ace}, {Heart, King}};
   Hand two{
       {Heart, Three}, {Tile, Six}, {Clover, Ten}, {Pike, Ace}, {Heart, King}};
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
-TEST(HandComparison, WhenHighCardVsPair) {
-  auto one = DrawHandWithLowPair();
-  auto two = DrawHandWithHighHightCard();
-  EXPECT_THAT(one, Gt(two));
-}
+
 TEST(HandComparison, WhenHandsWithPair) {
   auto one = DrawHandWithLowPair();
   auto two = DrawHandWithHighPair();
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
 TEST(HandComparison, WhenHandsWithPairs) {
   Hand one{
@@ -117,61 +200,39 @@ TEST(HandComparison, WhenHandsWithPairs) {
   Hand two{
       {Pike, Two}, {Clover, Three}, {Pike, Six}, {Clover, Six}, {Pike, Eight}};
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
 TEST(HandComparison, WhenHandsWithEqualPairs) {
   Hand one{
-      {Pike, Three}, {Tile, Five}, {Heart, Five}, {Tile, Six}, {Clover, Seven}};
-  Hand two{{Heart, Two},
-           {Tile, Three},
+      {Pike, Two}, {Tile, Five}, {Heart, Five}, {Tile, Three}, {Clover, Jack}};
+  Hand two{{Heart, Three},
+           {Tile, Four},
            {Clover, Five},
            {Pike, Five},
            {Clover, Jack}};
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
-TEST(HandComparison, WhenPairVsThreeOfAKind) {
-  auto one = DrawHandWithLowPair();
-  auto two = DrawLowHandWithThreeOfAKind();
-  EXPECT_THAT(one, Lt(two));
-}
-TEST(HandComparison, WhenThreeOfAKindVsFourOfAKind) {
-  auto one = DrawLowHandWithThreeOfAKind();
-  auto two = DrawLowHandWithFourOfAKind();
-  EXPECT_THAT(one, Lt(two));
-}
-TEST(HandComparison, WhenStraightVsFourOfAKind) {
-  auto one = DrawHandWithStraight();
-  auto two = DrawLowHandWithFourOfAKind();
-  EXPECT_THAT(one, Lt(two));
-}
-TEST(HandComparison, WhenThreeOfAKindVsStraight) {
-  auto one = DrawLowHandWithThreeOfAKind();
-  auto two = DrawHandWithStraight();
-  EXPECT_THAT(one, Lt(two));
-}
+
 TEST(HandComparison, WhenTwoHandsWithThreeOfAKind) {
   auto one = DrawLowHandWithThreeOfAKind();
   auto two = DrawHighHandWithThreeOfAKind();
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
+
 TEST(HandComparison, WhenTwoHandsWithFourOfAKind) {
   auto one = DrawLowHandWithFourOfAKind();
   auto two = DrawHighHandWithFourOfAKind();
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
-TEST(HandComparison, WhenTwoPairsVsThreeOfAKind) {
-  auto one = DrawLowHandWithTwoPairs();
-  auto two = DrawLowHandWithThreeOfAKind();
-  EXPECT_THAT(one, Lt(two));
-}
-TEST(HandComparison, WhenTwoPairsVsThreeOfAKindHigh) {
-  auto one = DrawLowHandWithTwoPairs();
-  auto two = DrawHighHandWithThreeOfAKind();
-  EXPECT_THAT(one, Lt(two));
-}
+
 TEST(HandComparison, WhenHandsWithTwoPairs) {
   auto one = DrawLowHandWithTwoPairs();
   auto two = DrawHighHandWithTwoPairs();
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
 TEST(HandComparison, WhenHandsWithTwoPairsSameHighPair) {
   auto one =
@@ -179,6 +240,7 @@ TEST(HandComparison, WhenHandsWithTwoPairsSameHighPair) {
   auto two =
       Hand{{Tile, Ace}, {Clover, Ace}, {Pike, King}, {Heart, Ten}, {Tile, Ten}};
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
 TEST(HandComparison, WhenHandsWithTwoEqualPairsHighCardWins) {
   auto one = Hand{
@@ -186,50 +248,75 @@ TEST(HandComparison, WhenHandsWithTwoEqualPairsHighCardWins) {
   auto two =
       Hand{{Tile, Ace}, {Clover, Ace}, {Pike, King}, {Heart, Ten}, {Tile, Ten}};
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
-TEST(HandComparison, WhenHandWithOnePairVsTwoPairs) {
-  auto one = DrawHandWithHighPair();
-  auto two = DrawLowHandWithTwoPairs();
-  EXPECT_THAT(one, Lt(two));
-}
-TEST(HandComparison, WhenHandWithThreeOfAKindVsFullHouse) {
-  auto one = DrawHighHandWithThreeOfAKind();
-  auto two = DrawLowHandWithFullHouse();
-  EXPECT_THAT(one, Lt(two));
-}
-TEST(HandComparison, WhenHandWithFourOfAKindVsFullHouse) {
-  auto one = DrawHighHandWithFullHouse();
-  auto two = DrawLowHandWithFourOfAKind();
-  EXPECT_THAT(one, Lt(two));
-}
+
 TEST(HandComparison, WhenHandWithTwoFullHouse) {
   auto one = DrawLowHandWithFullHouse();
   auto two = DrawHighHandWithFullHouse();
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
-TEST(HandComparison, WhenHandWithFlushVsStraight) {
-  auto one = DrawHandWithStraight();
-  auto two = DrawLowHandWithFlush();
-  EXPECT_THAT(one, Lt(two));
-}
-TEST(HandComparison, WhenHandWithFlushVsFullHouse) {
-  auto one = DrawHighHandWithFlush();
-  auto two = DrawLowHandWithFullHouse();
-  EXPECT_THAT(one, Lt(two));
-}
+
 TEST(HandComparison, WhenTwoHandsWithFlush) {
   auto one = DrawLowHandWithFlush();
   auto two = DrawHighHandWithFlush();
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
-TEST(HandComparison, WhenFourOfAKindVsStraightFlush) {
-  auto one = DrawHighHandWithFourOfAKind();
-  auto two = DrawLowHandWithStraightFlush();
+
+TEST(HandComparison, WhenTwoHandsWithStraight) {
+  auto one = DrawLowHandWithStraight();
+  auto two = DrawHighHandWithStraight();
   EXPECT_THAT(one, Lt(two));
+  EXPECT_THAT(two, Not(Lt(one)));
 }
-TEST(HandComparison, WhenStraightFlushVsRoyalFlush) {
-  auto one = DrawLowHandWithStraightFlush();
-  auto two = DrawHandWithRoyalFlush();
-  EXPECT_THAT(one, Lt(two));
+TEST(HandComparison, WhenEqualStraights) {
+  auto one = DrawLowHandWithStraight();
+  auto two = DrawLowHandWithStraight();
+  EXPECT_THAT(one, Eq(two));
+}
+
+TEST(HandGetMostValuableScoreSpec, WhenHightCard) {
+
+  auto one = DrawHandWithLowHightCard();
+  auto score = one.GetMostValuableScore();
+  EXPECT_THAT(score.GetType(), Eq(Score::HighCard));
+}
+TEST(HandGetMostValuableScoreSpec, WhenPair) {
+  auto one = DrawHandWithLowPair();
+  auto score = one.GetMostValuableScore();
+  EXPECT_THAT(score.GetType(), Eq(Score::OnePair));
+}
+TEST(HandGetMostValuableScoreSpec, WhenTwoPairs) {
+  auto one = Hand{
+      {Clover, Five}, {Tile, Five}, {Clover, Nine}, {Tile, Ace}, {Clover, Ace}};
+  auto score = one.GetMostValuableScore();
+  EXPECT_THAT(score.GetType(), Eq(Score::TwoPairs));
+}
+TEST(HandGetMostValuableScoreSpec, WhenThreeOfAKind) {
+  auto one = DrawHighHandWithThreeOfAKind();
+  auto score = one.GetMostValuableScore();
+  EXPECT_THAT(score.GetType(), Eq(Score::ThreeOfAKind));
+}
+TEST(HandGetMostValuableScoreSpec, WhenFourOfAKind) {
+  auto one = DrawLowHandWithFourOfAKind();
+  auto score = one.GetMostValuableScore();
+  EXPECT_THAT(score.GetType(), Eq(Score::FourOfAKind));
+}
+TEST(HandGetMostValuableScoreSpec, WhenStraight) {
+  auto one = DrawHighHandWithStraight();
+  auto score = one.GetMostValuableScore();
+  EXPECT_THAT(score.GetType(), Eq(Score::Straight));
+}
+TEST(HandGetMostValuableScoreSpec, WhenFlush) {
+  auto one = DrawLowHandWithFlush();
+  auto score = one.GetMostValuableScore();
+  EXPECT_THAT(score.GetType(), Eq(Score::Flush));
+}
+TEST(HandGetMostValuableScoreSpec, WhenFullHouse) {
+  auto one = DrawLowHandWithFullHouse();
+  auto score = one.GetMostValuableScore();
+  EXPECT_THAT(score.GetType(), Eq(Score::FullHouse));
 }
 } // namespace
