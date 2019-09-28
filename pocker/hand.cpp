@@ -4,7 +4,7 @@
 #include <numeric>
 #include <set>
 
-#include "hand.h"
+#include "pocker/hand.h"
 
 namespace pocker {
 

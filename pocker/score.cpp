@@ -1,4 +1,4 @@
-#include "score.h"
+#include "pocker/score.h"
 
 namespace pocker {
 bool operator<(const Score &lhs, const Score &rhs) {

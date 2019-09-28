@@ -2,7 +2,7 @@
 
 #include <tuple>
 
-#include "hand.h"
+#include "pocker/hand.h"
 
 namespace pocker {
 std::pair<Hand, Hand> ParseHandsFromLine(std::string const &line);

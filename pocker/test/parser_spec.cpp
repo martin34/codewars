@@ -4,8 +4,8 @@
 #include <string>
 #include <tuple>
 
-#include "hand.h"
-#include "parser.h"
+#include "pocker/hand.h"
+#include "pocker/parser.h"
 
 namespace {
 using namespace ::testing;

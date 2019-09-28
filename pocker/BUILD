@@ -1,41 +1,29 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
 cc_library(
-    name = "pocker_lib",
+    name = "pocker",
     srcs = glob(
         [
-            "src/*.h",
-            "src/*.cpp",
+            "*.h",
+            "*.cpp",
         ],
-        exclude = ["src/main.cpp"],
+        exclude = ["main.cpp"],
     ),
-    hdrs = glob(["include/*.h"]),
-    strip_include_prefix = "include",
+    hdrs = glob(["*.h"]),
+    visibility = [":__subpackages__"],
     deps = [
         "//utils/string",
     ],
 )
 
 cc_binary(
-    name = "pocker",
-    srcs = ["src/main.cpp"],
+    name = "pocker_bin",
+    srcs = ["main.cpp"],
     data = [
         "pocker.txt",
     ],
     linkopts = ["-lstdc++fs"],
     deps = [
-        ":pocker_lib",
-    ],
-)
-
-cc_test(
-    name = "pocker_spec",
-    srcs = glob([
-        "test/*.cpp",
-    ]),
-    deps = [
-        ":pocker_lib",
-        "@googletest//:gtest_main",
-        "@googletest//:gtest_sample_lib",
+        ":pocker",
     ],
 )
