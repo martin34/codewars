@@ -4,7 +4,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "pub_sub/src/pub_sub.h"
+#include "pub_sub/pub_sub.h"
 
 using namespace testing;
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <random>
 
-#include "wilson_primes/src/wilson_prime.h"
+#include "wilson_prime/wilson_prime.h"
 
 static void BM_IsPrime(benchmark::State &state) {
   // Perform setup here

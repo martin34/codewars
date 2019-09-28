@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "guess_number_game/src/guesser.h"
+#include "guess_number_game/guesser.h"
 
 using namespace ::testing;
 

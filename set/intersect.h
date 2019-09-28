@@ -1,5 +1,4 @@
-#ifndef SET_SRC_INTERSECT_H_
-#define SET_SRC_INTERSECT_H_
+#pragma once
 
 #include <algorithm>
 #include <string>
@@ -16,5 +15,3 @@ GetSortedElementsOfFirstInSecond(std::vector<std::string> first,
 
   return common_elements;
 }
-
-#endif // SET_SRC_INTERSECT_H_

@@ -5,8 +5,8 @@ cc_library(
     srcs = ["split.cpp"],
     hdrs = ["split.h"],
     visibility = [
-        ":__subpackages__",
+        "//utils/string/test:__pkg__",
         "//csv:__pkg__",
-        "//pocker:__subpackages__",
+        "//pocker:__pkg__",
     ],
 )

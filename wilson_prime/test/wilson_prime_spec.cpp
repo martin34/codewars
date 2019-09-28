@@ -3,7 +3,7 @@
 
 #include <numeric>
 
-#include "wilson_primes/src/wilson_prime.h"
+#include "wilson_prime/wilson_prime.h"
 
 using namespace ::testing;
 

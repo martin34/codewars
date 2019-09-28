@@ -8,7 +8,7 @@ cc_library(
     ),
     hdrs = glob(["*.h"]),
     linkopts = ["-lstdc++fs"],
-    visibility = [":__subpackages__"],
+    visibility = ["//csv/test:__pkg__"],
     deps = ["//utils/string"],
 )
 

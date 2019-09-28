@@ -1,4 +1,4 @@
-#include "threads/src/auto_join_thread.h"
+#include "threads/auto_join_thread.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include <chrono>

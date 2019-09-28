@@ -1,9 +1,8 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
-    name = "pub_sub",
+    name = "wilson_prime",
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.h"]),
-    visibility = ["//pub_sub/test:__pkg__"],
+    visibility = ["//wilson_prime/test:__pkg__"],
 )
-

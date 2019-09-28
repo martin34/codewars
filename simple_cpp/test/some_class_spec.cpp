@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "simple_cpp/src/some_class.h"
+#include "simple_cpp/some_class.h"
 
 using namespace ::testing;
 

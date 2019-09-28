@@ -2,9 +2,11 @@ load("@rules_cc//cc:defs.bzl", "cc_test")
 
 cc_test(
     name = "test",
-    srcs = ["test.cpp"],
+    srcs = [
+        "some_class_spec.cpp",
+    ],
     deps = [
-        "//delete_n_th_repetition",
+        "//simple_cpp",
         "@googletest//:gtest_main",
         "@googletest//:gtest_sample_lib",
     ],
