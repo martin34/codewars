@@ -32,7 +32,7 @@ Suit ParseSuit(char v) {
   case 'S':
     return Pike;
   }
-  throw std::logic_error("Can't parse Suit from " + v);
+  throw std::logic_error("Can't parse Suit from " + std::string{v});
 }
 FaceValue ParseFaceValue(char v) {
   switch (v) {
@@ -63,7 +63,7 @@ FaceValue ParseFaceValue(char v) {
   case 'A':
     return Ace;
   }
-  throw std::logic_error("Can't parse FaceValue from " + v);
+  throw std::logic_error("Can't parse FaceValue from " + std::string{v});
 }
 
 } // namespace pocker
