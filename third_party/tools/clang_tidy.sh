@@ -8,4 +8,6 @@ fi
 
 $(dirname "${BASH_SOURCE[0]}")/generate_compilation_database.sh
 
-"$CLANG_TIDY" -p "$(bazel info execution_root)" "$@"
+#"$CLANG_TIDY" -p "$(bazel info execution_root)" "$@"
+sed -i s/-fno-canonical-system-headers\ //g "$(bazel info execution_root)/compile_commands.json"
+clang-tidy-8 -p "$(bazel info execution_root)" "$@"
