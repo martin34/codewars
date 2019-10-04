@@ -14,3 +14,7 @@
 
 ## Compiler explorer
 https://godbolt.org/
+
+## Sanitizer options
+Search for sanitize: 
+https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html

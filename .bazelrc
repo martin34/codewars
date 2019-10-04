@@ -6,3 +6,10 @@ build --cxxopt='-Werror'
 # Enable cpp-20 features
 build --action_env='CC=gcc-8'
 build --per_file_copt=benchmark/.*\(.cc|.h)@-Wno-deprecated-declarations
+
+build:asan --cxxopt="-fsanitize=address"
+build:asan --linkopt="-fsanitize=address"
+
+build:usan --cxxopt=""-fsanitize=undefined
+build:usan --linkopt="-fsanitize=undefined"
+
