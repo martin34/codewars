@@ -9,7 +9,7 @@
             "name": "g++-8 build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bazel-out/k8-dbg/bin/pocker/pocker_spec",
+            "program": "${workspaceFolder}/bazel-out/k8-dbg/bin/logging/test/test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
