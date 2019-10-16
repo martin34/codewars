@@ -1,9 +1,13 @@
 #pragma once
 
 #include <exception>
+#include <iostream>
+#include <mutex>
 #include <string>
 
 namespace logging {
+
+std::mutex g_i_mutex;
 
 class Logger {
 public:
@@ -18,9 +22,18 @@ public:
     }
     return *logger_;
   }
-  virtual void LogError(std::string const &message) = 0;
+  void LogError(std::string const &message) {
+    std::lock_guard<std::mutex> lock(g_i_mutex);
+    std::cerr << "Start Log" << message << std::endl;
+    logger_->LogErrorImpl(message);
+    std::cerr << "End Log" << message << std::endl;
+  }
+
+  virtual ~Logger() = default;
 
 private:
+  virtual void LogErrorImpl(std::string const &message) = 0;
+
   static Logger *logger_;
 };
 
