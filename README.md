@@ -4,8 +4,8 @@
 * https://www.fluentcpp.com
 
 ## Debug with gdb and bazel
-1. Build with debug symbols: bazel build ... --compilation_mode=dbg -s
-2. start gdb
+1. Build with debug symbols: `bazel build ... --compilation_mode=dbg -s`
+2. `start gdb`
 3. list, run, break, unitl, step, next, finish, continue, print, ... (https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf)
 
 ## Benchmark
@@ -18,3 +18,8 @@ https://godbolt.org/
 ## Sanitizer options
 Search for sanitize: 
 https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html
+
+## Analyse bazel behavior
+e. g. find reason for not using cache
+`bazel build //... --explain=1.log --verbose_explanations`
+
