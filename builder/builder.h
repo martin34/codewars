@@ -4,6 +4,8 @@
 #include <memory>
 #include <vector>
 
+namespace builder {
+
 class IPart {
 public:
   virtual ~IPart() = default;
@@ -30,12 +32,14 @@ public:
   virtual ~ICreator() = default;
   virtual std::unique_ptr<IPart> Create() = 0;
 };
+
 template <class T> class Creator : public ICreator {
 public:
   std::unique_ptr<IPart> Create() override {
     return std::unique_ptr<T>{new T{}};
   }
 };
+
 template <class T, class F> class Creator2 : public ICreator {
 public:
   Creator2(F &f) : f_(f) {}
@@ -47,6 +51,8 @@ public:
   }
   F &f_;
 };
+
+template <class T> T &With(T &t) { return t; }
 
 class Builder {
 public:
@@ -67,17 +73,8 @@ public:
         new Creator2<Part, Thing>{thing}});
     return *this;
   }
-  // template <class Thing> void With(Thing &thing) {
-  // create_functions_.back() = std::function<std::unique_ptr<IPart>()>{
-  //     [create_function = create_functions_.back(), &thing]() {
-  //       auto obj_ptr = create_function();
-  //       obj_ptr->Set(thing);
-  //       return obj_ptr;
-  //     }};
-  //   std::unique_ptr<ICreator>{new Creator2<decltype(*creators_.back()),
-  //   Thing>(thing)};
-  // }
 
 private:
   std::vector<std::unique_ptr<ICreator>> creators_;
 };
+} // namespace builder

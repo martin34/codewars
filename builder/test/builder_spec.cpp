@@ -8,6 +8,7 @@
 
 namespace {
 using namespace ::testing;
+using namespace builder;
 
 class ICoolString {
 public:
@@ -61,8 +62,7 @@ TEST(Builder, AddPartWithProperty) {
   Builder unit{};
 
   CoolStringMock cool_string;
-  //   unit.AddPart<PartAMock>().With(cool_string);
-  unit.AddPart<PartAMock>(cool_string);
+  unit.AddPart<PartAMock>(With(cool_string));
 
   auto product = unit.Build();
   auto mock = dynamic_cast<PartAMock *>(product.GetParts().at(0).get());
