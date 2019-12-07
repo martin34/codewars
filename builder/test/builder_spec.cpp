@@ -9,9 +9,19 @@
 namespace {
 using namespace ::testing;
 
+class ICoolString {
+public:
+  virtual std::string Get() = 0;
+  virtual ~ICoolString() = default;
+};
+
 class PartAMock : public IPart {
 public:
   MOCK_METHOD(void, Do, (), (override));
+  void Set(ICoolString &provider) { provider_ = &provider; }
+
+  // private:
+  ICoolString *provider_{nullptr};
 };
 
 TEST(Builder, AddPart) {
@@ -40,6 +50,26 @@ TEST(Builder, AddMultipleParts) {
     EXPECT_CALL(*mock_a, Do()).Times(1);
     EXPECT_CALL(*mock_b, Do()).Times(1);
   }
+  product.Do();
+}
+
+class CoolStringMock : public ICoolString {
+public:
+  MOCK_METHOD(std::string, Get, (), (override));
+};
+TEST(Builder, AddPartWithProperty) {
+  Builder unit{};
+
+  CoolStringMock cool_string;
+  //   unit.AddPart<PartAMock>().With(cool_string);
+  unit.AddPart<PartAMock>(cool_string);
+
+  auto product = unit.Build();
+  auto mock = dynamic_cast<PartAMock *>(product.GetParts().at(0).get());
+  EXPECT_CALL(*mock, Do()).Times(1).WillRepeatedly(Invoke([mock]() {
+    mock->provider_->Get();
+  }));
+  EXPECT_CALL(cool_string, Get());
   product.Do();
 }
 } // namespace

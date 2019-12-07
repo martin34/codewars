@@ -25,24 +25,59 @@ private:
   std::vector<std::unique_ptr<IPart>> parts_{};
 };
 
+class ICreator {
+public:
+  virtual ~ICreator() = default;
+  virtual std::unique_ptr<IPart> Create() = 0;
+};
+template <class T> class Creator : public ICreator {
+public:
+  std::unique_ptr<IPart> Create() override {
+    return std::unique_ptr<T>{new T{}};
+  }
+};
+template <class T, class F> class Creator2 : public ICreator {
+public:
+  Creator2(F &f) : f_(f) {}
+
+  std::unique_ptr<IPart> Create() override {
+    auto part = std::unique_ptr<T>{new T{}};
+    part->Set(f_);
+    return std::move(part);
+  }
+  F &f_;
+};
+
 class Builder {
 public:
   auto Build() {
-    auto create_function = create_functions_.at(0);
-    auto part_ptr = create_function();
     Product product{};
-    for (auto create_function : create_functions_) {
-      product.Add(create_function());
+    for (auto &creator : creators_) {
+      product.Add(creator->Create());
     }
     return product;
   }
 
-  template <class Part> void AddPart() {
-    std::function<std::unique_ptr<IPart>()> create_function{
-        []() { return std::unique_ptr<IPart>{new Part{}}; }};
-    create_functions_.push_back(create_function);
+  template <class Part> Builder &AddPart() {
+    creators_.push_back(std::unique_ptr<Creator<Part>>{new Creator<Part>{}});
+    return *this;
   }
+  template <class Part, class Thing> Builder &AddPart(Thing &thing) {
+    creators_.push_back(std::unique_ptr<Creator2<Part, Thing>>{
+        new Creator2<Part, Thing>{thing}});
+    return *this;
+  }
+  // template <class Thing> void With(Thing &thing) {
+  // create_functions_.back() = std::function<std::unique_ptr<IPart>()>{
+  //     [create_function = create_functions_.back(), &thing]() {
+  //       auto obj_ptr = create_function();
+  //       obj_ptr->Set(thing);
+  //       return obj_ptr;
+  //     }};
+  //   std::unique_ptr<ICreator>{new Creator2<decltype(*creators_.back()),
+  //   Thing>(thing)};
+  // }
 
 private:
-  std::vector<std::function<std::unique_ptr<IPart>()>> create_functions_{};
+  std::vector<std::unique_ptr<ICreator>> creators_;
 };
