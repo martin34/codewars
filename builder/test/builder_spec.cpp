@@ -9,28 +9,37 @@
 namespace {
 using namespace ::testing;
 
-class PartA : public IPart {
+class PartAMock : public IPart {
 public:
-  virtual void Do(){};
-  virtual ~PartA() = default;
+  MOCK_METHOD(void, Do, (), (override));
 };
 
 TEST(Builder, AddPart) {
   Builder unit{};
-  unit.AddPart<PartA>();
+  unit.AddPart<PartAMock>();
 
-  EXPECT_NO_THROW(unit.Build());
+  auto product = unit.Build();
+  auto mock = dynamic_cast<PartAMock *>(product.GetParts().at(0).get());
+  EXPECT_CALL(*mock, Do()).Times(1);
+  product.Do();
 }
-class PartB : public IPart {
+class PartBMock : public IPart {
 public:
-  virtual void Do(){};
-  virtual ~PartB() = default;
+  MOCK_METHOD(void, Do, (), (override));
 };
 TEST(Builder, AddMultipleParts) {
   Builder unit{};
-  unit.AddPart<PartA>();
-  unit.AddPart<PartB>();
+  unit.AddPart<PartAMock>();
+  unit.AddPart<PartBMock>();
 
-  EXPECT_NO_THROW(unit.Build());
+  auto product = unit.Build();
+  auto mock_a = dynamic_cast<PartAMock *>(product.GetParts().at(0).get());
+  auto mock_b = dynamic_cast<PartBMock *>(product.GetParts().at(1).get());
+  {
+    InSequence Sequence;
+    EXPECT_CALL(*mock_a, Do()).Times(1);
+    EXPECT_CALL(*mock_b, Do()).Times(1);
+  }
+  product.Do();
 }
 } // namespace
