@@ -19,6 +19,14 @@ https://godbolt.org/
 Search for sanitize: 
 https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html
 
+Examples:
+```
+bazel run --conifg=asan //bad_code:out_of_bound -c dbg
+bazel run --conifg=usan //bad_code:out_of_bound -c dbg
+bazel run --config=asan //bad_code:use_after_freed -c dbg
+bazel run --config=usan //bad_code:use_after_freed -c dbg
+```
+
 ## Analyse bazel behavior
 e. g. find reason for not using cache
 `bazel build //... --explain=1.log --verbose_explanations`
