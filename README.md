@@ -31,3 +31,5 @@ bazel run --config=usan //bad_code:use_after_freed -c dbg
 e. g. find reason for not using cache
 `bazel build //... --explain=1.log --verbose_explanations`
 
+## Search for change in all branches
+git branch | xargs -I% git --no-pager log -1 -p %
