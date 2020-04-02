@@ -1,8 +1,8 @@
-s =   "seeyouatnoon"
+s = "seeyouatnoon"
 key = "spyspyspyspyspy"
 res = ""
 
-for i,e in enumerate(s):
+for i, e in enumerate(s):
     small_letters_ascii_offset = 97
     number_in_alphabet = ord(e) - small_letters_ascii_offset
     k_number_in_alphabet = ord(key[i]) - small_letters_ascii_offset

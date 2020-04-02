@@ -20,6 +20,7 @@ from inner.inner import inner_function
 from python_libs_other.foo_bar import foo_bar
 from foo_bar import something_else
 
+
 def main():
     print("Hello World")
     print(hello_module_a())
@@ -33,5 +34,6 @@ def main():
     print(foo_bar())
     print(something_else())
 
-if __name__== "__main__":
-  main()
+
+if __name__ == "__main__":
+    main()

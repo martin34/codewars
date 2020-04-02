@@ -24,6 +24,5 @@ class CalculateAverageSpec(unittest.TestCase):
         self.assertEquals(3, average)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
-
