@@ -6,4 +6,3 @@ py_library(
     imports = ["."],
     visibility = ["//python_libs:__pkg__"],
 )
-
