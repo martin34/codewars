@@ -105,4 +105,44 @@ INSTANTIATE_TEST_SUITE_P(Foo, OtherTestFixture,
                              // clang-format on 
     ));
 
+
+class YetOtherTestFixture : public testing::TestWithParam<Params> {
+public:
+  YetOtherTestFixture() {
+    unit.SetA(GetParam().a);
+    unit.SetB(GetParam().b);
+    unit.SetC(GetParam().c);
+    unit.SetD(GetParam().d);
+  }
+  Proxy unit{};
+};
+TEST_P(YetOtherTestFixture, Aspects) {
+  EXPECT_THAT(unit.IsAspectX(), Eq(GetParam().aspect_x));
+  EXPECT_THAT(unit.IsAspectY(), Eq(GetParam().aspect_y));
+  EXPECT_THAT(unit.IsAspectZ(), Eq(GetParam().aspect_z));
+}
+
+using ModifyFunc = std::function<void(Params&)>;
+class Modifier{
+  public:
+    Modifier(Params params) : params_(params){}
+    Modifier& Modify(ModifyFunc&& func)
+    {
+      func(params_);
+      return *this;
+    }
+    Params Build(){
+      return params_;
+    }
+  private:
+    Params params_;
+};
+INSTANTIATE_TEST_SUITE_P(Foo, YetOtherTestFixture,
+                         Values(
+                             // clang-format off
+                           Modifier(Params{}).Modify([](Params& p){p.b = 5;}).Build(),
+                           Modifier(Params{}).Modify([](Params& p){p.a = true;}).Modify([](Params& p){p.d = "bar";}).Modify([](Params& p){p.aspect_z = true;}).Build()
+                             // clang-format on 
+                           ));
+
 } // namespace
