@@ -105,8 +105,22 @@ INSTANTIATE_TEST_SUITE_P(Foo, OtherTestFixture,
                              // clang-format on 
     ));
 
-
-class YetOtherTestFixture : public testing::TestWithParam<Params> {
+struct DefaultParams;
+using ModifyFunc = std::function<void(DefaultParams&)>;
+struct DefaultParams {
+  DefaultParams& Modify(ModifyFunc func){
+    func(*this);
+    return *this;
+  }
+  bool a{};
+  int b{};
+  double c{};
+  std::string d{};
+  bool aspect_x{};
+  bool aspect_y{};
+  bool aspect_z{};
+};
+class YetOtherTestFixture : public testing::TestWithParam<DefaultParams> {
 public:
   YetOtherTestFixture() {
     unit.SetA(GetParam().a);
@@ -121,27 +135,11 @@ TEST_P(YetOtherTestFixture, Aspects) {
   EXPECT_THAT(unit.IsAspectY(), Eq(GetParam().aspect_y));
   EXPECT_THAT(unit.IsAspectZ(), Eq(GetParam().aspect_z));
 }
-
-using ModifyFunc = std::function<void(Params&)>;
-class Modifier{
-  public:
-    Modifier(Params params) : params_(params){}
-    Modifier& Modify(ModifyFunc&& func)
-    {
-      func(params_);
-      return *this;
-    }
-    Params Build(){
-      return params_;
-    }
-  private:
-    Params params_;
-};
 INSTANTIATE_TEST_SUITE_P(Foo, YetOtherTestFixture,
                          Values(
                              // clang-format off
-                           Modifier(Params{}).Modify([](Params& p){p.b = 5;}).Build(),
-                           Modifier(Params{}).Modify([](Params& p){p.a = true;}).Modify([](Params& p){p.d = "bar";}).Modify([](Params& p){p.aspect_z = true;}).Build()
+      DefaultParams{}.Modify([](auto& p){p.b = 5;}),
+      DefaultParams{}.Modify([](auto& p){p.a = true;}).Modify([](auto& p){p.d = "bar";}).Modify([](auto& p){p.aspect_z = true;})
                              // clang-format on 
                            ));
 
