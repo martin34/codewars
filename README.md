@@ -33,3 +33,15 @@ e. g. find reason for not using cache
 
 ## Search for change in all branches
 git branch | xargs -I% git --no-pager log -1 -p %
+
+## Coredumps 
+ulimit -c unlimited => Tell bash to generate a core dump of unlimited size, when app crashes
+Execute the app
+Build binary with debug symbols (--copt -g)
+gdb <executable> -c core
+
+## Split debug informations
+cp bin bin.debug
+Optional: strip --only-keep-debug bin.debug
+sudo strip --strip-debug ./bin
+gdb bin -s <bin_with_debug or bin.debug> -c core
