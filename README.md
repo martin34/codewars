@@ -45,3 +45,10 @@ cp bin bin.debug
 Optional: strip --only-keep-debug bin.debug
 sudo strip --strip-debug ./bin
 gdb bin -s <bin_with_debug or bin.debug> -c core
+
+## Property based testing
+ 
+[Introduction](https://medium.com/criteo-labs/introduction-to-property-based-testing-f5236229d237)
+
+* C++: https://github.com/emil-e/rapidcheck
+* Python: https://hypothesis.readthedocs.io/en/latest/
