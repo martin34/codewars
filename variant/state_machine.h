@@ -19,6 +19,52 @@ private:
   bool c_{};
 };
 
+namespace variant {
+
+class Init {};
+class Ready {};
+class Active {};
+class Error {};
+
+using State = std::variant<Init, Ready, Active, Error>;
+
+State Transition(const Init &init, const Context &context) {
+  if (context.IsReady()) {
+    return State{Ready{}};
+  }
+  return State{init};
+}
+State Transition(const Ready &current, const Context &context) {
+  if (context.IsButtonPressed()) {
+    return State{Active{}};
+  }
+  return State{current};
+}
+State Transition(const Active &current, const Context &) {
+  return State{current};
+}
+State Transition(const Error &current, const Context &) {
+  return State{current};
+}
+
+class StateMachine {
+public:
+  explicit StateMachine(State state = State{Init{}}) : state_{state} {}
+  State GetState() const { return state_; }
+  void Update(const Context &context) {
+    state_ = std::visit(
+        [&context](const auto &value) { return Transition(value, context); },
+        state_);
+  }
+
+private:
+  State state_{Init{}};
+};
+
+} // namespace variant
+
+namespace polymorphic {
+
 class IState {
 public:
   virtual std::shared_ptr<IState> Next(const Context &context) = 0;
@@ -61,4 +107,6 @@ public:
 private:
   std::shared_ptr<IState> state_{std::make_shared<Init>()};
 };
+
+} // namespace polymorphic
 } // namespace variant

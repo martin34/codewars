@@ -1,6 +1,7 @@
 #include "state_machine.h"
 
 namespace variant {
+namespace polymorphic {
 std::shared_ptr<IState> Init::Next(const Context &context) {
   if (context.IsErrorDetected()) {
     return std::make_shared<Error>();
@@ -34,4 +35,5 @@ std::shared_ptr<IState> Error::Next(const Context &context) {
   }
   return std::make_shared<Error>(*this);
 }
+} // namespace polymorphic
 } // namespace variant
