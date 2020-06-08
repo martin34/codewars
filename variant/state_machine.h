@@ -28,24 +28,10 @@ class Error {};
 
 using State = std::variant<Init, Ready, Active, Error>;
 
-State Transition(const Init &init, const Context &context) {
-  if (context.IsReady()) {
-    return State{Ready{}};
-  }
-  return State{init};
-}
-State Transition(const Ready &current, const Context &context) {
-  if (context.IsButtonPressed()) {
-    return State{Active{}};
-  }
-  return State{current};
-}
-State Transition(const Active &current, const Context &) {
-  return State{current};
-}
-State Transition(const Error &current, const Context &) {
-  return State{current};
-}
+State Transition(const Init &init, const Context &context);
+State Transition(const Ready &current, const Context &context);
+State Transition(const Active &current, const Context &context);
+State Transition(const Error &current, const Context &context);
 
 class StateMachine {
 public:
