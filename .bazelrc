@@ -3,9 +3,11 @@ build --cxxopt='-Wall'
 build --cxxopt='-Wpedantic'
 build --cxxopt='-Wextra'
 build --cxxopt='-Werror'
+build --cxxopt='-Wconversion'
 # Enable cpp-20 features
 build --action_env='CC=gcc-8'
 build --per_file_copt=benchmark/.*\(.cc|.h)@-Wno-deprecated-declarations
+build --per_file_copt=benchmark/.*\(.cc|.h)@-Wno-conversion
 
 build:asan --cxxopt="-fsanitize=address"
 build:asan --linkopt="-fsanitize=address"

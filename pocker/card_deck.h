@@ -12,7 +12,7 @@ public:
 
   Card Draw(Card card);
 
-  std::int32_t CardsLeft() { return cards.size(); }
+  std::int32_t CardsLeft() { return static_cast<std::int32_t>(cards.size()); }
   std::vector<Card> GetAllCards() { return cards; }
 
 private:

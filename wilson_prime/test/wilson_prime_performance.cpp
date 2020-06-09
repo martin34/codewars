@@ -8,7 +8,12 @@ static void BM_IsPrime(benchmark::State &state) {
   // Perform setup here
   for (auto _ : state) {
     // This code gets timed
-    v2::IsPrime(state.range(0));
+    auto v = state.range(0);
+    if (v >= 0) {
+      v2::IsPrime(static_cast<std::uint32_t>(v));
+    } else {
+      throw std::logic_error("Invalid conversion");
+    }
   }
 }
 // Register the function as a benchmark
