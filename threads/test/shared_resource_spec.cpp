@@ -59,7 +59,9 @@ TEST(Logging, WhenMultipleThreadsLogSimulatneously) {
   thread2.join();
 
   std::string output = buffer.str();
-  EXPECT_THAT(output, Eq(std::string{"Created logger\nFoo\nBar\n"}));
+  EXPECT_THAT(output, StartsWith(std::string{"Created logger\n"}));
+  EXPECT_THAT(output, HasSubstr(std::string{"Foo\n"}));
+  EXPECT_THAT(output, HasSubstr(std::string{"Bar\n"}));
 }
 
 TEST(Logging, WhenMultipleThreadsAndLogToFile) {
