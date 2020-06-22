@@ -1,4 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_binary")
 
 cc_library(
     name = "threads",
@@ -7,5 +7,11 @@ cc_library(
         "auto_join_thread.h",
         "simple_threading.h",
     ],
+    visibility = ["//threads/test:__pkg__"],
+)
+
+cc_binary(
+    name = "user_input",
+    srcs = ["user_input.cpp"],
     visibility = ["//threads/test:__pkg__"],
 )

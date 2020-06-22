@@ -12,3 +12,18 @@ cc_test(
         "@googletest//:gtest_sample_lib",
     ],
 )
+cc_test(
+    name = "user_input_tests",
+    srcs = [
+        "user_input_spec.cpp",
+    ],
+    data = [
+        "//threads:user_input",
+    ],
+    deps = [
+        "//threads",
+        "@googletest//:gtest_main",
+        "@googletest//:gtest_sample_lib",
+    ],
+)
+
