@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 
 #include <boost/program_options.hpp>
 
@@ -16,7 +17,9 @@ int main(int argc, char **argv) {
   if (vm.count("stdin2stdout")) {
     while (true) {
       std::string line;
-      std::getline(std::cin, line);
+      std::thread user_input_thread{
+          [&line]() { std::getline(std::cin, line); }};
+      user_input_thread.join();
       std::cout << line << '\n';
     }
   } else {

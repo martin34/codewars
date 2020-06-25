@@ -17,4 +17,5 @@ cc_binary(
     deps = [
         "@boost//:program_options",
     ],
+    linkopts = ["-lpthread"],
 )
