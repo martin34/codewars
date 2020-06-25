@@ -12,6 +12,7 @@ cc_test(
         "@googletest//:gtest_sample_lib",
     ],
 )
+
 cc_test(
     name = "user_input_tests",
     srcs = [
@@ -22,8 +23,8 @@ cc_test(
     ],
     deps = [
         "//threads",
+        "@boost//:process",
         "@googletest//:gtest_main",
         "@googletest//:gtest_sample_lib",
     ],
 )
-

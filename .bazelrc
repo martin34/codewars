@@ -8,6 +8,9 @@ build --cxxopt='-Wconversion'
 build --action_env='CC=gcc-8'
 build --per_file_copt=benchmark/.*\(.cc|.h)@-Wno-deprecated-declarations
 build --per_file_copt=benchmark/.*\(.cc|.h)@-Wno-conversion
+build --per_file_copt=boost/.*\(.cc|.cpp|.h)@-Wno-conversion
+build --per_file_copt=boost/.*\(.cc|.cpp|.h)@-Wno-implicit-fallthrough
+build --per_file_copt=boost/.*\(.cc|.cpp|.h)@-Wno-unused-parameter
 
 build:asan --cxxopt="-fsanitize=address"
 build:asan --linkopt="-fsanitize=address"
