@@ -1,6 +1,6 @@
 cc_library(
     name = "templates",
-    hdrs = ["log.h"],
     srcs = ["log.cpp"],
+    hdrs = ["log.h"],
     visibility = [":__subpackages__"],
 )

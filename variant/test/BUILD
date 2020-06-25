@@ -4,8 +4,8 @@ cc_test(
     name = "test",
     srcs = glob(["*.cpp"]),
     deps = [
+        "//variant:state_machine",
         "@googletest//:gtest_main",
         "@googletest//:gtest_sample_lib",
-        "//variant:state_machine"
     ],
 )
