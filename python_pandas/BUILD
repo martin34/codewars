@@ -6,4 +6,5 @@ py_test(
         "filter_function.py",
         "tests.py",
     ],
+    python_version = "PY3",
 )

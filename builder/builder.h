@@ -47,7 +47,7 @@ public:
   std::unique_ptr<IPart> Create() override {
     auto part = std::unique_ptr<T>{new T{}};
     part->Set(f_);
-    return std::move(part);
+    return part;
   }
   F &f_;
 };

@@ -6,8 +6,8 @@
 namespace pocker {
 
 CardDeck::CardDeck() {
-  constexpr std::initializer_list<Suit> all_suits = {Heart, Tile, Clover, Pike};
-  constexpr std::initializer_list<FaceValue> all_face_values = {
+  const std::initializer_list<Suit> all_suits = {Heart, Tile, Clover, Pike};
+  const std::initializer_list<FaceValue> all_face_values = {
       Two,  Three, Four, Five,  Six,  Seven, Eight,
       Nine, Ten,   Jack, Queen, King, Ace};
 
