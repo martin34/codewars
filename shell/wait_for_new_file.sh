@@ -8,7 +8,7 @@ wait_for_new_file_in()
   set_TARGET_DIR_from_input $1
   echo "Wait for new file in $TARGET_DIR"
   # sudo apt-get install inotify-tools
-  inotifywait -e attrib $TARGET_DIR
+  inotifywait -e modify $TARGET_DIR
   echo "New file was created"
   return 0
 }
