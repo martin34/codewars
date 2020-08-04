@@ -1,11 +1,6 @@
 #!/bin/sh
 
-TARGET_DIR=$1
-if [ -z "$TARGET_DIR" ]
-then
-  echo "Missing argument directory, nothing to do"
-  exit 1
-fi
+. ./input_args.sh
 
 FILE=$(ls -rt $TARGET_DIR | tail -n1)
 if [ -z "$FILE" ]
