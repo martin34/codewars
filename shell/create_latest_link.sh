@@ -1,6 +1,9 @@
 #!/bin/sh
 
-. ./input_args.sh
+# Get path to this script to import other scripts
+SCRIPT_DIR=$(dirname $(readlink -f $0))
+
+. $SCRIPT_DIR/input_args.sh
 
 FILE=$(ls -rt $TARGET_DIR | tail -n1)
 if [ -z "$FILE" ]
