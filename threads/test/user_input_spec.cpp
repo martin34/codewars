@@ -47,4 +47,25 @@ TEST(Multiprocess, ReactOnStdinWhenBlub) {
 
   EXPECT_THAT(actual, Contains(std::string{"Blub"}));
 }
+// TEST(Multiprocess, DoParallelCount) {
+//   const char *path{"./threads/user_input --parallel"};
+
+//   boost::process::ipstream pipe_stream;
+//   boost::process::opstream in;
+
+//   boost::process::child c{path, boost::process::std_out > pipe_stream,
+//                           boost::process::std_in < in};
+//   in << "quit" << std::endl;
+
+//   std::vector<std::string> lines{};
+
+//   std::string line{};
+//   if (pipe_stream && std::getline(pipe_stream, line) && !line.empty()) {
+//     lines.push_back(line);
+//   }
+
+//   c.terminate();
+
+//   EXPECT_THAT(actual, Contains(std::string{"Blub"}));
+// }
 } // namespace

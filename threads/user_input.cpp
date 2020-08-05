@@ -1,9 +1,28 @@
+#include <chrono>
 #include <iostream>
 #include <thread>
 
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
+using namespace std::chrono_literals;
+
+enum class Actions { End, Unknown };
+std::string to_string(Actions action) {
+  switch (action) {
+  case Actions::End:
+    return std::string{"End"};
+
+  default:
+    return std::string{"Unkown"};
+  }
+}
+Actions from_string(std::string const &action) {
+  if (action == to_string(Actions::End)) {
+    return Actions::End;
+  }
+  return Actions::Unknown;
+}
 
 int main(int argc, char **argv) {
   po::options_description desc("Allowed options");
@@ -14,13 +33,26 @@ int main(int argc, char **argv) {
   po::store(po::parse_command_line(argc, argv, desc), vm);
   po::notify(vm);
 
+  std::atomic<Actions> shared_line{Actions::Unknown};
+  std::thread user_input_thread{[&shared_line]() {
+    while (shared_line != Actions::End) {
+      std::string line{};
+      std::getline(std::cin, line);
+      std::cout << line << '\n';
+      shared_line.store(from_string(line));
+    }
+  }};
+
+  // std::cout << "Continue" << '\n';
   if (vm.count("stdin2stdout")) {
     while (true) {
-      std::string line;
-      std::thread user_input_thread{
-          [&line]() { std::getline(std::cin, line); }};
-      user_input_thread.join();
-      std::cout << line << '\n';
+      // std::cout << "Step" << '\n';
+      // std::cout << to_string(shared_line.load()) << '\n';
+      if (shared_line == Actions::End) {
+        user_input_thread.join();
+        return 0;
+      }
+      std::this_thread::sleep_for(100ms);
     }
   } else {
     std::cout << "Foo" << '\n';
