@@ -8,10 +8,10 @@ namespace {
 
 using namespace ::testing;
 
-std::vector<std::int32_t> CalculateUpToAtLeastN(std::int32_t const n) {
-  std::vector<std::int32_t> result{1};
-  std::int32_t first{1};
-  for (std::int32_t i = 0; result.back() < n; ++i) {
+std::vector<std::uint64_t> CalculateUpToAtLeastN(std::uint64_t const n) {
+  std::vector<std::uint64_t> result{1};
+  std::uint64_t first{1};
+  for (std::uint64_t i = 0; result.back() < n; ++i) {
     if (i < 1) {
       result.push_back(first);
     } else {
@@ -22,7 +22,7 @@ std::vector<std::int32_t> CalculateUpToAtLeastN(std::int32_t const n) {
   }
   return result;
 }
-bool IsAFibonacciNumber(std::int32_t const n) {
+bool IsAFibonacciNumber(std::uint64_t const n) {
   auto const fibonacci_numbers = CalculateUpToAtLeastN(n);
   return std::find(fibonacci_numbers.crbegin(), fibonacci_numbers.crend(), n) !=
          fibonacci_numbers.crend();
@@ -30,23 +30,23 @@ bool IsAFibonacciNumber(std::int32_t const n) {
 
 class KingsTable {
 public:
-  KingsTable(std::int32_t const number_of_seats) : knights_(number_of_seats) {
+  KingsTable(std::uint64_t const number_of_seats) : knights_(number_of_seats) {
     std::iota(knights_.begin(), knights_.end(), 1);
   }
-  std::int32_t NthKnightLeftToTheKing(std::uint32_t const n) {
+  std::uint64_t NthKnightLeftToTheKing(std::uint64_t const n) {
     if (n > knights_.size()) {
       throw std::runtime_error{"Not enough seats"};
     }
     auto neighbors = FindPossibleNeighbors();
 
     auto graph = BuildGraphFromNeighbors(neighbors);
-    for (auto const &n : neighbors) {
-      std::cerr << "Possible neighbors of: " << n.first << " are:";
-      for (auto const i : n.second) {
-        std::cerr << " " << i;
-      }
-      std::cerr << '\n';
-    }
+    // for (auto const &n : neighbors) {
+    //   std::cerr << "Possible neighbors of: " << n.first << " are:";
+    //   for (auto const i : n.second) {
+    //     std::cerr << " " << i;
+    //   }
+    //   std::cerr << '\n';
+    // }
     auto leafs = graph.Leafs();
     std::sort(leafs.begin(), leafs.end(),
               [](Vertex const &lhs, Vertex const &rhs) {
@@ -67,8 +67,8 @@ public:
 
 private:
   Graph BuildGraphFromNeighbors(
-      std::map<std::int32_t, std::vector<std::int32_t>> &neighbors) {
-    for (std::int32_t i = 1; i <= static_cast<std::int32_t>(knights_.size());
+      std::map<std::uint64_t, std::vector<std::uint64_t>> &neighbors) {
+    for (std::uint64_t i = 1; i <= static_cast<std::uint64_t>(knights_.size());
          ++i) {
       for (auto &e : neighbors[i]) {
         if (e > i) {
@@ -82,16 +82,16 @@ private:
     }
     return graph;
   }
-  std::map<std::int32_t, std::vector<std::int32_t>> FindPossibleNeighbors() {
+  std::map<std::uint64_t, std::vector<std::uint64_t>> FindPossibleNeighbors() {
     // Create pairs/s
     if (knights_.size() < 2) {
       return {};
     }
-    std::map<std::int32_t, std::vector<std::int32_t>> neighbors{};
+    std::map<std::uint64_t, std::vector<std::uint64_t>> neighbors{};
     auto first = knights_.cbegin();
     auto const end = knights_.cend();
     for (; first != std::prev(end); ++first) {
-      std::vector<std::int32_t> neighbors_of_first{};
+      std::vector<std::uint64_t> neighbors_of_first{};
       auto second = std::next(first);
       for (; second != end; ++second) {
         // Sum
@@ -107,7 +107,7 @@ private:
   }
 
 private:
-  std::vector<std::int32_t> knights_;
+  std::vector<std::uint64_t> knights_;
 };
 TEST(KingsTable, NthKnightLeftToTheKing_WhenNotEnoughSeats) {
   KingsTable table{7};
@@ -125,21 +125,26 @@ TEST(KingsTable, Return3thsKnightOnTableWith34Seats) {
   KingsTable table{34};
   EXPECT_THAT(table.NthKnightLeftToTheKing(3), Eq(30));
 }
+// TEST(KingsTable, Return3thsKnightOnTableWith34Seatsxxx) {
+//   KingsTable table{99'194'853'094'755'497};
+//   std::cerr << "Result is: " <<
+//   table.NthKnightLeftToTheKing(10'000'000'000'000'000); FAIL();
+// }
 
 TEST(Fibonacci, CalculateUpToAtLeastN) {
-  std::vector<std::int32_t> const expected{1, 1, 2, 3, 5, 8, 13};
+  std::vector<std::uint64_t> const expected{1, 1, 2, 3, 5, 8, 13};
   auto const actual = CalculateUpToAtLeastN(9);
   EXPECT_THAT(actual, Eq(expected));
 }
 
-class IsAFibonacciNumber_WhenFalse : public TestWithParam<std::int32_t> {};
+class IsAFibonacciNumber_WhenFalse : public TestWithParam<std::uint64_t> {};
 TEST_P(IsAFibonacciNumber_WhenFalse, _) {
   EXPECT_FALSE(IsAFibonacciNumber(GetParam()));
 }
-class IsAFibonacciNumber_WhenTrue : public TestWithParam<std::int32_t> {};
+class IsAFibonacciNumber_WhenTrue : public TestWithParam<std::uint64_t> {};
 TEST(IsAFibonacciNumber_WhenTrue, _) { EXPECT_TRUE(IsAFibonacciNumber(1)); }
 INSTANTIATE_TEST_CASE_P(Typical, IsAFibonacciNumber_WhenFalse,
-                        Values(-5, -1, 4, 6, 7, 9, 10, 11, 12));
+                        Values(4, 6, 7, 9, 10, 11, 12));
 INSTANTIATE_TEST_CASE_P(Typical, IsAFibonacciNumber_WhenTrue,
                         Values(1, 2, 3, 5, 8, 13));
 } // namespace

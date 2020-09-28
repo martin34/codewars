@@ -25,7 +25,7 @@ TEST(Graph_DepthFirstSearch, LineGraph) {
   graph.AddVertex(Vertex{3, Vertex::Edges{2}});
 
   auto path = graph.GetPathFromTo(1, 3);
-  EXPECT_THAT(path, Eq(Graph::Path{1, 2, 3}));
+  EXPECT_THAT(path, Eq(Path{1, 2, 3}));
 }
 TEST(Graph_Leafs, ComplexGraph) {
   Graph graph{};
@@ -54,7 +54,7 @@ TEST(Graph_DepthFirstSearch, ComplexGraph) {
   graph.AddVertex(Vertex{7, Vertex::Edges{6, 1}});
 
   auto path = graph.GetPathFromTo(4, 5);
-  EXPECT_THAT(path, Eq(Graph::Path{4, 1, 7, 6, 2, 3, 5}));
+  EXPECT_THAT(path, Eq(Path{4, 1, 7, 6, 2, 3, 5}));
 }
 TEST(Graph_Leafs, CycleWithAditionalVertex) {
   Graph graph{};

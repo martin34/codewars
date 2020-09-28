@@ -9,14 +9,14 @@
 
 class Vertex {
 public:
-  using Name = std::int32_t;
+  using Name = std::uint64_t;
   using Edges = std::vector<Name>;
   Vertex(Name const name, Edges edges) : name_{name}, edges_{edges} {
     std::sort(edges_.begin(), edges_.end());
   }
   Name GetName() const { return name_; }
-  std::int32_t NumberOfEdges() const {
-    return static_cast<std::int32_t>(edges_.size());
+  std::uint64_t NumberOfEdges() const {
+    return static_cast<std::uint64_t>(edges_.size());
   }
 
   std::optional<Name> Next() {
@@ -35,10 +35,13 @@ public:
   std::size_t visited{0};
 };
 
+using Vertices = std::vector<Vertex>;
+std::optional<Vertex::Name> JumpBack(std::vector<Vertices::iterator> &path);
+using Path = std::vector<Vertex::Name>;
+Path ConvertToNames(std::vector<Vertices::iterator> const &path);
+
 class Graph {
 public:
-  using Vertices = std::vector<Vertex>;
-  using Path = std::vector<Vertex::Name>;
   void AddVertex(const Vertex &vertex) { vertices.push_back(vertex); }
   Vertices Leafs() {
     Vertices leafs{};
@@ -47,59 +50,46 @@ public:
     return leafs;
   }
   Path GetPathFromTo(Vertex::Name start, Vertex::Name end) {
-    auto vertex_start =
-        std::find_if(vertices.begin(), vertices.end(),
-                     [start](Vertex const &v) { return v.GetName() == start; });
+
+    auto vertex_start = FindVertexByName(start);
     if (vertex_start == vertices.end()) {
       return {};
     }
+    auto vertex_end = FindVertexByName(end);
+    if (vertex_end == vertices.end()) {
+      return {};
+    }
+
     std::vector<Vertices::iterator> path{};
     path.push_back(vertex_start);
     auto next = vertex_start->Next();
     while (next) {
       Vertex::Name next_value = next.value();
-      //   std::cerr << "Next: " << next_value << '\n';
-      auto next_vertex = std::find_if(
-          vertices.begin(), vertices.end(),
-          [next_value](Vertex const &v) { return v.GetName() == next_value; });
+      auto next_vertex = FindVertexByName(next_value);
       // Ignore, when already visited
       if (std::find(path.cbegin(), path.cend(), next_vertex) == path.cend()) {
         path.push_back(next_vertex);
-        // std::cerr << "Path: ";
-        // for(auto v : path)
-        // {
-        //     std::cerr << " " << v->GetName();
-        // }
-        // std::cerr << '\n';
       }
       if (next_vertex->GetName() == end) {
         if (path.size() == vertices.size()) {
-          Path name_path(path.size());
-          std::transform(path.cbegin(), path.cend(), name_path.begin(),
-                         [](Vertices::iterator v) { return v->GetName(); });
-          return name_path;
+          return ConvertToNames(path);
+
         } else {
           path.back()->ClearVisitedCounter();
           path.pop_back();
         }
       }
-      next = path.back()->Next();
-      while (!next) {
-        path.back()->ClearVisitedCounter();
-        path.pop_back();
-        if (path.empty()) {
-          return {};
-        }
-        auto name = path.back()->GetName();
-        auto next_vertex = std::find_if(
-            vertices.begin(), vertices.end(),
-            [name](Vertex const &v) { return v.GetName() == name; });
-        next = next_vertex->Next();
-      }
+      next = JumpBack(path);
     }
     return {};
   }
 
 private:
+  Vertices::iterator FindVertexByName(Vertex::Name name) {
+    auto vertex =
+        std::find_if(vertices.begin(), vertices.end(),
+                     [name](Vertex const &v) { return v.GetName() == name; });
+    return vertex;
+  }
   Vertices vertices{};
 };
