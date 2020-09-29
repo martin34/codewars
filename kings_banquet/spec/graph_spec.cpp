@@ -15,7 +15,7 @@ TEST(Graph_Leafs, LineGraph) {
   std::vector<Vertex> leafs = graph.Leafs();
   std::vector<Vertex::Name> leaf_names(leafs.size());
   std::transform(leafs.cbegin(), leafs.cend(), leaf_names.begin(),
-                 [](Vertex const &v) { return v.GetName(); });
+                 [](Vertex const &v) { return v.name; });
   EXPECT_THAT(leaf_names, UnorderedElementsAre(1, 3));
 }
 TEST(Graph_DepthFirstSearch, LineGraph) {
@@ -40,7 +40,7 @@ TEST(Graph_Leafs, ComplexGraph) {
   std::vector<Vertex> leafs = graph.Leafs();
   std::vector<Vertex::Name> leaf_names(leafs.size());
   std::transform(leafs.cbegin(), leafs.cend(), leaf_names.begin(),
-                 [](Vertex const &v) { return v.GetName(); });
+                 [](Vertex const &v) { return v.name; });
   EXPECT_THAT(leaf_names, UnorderedElementsAre(5, 4));
 }
 TEST(Graph_DepthFirstSearch, ComplexGraph) {
@@ -66,7 +66,7 @@ TEST(Graph_Leafs, CycleWithAditionalVertex) {
   std::vector<Vertex> leafs = graph.Leafs();
   std::vector<Vertex::Name> leaf_names(leafs.size());
   std::transform(leafs.cbegin(), leafs.cend(), leaf_names.begin(),
-                 [](Vertex const &v) { return v.GetName(); });
+                 [](Vertex const &v) { return v.name; });
   EXPECT_THAT(leaf_names, UnorderedElementsAre(1));
 }
 } // namespace

@@ -50,18 +50,18 @@ public:
     auto leafs = graph.Leafs();
     std::sort(leafs.begin(), leafs.end(),
               [](Vertex const &lhs, Vertex const &rhs) {
-                return lhs.GetName() < rhs.GetName();
+                return lhs.name < rhs.name;
               });
     if (leafs.size() != 2) {
       std::cerr << "Leafs:";
       for (auto const &l : leafs) {
-        std::cerr << " " << l.GetName();
+        std::cerr << " " << l.name;
       }
       std::cerr << '\n';
       throw std::runtime_error("To many knights need to be beside the king");
     }
     auto seating_order =
-        graph.GetPathFromTo(leafs.at(0).GetName(), leafs.at(1).GetName());
+        graph.GetPathFromTo(leafs.at(0).name, leafs.at(1).name);
     return seating_order[n - 1];
   }
 
