@@ -6,5 +6,6 @@ cc_test(
     deps = [
         "@googletest//:gtest_main",
         "@googletest//:gtest_sample_lib",
+        "//kings_banquet:kings_table",
     ],
 )

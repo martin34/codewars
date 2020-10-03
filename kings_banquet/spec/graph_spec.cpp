@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "graph.h"
+#include "kings_banquet/graph.h"
 
 namespace {
 using namespace ::testing;

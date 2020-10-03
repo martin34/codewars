@@ -3,9 +3,9 @@
 
 #include <numeric>
 
-#include "fibonacci.h"
-#include "graph.h"
-#include "kings_table.h"
+#include "kings_banquet/fibonacci.h"
+#include "kings_banquet/graph.h"
+#include "kings_banquet/kings_table.h"
 
 namespace {
 
