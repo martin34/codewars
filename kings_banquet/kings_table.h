@@ -12,10 +12,15 @@ public:
 
   void ArrangeSeating();
   std::uint64_t NthKnightLeftToTheKing(std::uint64_t const n) const;
+  std::vector<std::uint64_t> GetSeatingArrangement() const {
+    CheckIfSeatingIsArranged();
+    return knights_;
+  }
 
 private:
   std::map<std::uint64_t, std::vector<std::uint64_t>>
   FindPossibleNeighbors() const;
+  void CheckIfSeatingIsArranged() const;
 
 private:
   std::vector<std::uint64_t> knights_;

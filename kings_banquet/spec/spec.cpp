@@ -14,6 +14,10 @@ TEST(KingsTable, ThrowWhenQueryNotArrangedArrangeSeating) {
   KingsTable table{34};
   EXPECT_THROW(table.NthKnightLeftToTheKing(3), std::runtime_error);
 }
+TEST(KingsTable, ThrowWhenGetSeatingArrangementQueryNotArrangedArrangeSeating) {
+  KingsTable table{34};
+  EXPECT_THROW(table.GetSeatingArrangement(), std::runtime_error);
+}
 TEST(KingsTable, NthKnightLeftToTheKing_WhenNotEnoughSeats) {
   KingsTable table{7};
   table.ArrangeSeating();
@@ -29,10 +33,24 @@ TEST(KingsTable, Return4thsKnightOnTableWith7Seats) {
   table.ArrangeSeating();
   EXPECT_THAT(table.NthKnightLeftToTheKing(4), Eq(6));
 }
+TEST(KingsTable, Return4thsKnightOnTableWith14Seats) {
+  KingsTable table{14};
+  EXPECT_THROW(table.ArrangeSeating(), std::runtime_error);
+}
+TEST(KingsTable, ReturnSeatingArrangement) {
+  KingsTable table{7};
+  table.ArrangeSeating();
+  EXPECT_THAT(table.GetSeatingArrangement(),
+              Eq(std::vector<std::uint64_t>{4, 1, 7, 6, 2, 3, 5}));
+}
 TEST(KingsTable, Return3thsKnightOnTableWith34Seats) {
   KingsTable table{34};
   table.ArrangeSeating();
   EXPECT_THAT(table.NthKnightLeftToTheKing(3), Eq(30));
+}
+TEST(KingsTable, Return3thsKnightOnTableWith88Seats) {
+  KingsTable table{88};
+  table.ArrangeSeating();
 }
 // TEST(KingsTable, Return3thsKnightOnTableWith34Seatsxxx) {
 //   KingsTable table{99'194'853'094'755'497};

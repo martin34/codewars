@@ -1,4 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
 cc_library(
     name = "kings_table",
@@ -13,4 +13,10 @@ cc_library(
         "kings_table.h",
     ],
     visibility = [":__subpackages__"],
+)
+
+cc_binary(
+    name = "kings_banquet",
+    srcs = ["main.cpp"],
+    deps = [":kings_table"],
 )

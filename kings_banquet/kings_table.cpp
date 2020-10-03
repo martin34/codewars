@@ -28,6 +28,9 @@ void KingsTable::ArrangeSeating() {
     throw std::runtime_error("To many knights need to be beside the king");
   }
   auto seating_order = graph.GetPathFromTo(leafs.at(0).name, leafs.at(1).name);
+  if (seating_order.empty()) {
+    throw std::runtime_error("Did not find a solution");
+  }
   knights_ = seating_order;
   seating_arranged_ = true;
 }
@@ -35,9 +38,9 @@ std::uint64_t KingsTable::NthKnightLeftToTheKing(std::uint64_t const n) const {
   if (n > knights_.size()) {
     throw std::runtime_error{"Not enough seats"};
   }
-  if (!seating_arranged_) {
-    throw std::runtime_error{"Seating not arranged --> call ArrangeSeating"};
-  }
+
+  CheckIfSeatingIsArranged();
+
   return knights_[n - 1];
 }
 
@@ -80,4 +83,10 @@ KingsTable::FindPossibleNeighbors() const {
     neighbors.emplace(std::make_pair(*first, neighbors_of_first));
   }
   return neighbors;
+}
+
+void KingsTable::CheckIfSeatingIsArranged() const {
+  if (!seating_arranged_) {
+    throw std::runtime_error{"Seating not arranged --> call ArrangeSeating"};
+  }
 }
