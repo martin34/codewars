@@ -9,7 +9,7 @@ import random
 
 
 def create_animal(index):
-    return random.choice(seq=['cat', 'dog', 'pig'])
+    return random.choice(seq=["cat", "dog", "pig"])
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     df = pd.DataFrame(data={"x": x_values})
     df["sin"] = np.sin(df["x"])
     df["cos"] = np.cos(df["x"])
-    df["animal"]=df["x"].apply(create_animal)
+    df["animal"] = df["x"].apply(create_animal)
 
     fig = make_subplots(rows=3, cols=1, shared_xaxes=True)
     fig.add_trace(go.Scatter(x=df["x"], y=df["sin"], mode="lines+markers"), row=1, col=1)

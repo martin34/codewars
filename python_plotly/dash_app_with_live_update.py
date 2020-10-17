@@ -55,11 +55,12 @@ def update_graph_live(n):
     print("Update")
     return widget
 
+
 @app.callback(
-    dash.dependencies.Output('dd-output-container', 'children'),
-    [dash.dependencies.Input('demo-dropdown', 'value')])
+    dash.dependencies.Output("dd-output-container", "children"), [dash.dependencies.Input("demo-dropdown", "value")]
+)
 def update_output(value):
-    
+
     return 'You have selected "{}"'.format(value)
 
 
@@ -73,10 +74,10 @@ def main():
                     {"label": "cos", "value": "cos"},
                     {"label": "animals", "value": "animals"},
                 ],
-                value=["sin","cos","animals"],
-                multi=True
+                value=["sin", "cos", "animals"],
+                multi=True,
             ),
-            html.Div(id='dd-output-container'),
+            html.Div(id="dd-output-container"),
             dcc.Graph(id="basic-interactions", figure=widget, animate=True),
             html.Div(id="hidden-div", style={"display": "none"}),
             dcc.Interval(id="interval-component", interval=1 * 1000, n_intervals=0),  # in milliseconds

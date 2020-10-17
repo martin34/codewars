@@ -6,7 +6,12 @@ import numpy
 
 @pytest.mark.parametrize(
     "test_input,expected",
-    [("Hello world 1", 1), ("Hello world 2", 2), ("Hello world 98", 98), ("Hello world 98.1", 98),],
+    [
+        ("Hello world 1", 1),
+        ("Hello world 2", 2),
+        ("Hello world 98", 98),
+        ("Hello world 98.1", 98),
+    ],
 )
 def test_filter_number(test_input, expected):
     actual = filter_number(test_input)
@@ -15,7 +20,14 @@ def test_filter_number(test_input, expected):
 
 def test_created_filtered_dataframe():
     data = {
-        "Producer": ["Honda Civic", "Samsung", "Toyota Corolla", "AEG", "Ford Focus", "Audi A4",],
+        "Producer": [
+            "Honda Civic",
+            "Samsung",
+            "Toyota Corolla",
+            "AEG",
+            "Ford Focus",
+            "Audi A4",
+        ],
         "Type": ["Car", "Multimedia", "Car", "Kitchen", "Car", "Car"],
         "Price": [22000, 330, 25000, 100, 27000, 35000],
     }

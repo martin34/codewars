@@ -47,7 +47,14 @@ fy = lambdify(z, solution[2][y], "numpy")
 values = numpy.arange(start=-100.0, stop=200.0, step=10.0)
 es = []
 for v in values:
-    es.append(Ellipse(xy=numpy.zeros(2), width=2 * math.fabs(fx(v)), height=2 * math.fabs(fy(v)), fill=False,))
+    es.append(
+        Ellipse(
+            xy=numpy.zeros(2),
+            width=2 * math.fabs(fx(v)),
+            height=2 * math.fabs(fy(v)),
+            fill=False,
+        )
+    )
 
 
 print("Circle")
