@@ -13,9 +13,9 @@ cc_library(
 cc_binary(
     name = "user_input",
     srcs = ["user_input.cpp"],
+    linkopts = ["-lpthread"],
     visibility = ["//threads/test:__pkg__"],
     deps = [
         "@boost//:program_options",
     ],
-    linkopts = ["-lpthread"],
 )
