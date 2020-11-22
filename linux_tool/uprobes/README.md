@@ -1,3 +1,8 @@
+# man page
+https://www.kernel.org/doc/Documentation/trace/uprobetracer.txt
+
+# Example
+
 ```shell
 # Build
 g++ -osample sample.cpp -g
@@ -104,4 +109,16 @@ cat available_events | grep cpu
 
 # You can set uprobes with perf
 sudo perf probe -x ./sample my_perf_count=sample.cpp:11
+
+# Remove uprobes
+ echo > uprobe_events
+# or
+sudo perf probe -d my_probe_name
+```
+
+# With args and return values
+
+```shell
+echo "p:probe_example_with_function/entry /home/martin/repo/codewars/linux_tool/uprobes/example_with_function:0x0000000000001149 arg1=%di" > uprobe_events
+echo "r:probe_example_with_function/exit /home/martin/repo/codewars/linux_tool/uprobes/example_with_function:0x0000000000001149 \$retval:u8" > uprobe_events
 ```
