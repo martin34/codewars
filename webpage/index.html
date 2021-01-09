@@ -23,7 +23,7 @@
     <div class="container-fluid">  
         <div class="row">
             <div class="col-md-8">
-                <h1>Heading</h1>
+                <h1 id="id1">Heading</h1>
                 <p>Some Text. Blub.</p>
                 <!--Client server communication example-->
                 <a href="http://127.0.0.1:5000/">Click me to magically send data to the server</a>
@@ -35,6 +35,12 @@
             </div>
             <div class="col-md-4">
             <img src="images/berg.jpg" width="300px">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+              <button type="button" onclick="document.getElementById('id1').style.color = 'red'"> RedHeadline</button>
+              <button type="button" onclick="document.getElementById('id1').style.color = 'blue'"> BlueHeadline</button>
             </div>
         </div>
         <p class="text-right"></p><a href="impressum.html">Impressum</a></p>
