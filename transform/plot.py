@@ -1,6 +1,7 @@
 import csv
 import matplotlib.pyplot as plt
 from itertools import cycle
+import math
 
 
 class Colors:
@@ -24,6 +25,11 @@ class Point:
         res.y += b.y
         return res
 
+    def turn(self, angle):
+        new_x = math.cos(angle) * self.x + math.sin(angle) * self.y
+        new_y = -math.sin(angle) * self.x + math.cos(angle) * self.y
+        return Point(new_x, new_y)
+
     def plot(self, color="b"):
         plt.plot([self.x], [self.y], marker="o", color=color)
 
@@ -34,7 +40,7 @@ class Line:
         self.b = b
 
     def plot(self, color="b"):
-        plt.plot([self.a.x, self.b.x], [self.b.y, self.b.y], color=color)
+        plt.plot([self.a.x, self.b.x], [self.a.y, self.b.y], color=color)
 
 
 class Snap:
@@ -52,17 +58,26 @@ with open("data.txt", newline="") as csvfile:
     reader = csv.DictReader(csvfile, delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
 
     snaps = []
+    last = Point(0.,0.)
     for row in reader:
         o = Point(row["x"], row["y"])
+        angle = 0.
+        if not (abs(o.x - last.x) < 0.00001):
+            angle = math.atan((o.y - last.y)/(o.x - last.x))
+
+        last = o
         a = Point(row["ax"], row["ay"])
         b = Point(row["bx"], row["by"])
+
+        a = a.turn(-angle)
+        b = b.turn(-angle)
         oa = o.add(a)
         ob = o.add(b)
 
         ar = Point(row["arx"], row["ary"])
         br = Point(row["brx"], row["bry"])
-        oar = o.add(ar)
-        obr = o.add(br)
+        oar = o.add(ar.turn(-angle))
+        obr = o.add(br.turn(-angle))
 
         snaps.append(Snap(o, [Line(oa, ob), Line(oar, obr)]))
 
