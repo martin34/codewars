@@ -20,7 +20,7 @@ static void BM_IsPrime(benchmark::State &state) {
 // BENCHMARK(BM_IsPrime)->RangeMultiplier(2)->Range(2, 1'000'000'000);
 
 static void CustomArguments(benchmark::internal::Benchmark *b) {
-  std::int32_t seed{15};
+  std::uint32_t seed{15U};
   std::mt19937 gen(seed);
   std::uniform_int_distribution<> dis(2, 1'000'000'000);
   for (std::int32_t i = 0; i < 100; ++i) {
