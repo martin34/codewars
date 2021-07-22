@@ -1,3 +1,4 @@
+#include <cassert>
 #include <string>
 #include <vector>
 
@@ -13,7 +14,8 @@ std::ostream &operator<<(std::ostream &os, const FaceValue &p) {
   const std::vector<std::string> suit_string{
       "Two",  "Three", "Four", "Five",  "Six",  "Seven", "Eight",
       "Nine", "Ten",   "Jack", "Queen", "King", "Ace"};
-  os << suit_string.at(p);
+  assert(p >= 0); // Todo: What about release builds
+  os << suit_string.at(static_cast<std::vector<std::string>::size_type>(p));
   return os;
 }
 std::ostream &operator<<(std::ostream &os, const Suit &p) {

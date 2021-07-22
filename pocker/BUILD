@@ -22,7 +22,10 @@ cc_binary(
     data = [
         "pocker.txt",
     ],
-    linkopts = ["-lstdc++fs"],
+    linkopts = [
+        "-lstdc++fs",
+        "-lc++fs",
+    ],
     deps = [
         ":pocker",
     ],
