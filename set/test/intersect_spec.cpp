@@ -25,7 +25,7 @@ TEST_P(GetSortedElementsOfFirstInSecondSpec, WhenTrue) {
   EXPECT_THAT(res, Eq(expect));
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     Foo, GetSortedElementsOfFirstInSecondSpec,
     Values(TestParameter{strings{"abc"}, strings{"abc"}, strings{"abc"}},
            TestParameter{strings{"abc"}, strings{}, strings{}},

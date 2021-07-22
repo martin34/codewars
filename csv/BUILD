@@ -7,7 +7,10 @@ cc_library(
         exclude = ["main.cpp"],
     ),
     hdrs = glob(["*.h"]),
-    linkopts = ["-lstdc++fs"],
+    linkopts = [
+        "-lstdc++fs",
+        "-lc++fs",
+    ],
     visibility = ["//csv/test:__pkg__"],
     deps = ["//utils/string"],
 )

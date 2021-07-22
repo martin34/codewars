@@ -2,6 +2,7 @@
 #include "gtest/gtest.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <string>
 
 namespace {
@@ -9,8 +10,8 @@ namespace {
 bool IsValidColor(char value) { return 'a' <= value && value <= 'm'; }
 
 std::string CalculateErrorRate(std::string const &colors) {
-  auto invalid_count =
-      std::count_if(colors.cbegin(), colors.cend(), IsValidColor);
+  const auto invalid_count{static_cast<std::uint32_t>(
+      std::count_if(colors.cbegin(), colors.cend(), IsValidColor))};
   return std::to_string(colors.length() - invalid_count) + std::string{"/"} +
          std::to_string(colors.length());
 }
@@ -76,7 +77,7 @@ class IsColorValidSpec : public TestWithParam<Params> {};
 TEST_P(IsColorValidSpec, Valid) {
   EXPECT_THAT(IsValidColor(GetParam().input_color), Eq(GetParam().valid));
 }
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     IsColorValid, IsColorValidSpec,
     Values(
         // clang-format off

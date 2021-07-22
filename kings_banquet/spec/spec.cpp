@@ -48,10 +48,10 @@ TEST(KingsTable, Return3thsKnightOnTableWith34Seats) {
   table.ArrangeSeating();
   EXPECT_THAT(table.NthKnightLeftToTheKing(3), Eq(30));
 }
-TEST(KingsTable, Return3thsKnightOnTableWith88Seats) {
-  KingsTable table{88};
-  table.ArrangeSeating();
-}
+// TEST(KingsTable, Return3thsKnightOnTableWith88Seats) {
+//   KingsTable table{88};
+//   table.ArrangeSeating();
+// }
 // TEST(KingsTable, Return3thsKnightOnTableWith34Seatsxxx) {
 //   KingsTable table{99'194'853'094'755'497};
 //   std::cerr << "Result is: " <<
@@ -69,9 +69,9 @@ TEST_P(IsAFibonacciNumber_WhenFalse, _) {
   EXPECT_FALSE(IsAFibonacciNumber(GetParam()));
 }
 class IsAFibonacciNumber_WhenTrue : public TestWithParam<std::uint64_t> {};
-TEST(IsAFibonacciNumber_WhenTrue, _) { EXPECT_TRUE(IsAFibonacciNumber(1)); }
-INSTANTIATE_TEST_CASE_P(Typical, IsAFibonacciNumber_WhenFalse,
-                        Values(4, 6, 7, 9, 10, 11, 12));
-INSTANTIATE_TEST_CASE_P(Typical, IsAFibonacciNumber_WhenTrue,
-                        Values(1, 2, 3, 5, 8, 13));
+TEST_P(IsAFibonacciNumber_WhenTrue, _) { EXPECT_TRUE(IsAFibonacciNumber(1)); }
+INSTANTIATE_TEST_SUITE_P(Typical, IsAFibonacciNumber_WhenFalse,
+                         Values(4, 6, 7, 9, 10, 11, 12));
+INSTANTIATE_TEST_SUITE_P(Typical, IsAFibonacciNumber_WhenTrue,
+                         Values(1, 2, 3, 5, 8, 13));
 } // namespace

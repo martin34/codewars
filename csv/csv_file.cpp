@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iterator>
 #include <optional>
+#include <sstream>
 #include <string>
 
 #include "utils/string/split.h"
