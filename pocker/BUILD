@@ -24,7 +24,6 @@ cc_binary(
     ],
     linkopts = [
         "-lstdc++fs",
-        "-lc++fs",
     ],
     deps = [
         ":pocker",

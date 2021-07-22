@@ -9,7 +9,6 @@ cc_library(
     hdrs = glob(["*.h"]),
     linkopts = [
         "-lstdc++fs",
-        "-lc++fs",
     ],
     visibility = ["//csv/test:__pkg__"],
     deps = ["//utils/string"],
