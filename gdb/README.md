@@ -1,5 +1,5 @@
 Build: 
-'gcc main.cpp -lstdc++ -o main.o'
+'gcc crashing_main.cpp -lstdc++ -o main.o'
 
 Generate coredump and backtrace: 
 'gdb -return-child-result -batch -ex "run" -ex "bt" -ex "generate-core-file core.dump" -ex "quit" main.o'
@@ -54,3 +54,18 @@ Dump of assembler code for function add<int>(int, int):
    0x00005555555551f6 <+23>:    retq
 End of assembler dump.
 ```
+
+With bazel:
+
+```
+# Run target
+bazel run //gdb:run --copt -g --run_under='gdbserver :1234'
+
+gdb
+target remote :1234
+set follow-fork-mode child # Follows first fork --> if second fork needs to be debugged we need to adapt the script
+
+```
+
+Generate coredump by `ulimit -c unlimited`
+
