@@ -2,6 +2,7 @@ workspace(name = "codewars")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+# ------------------- gtest
 http_archive(
     name = "googletest",
     sha256 = "353571c2440176ded91c2de6d6cd88ddd41401d14692ec1f99e35d013feda55a",
@@ -9,6 +10,7 @@ http_archive(
     urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"],
 )
 
+# ------------------- benchmark
 http_archive(
     name = "benchmark",
     sha256 = "2d22dd3758afee43842bb504af1a8385cccb3ee1f164824e4837c1c1b04d92a0",
@@ -16,7 +18,7 @@ http_archive(
     urls = ["https://github.com/google/benchmark/archive/v1.5.0.zip"],
 )
 
-# Python
+# ------------------- Python
 http_archive(
     name = "rules_python",
     sha256 = "aa96a691d3a8177f3215b14b0edc9641787abaaa30363a080165d06ab65e1161",
@@ -29,7 +31,7 @@ py_repositories()
 
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
-# Boost
+# ------------------- Boost
 git_repository(
     name = "com_github_nelhage_rules_boost",
     commit = "9f9fb8b2f0213989247c9d5c0e814a8451d18d7f",
@@ -41,6 +43,7 @@ load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 
 boost_deps()
 
+# ------------------- LLVM
 http_archive(
     name = "com_grail_bazel_toolchain",
     strip_prefix = "bazel-toolchain-master",
@@ -61,3 +64,20 @@ llvm_toolchain(
 load("@llvm_toolchain//:toolchains.bzl", "llvm_register_toolchains")
 
 llvm_register_toolchains()
+
+# ------------------- Rust
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "rules_rust",
+    sha256 = "224ebaf1156b6f2d3680e5b8c25191e71483214957dfecd25d0f29b2f283283b",
+    strip_prefix = "rules_rust-a814d859845c420fd105c629134c4a4cb47ba3f8",
+    urls = [
+        # `main` branch as of 2021-06-15
+        "https://github.com/bazelbuild/rules_rust/archive/a814d859845c420fd105c629134c4a4cb47ba3f8.tar.gz",
+    ],
+)
+
+load("@rules_rust//rust:repositories.bzl", "rust_repositories")
+
+rust_repositories()
