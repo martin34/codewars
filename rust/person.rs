@@ -1,5 +1,6 @@
 use std::sync::atomic::{AtomicU32, Ordering};
 
+#[derive(PartialEq)]
 pub struct Person
 {
     id : u32,
@@ -13,6 +14,16 @@ impl Person
         static NEXT_ID : AtomicU32 = AtomicU32::new(0);
         let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
         Person{id:id, name:name}
+    }
+
+    pub fn get_name(&self) -> String
+    {
+        self.name.clone()
+    }
+
+    pub fn get_id(&self) -> u32
+    {
+        self.id
     }
 }
 
