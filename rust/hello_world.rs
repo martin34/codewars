@@ -1,3 +1,5 @@
+use std::sync::atomic::{AtomicU32, Ordering};
+
 struct Person
 {
     id : u32,
@@ -8,11 +10,9 @@ impl Person
 {
     fn new(name : String) -> Person
     {
-        unsafe{
-        static mut NEXT_ID : u32 = 0;
-        NEXT_ID += 1;
-        Person{id:NEXT_ID, name:name}
-        }
+        static NEXT_ID : AtomicU32 = AtomicU32::new(0);
+        let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+        Person{id:id, name:name}
     }
 }
 
