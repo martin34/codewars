@@ -5,6 +5,7 @@ extern crate person;
 mod tests {
 
 use person::Person;
+use std::rc::Rc;
 
     #[test]
     fn test_person_to_string() {
@@ -38,5 +39,20 @@ use person::Person;
                 assert!(person.to_string().contains("a person named Xaver with id"));
             }
         }
+    }
+
+    #[test]
+    fn test_clone_person(){
+        let hans = <Person>::new("Hans".to_string());
+        let clone = hans.clone();
+        assert_eq!(hans.get_name(), clone.get_name());
+        assert_ne!(hans.get_id(), clone.get_id());
+    }
+
+    #[test]
+    fn test_trait_container(){
+        let hans = <Person>::new("Hans".to_string());
+        let pointer : Rc<dyn ToString> = Rc::new(hans);
+        assert!(pointer.to_string().contains("a person named Hans with id"));
     }
 }

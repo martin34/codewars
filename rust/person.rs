@@ -34,3 +34,11 @@ impl ToString for Person
         return format!("a person named {} with id {}", self.name, self.id);
     }
 }
+
+impl Clone for Person
+{
+    fn clone(&self) -> Person
+    {
+        Person::new(self.get_name())
+    }
+}
