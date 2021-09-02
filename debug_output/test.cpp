@@ -6,11 +6,38 @@
 
 namespace {
 
-std::uint32_t Encode(bool a, bool b, bool c) {
+class Bit {
+public:
+  Bit(bool value, std::uint16_t bit) : value_{value}, bit_{bit} {}
+
+  std::uint32_t Get() const {
+    return static_cast<std::uint32_t>(value_) << bit_;
+  }
+
+  ~Bit() = default;
+
+private:
+  bool value_;
+  std::uint16_t bit_{0U};
+};
+class A : public Bit {
+public:
+  A(bool value) : Bit(value, 0U) {}
+};
+class B : public Bit {
+public:
+  B(bool a) : Bit{a, 1U} {}
+};
+class C : public Bit {
+public:
+  C(bool a) : Bit{a, 2U} {}
+};
+
+std::uint32_t Encode(A a, B b, C c) {
   std::uint32_t bits{};
-  bits |= static_cast<std::uint32_t>(a) << 0U;
-  bits |= static_cast<std::uint32_t>(b) << 1U;
-  bits |= static_cast<std::uint32_t>(c) << 2U;
+  bits |= a.Get();
+  bits |= b.Get();
+  bits |= c.Get();
   return bits;
 }
 std::string Explain(std::uint32_t bits) {
