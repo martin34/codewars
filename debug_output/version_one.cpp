@@ -6,11 +6,6 @@
 
 namespace {
 
-// template<typename T>
-// std::uint32_t Encode(bool value)
-// {
-//     return static_cast<std::uint32_t>(value) << T::Bit;
-// }
 template <typename T> bool IsSet(std::uint32_t value) {
   return value & (1U << T::bit);
 }
