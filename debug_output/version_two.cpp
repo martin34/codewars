@@ -1,3 +1,4 @@
+#include <bitset>
 #include <cstdint>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -39,6 +40,12 @@ template <typename T> std::uint32_t Encode(T t) {
   return static_cast<std::uint32_t>(t.value) << T::bit;
 }
 
+template <typename... ArgTypes>
+std::bitset<sizeof...(ArgTypes)> Encode2Bitset(ArgTypes... args) {
+  const auto encoded = Encode(args...);
+  return std::bitset<sizeof...(ArgTypes)>{encoded};
+}
+
 template <typename T> bool IsSet(std::uint32_t value) {
   return value & (1U << T::bit);
 }
@@ -75,9 +82,19 @@ TEST(Bits, Init) {
 TEST(Bits, Encode) {
   First a{true};
   Second b{false};
-  EXPECT_THAT(Encode(a, b), ::testing::Eq(1));
-  EXPECT_THAT(Encode(First{false}, Second{true}), ::testing::Eq(2));
-  EXPECT_THAT(Encode(First{true}, Second{true}), ::testing::Eq(3));
+  EXPECT_THAT(Encode(a, b), ::testing::Eq(1U));
+  EXPECT_THAT(Encode(First{false}, Second{true}), ::testing::Eq(2U));
+  EXPECT_THAT(Encode(Second{true}, First{false}), ::testing::Eq(2U));
+  EXPECT_THAT(Encode(First{true}, Second{true}), ::testing::Eq(3U));
+}
+TEST(Bits, Encode2Bitset) {
+  First a{true};
+  EXPECT_THAT(Encode2Bitset(First{true}, Second{true}).to_ulong(),
+              ::testing::Eq(3U));
+  EXPECT_THAT(Encode2Bitset(First{true}, Second{true}).all(),
+              ::testing::Eq(true));
+  EXPECT_THAT(Encode2Bitset(First{true}, Second{true}).size(),
+              ::testing::Eq(2));
 }
 TEST(Bits, Explain) {
   EXPECT_THAT(Explain<Bits>(0b00U),
