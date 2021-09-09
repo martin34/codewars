@@ -13,13 +13,18 @@ public:
   Mask() = default;
   explicit Mask(std::uint32_t bits) : mask_{bits} {}
 
-  explicit Mask(T bit) { Set(bit, true); }
-  template <typename... Ts> explicit Mask(T bit, Ts... bits) : Mask(bits...) {
-    Set(bit, true);
+  explicit Mask(T bit) { Set(true, bit); }
+  template <typename... Ts> explicit Mask(T bit, Ts... bits) {
+    Set(true, bit);
+    Set(true, bits...);
   }
 
   bool IsSet(T bit) const { return mask_[static_cast<std::size_t>(bit)]; }
-  void Set(T bit, bool value) {
+  template <typename... Ts> void Set(bool value, T bit, Ts... bits) {
+    Set(value, bit);
+    Set(value, bits...);
+  }
+  void Set(bool value, T bit) {
     mask_.set(static_cast<std::size_t>(bit), value);
   }
 
@@ -47,7 +52,7 @@ TEST(Mask, IsSet) {
 }
 TEST(Mask, Set) {
   Mask<Bits> mask{0b101};
-  mask.Set(Bits::One, true);
+  mask.Set(true, Bits::One);
   EXPECT_TRUE(mask.IsSet(Bits::One));
 }
 TEST(Mask, Operator) {
@@ -79,6 +84,11 @@ TEST(Mask, ConstTwo) {
 TEST(Mask, ConstThree) {
   Mask<Bits> mask{Bits::Zero, Bits::Two, Bits::One};
   EXPECT_THAT(mask.ToULong(), ::testing::Eq(0b111));
+}
+TEST(Mask, VariadicSet) {
+  Mask<Bits> mask{0b111};
+  mask.Set(false, Bits::Zero, Bits::Two);
+  EXPECT_THAT(mask.ToULong(), ::testing::Eq(0b010));
 }
 enum class Other { Foo };
 // Does not compile
