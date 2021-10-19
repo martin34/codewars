@@ -53,11 +53,21 @@ gdb <executable> -c core
 
 ## Split debug informations
 
+[GDB: Separate-Debug-Files](https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html#Separate-Debug-Files)
+
 ```shell
 cp bin bin.debug
-Optional: strip --only-keep-debug bin.debug
+Optional: sudo strip --only-keep-debug bin.debug
 sudo strip --strip-debug ./bin
-gdb bin -s <bin_with_debug or bin.debug> -c core
+
+sudo objcopy --add-gnu-debuglink bin.debug bin
+gdb bin -c core
+# or
+readelf -n libpocker.so # Get Build ID
+mkdir -p /tmp/debug/.build-id/nn/nnnnnnnnn.debug # nn == first 2 caracters of Build ID; nnnnnnnnn == rest of Build ID
+gdb bin -c core
+$ set debug-file-directory /tmp/debug
+
 ```
 
 ## Property based testing
