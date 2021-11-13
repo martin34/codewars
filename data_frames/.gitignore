@@ -1,0 +1,7 @@
+# sbt
+project/project/
+project/target/
+target/
+
+#general
+*.class
