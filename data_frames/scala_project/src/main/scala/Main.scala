@@ -1,4 +1,3 @@
-import sqlContext.implicits._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 
@@ -8,6 +7,7 @@ object Main extends App {
 
   val spark = SparkSession.builder.master("local").appName("Word Count").getOrCreate()
   val sqlContext = spark.sqlContext
+  import sqlContext.implicits._
 
   val makePoint = udf((t: Double, x: Double, y: Double, name: String) => Point(t, x, y, name))
   def calcSlope(a: Option[Point], b: Option[Point]) : Double = {
