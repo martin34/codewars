@@ -1,0 +1,40 @@
+.img-overlay-wrap {
+  position: relative;
+  display: inline-block; /* <= shrinks container to image size */
+  transition: transform 150ms ease-in-out;
+}
+
+.img-overlay-wrap img { /* <= optional, for responsiveness */
+   display: block;
+   max-width: 100%;
+   height: auto;
+}
+
+.img-overlay-wrap svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+line {
+  stroke-width: 1;
+}
+
+#group-0 {
+  stroke: blue;
+}
+#group-0:hover {
+  stroke: green;
+}
+#group-1 {
+  stroke: red;
+}
+#group-1:hover {
+  stroke: green;
+}
+#visible-x {
+  stroke: black;
+}
+#visible-y {
+  stroke: black;
+}
