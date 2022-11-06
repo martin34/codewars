@@ -1,0 +1,28 @@
+#!/bin/bash
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+contains_issue=$(cat $COMMIT_MSG_FILE | grep Issue)
+if [ ! -z "$contains_issue" ]
+then
+      exit
+fi
+
+previous_commit_msgs_file=$(mktemp /tmp/tmp-file-prepare-commit-msg.XXXXXX)
+
+merge_base=$(git merge-base origin/master HEAD)
+git --no-pager log $merge_base..HEAD > $previous_commit_msgs_file
+issue_number_file=$(mktemp /tmp/tmp-file-prepare-commit-msg.XXXXXX)
+cat $previous_commit_msgs_file | grep Issue | sort | uniq > $issue_number_file
+
+if [ ! -s $issue_number_file ]; then
+    echo "Issue: " > $issue_number_file
+fi
+
+sed -e 's/^[ \t]*//' -i $issue_number_file
+cat $COMMIT_MSG_FILE >> $issue_number_file
+cat $issue_number_file > $COMMIT_MSG_FILE
+
+rm $issue_number_file $previous_commit_msgs_file
