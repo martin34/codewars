@@ -3,6 +3,10 @@ extern crate person;
 
 use person::Person;
 
+extern "C" {
+    pub fn Get8FromCpp() -> u8;
+}
+
 fn main() {
     println!("Hello World!");
     let a_number = 13;
@@ -13,5 +17,10 @@ fn main() {
     let xaver = <Person>::new("Xaver".to_string());
     print!("{}", hans.to_string());
     println!(" and {}", xaver.to_string());
+
+    unsafe {
+    println!("Get number form cpp: {}", Get8FromCpp());
+    }
+
 }
 
