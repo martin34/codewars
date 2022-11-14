@@ -16,6 +16,6 @@ build:asan --linkopt="-fsanitize=address"
 build:usan --cxxopt=""-fsanitize=undefined
 build:usan --linkopt="-fsanitize=undefined"
 
-build:llvm --crosstool_top=@llvm_toolchain//:toolchain
+build:llvm --extra_toolchains=@llvm_toolchain//:cc-toolchain-x86_64-linux
 build:llvm --linkopt="-lc++fs"
 
