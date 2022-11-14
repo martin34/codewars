@@ -1,14 +1,18 @@
-genrule(
-    name = "example_cpp_generator",
-    srcs = [
-        ":generator.py",
-        ":names.txt",
-    ],
-    outs = ["main.cpp"],
-    cmd = "python3 $(location :generator.py) $(location :names.txt) $@",
+load("//python_jinja:generator.bzl", "greeting_generator")
+
+py_binary(
+    name = "generator",
+    srcs = ["generator.py"],
+    data = ["//python_jinja/templates"],
+    visibility = ["//python_jinja:__subpackages__"],
+)
+
+greeting_generator(
+    name = "generate_greetings",
+    names_file = "names.txt",
 )
 
 cc_binary(
-    name = "example_bin",
+    name = "bin",
     srcs = [":main.cpp"],
 )

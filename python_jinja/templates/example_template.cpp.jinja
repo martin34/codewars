@@ -3,9 +3,8 @@
 int main() {
   std::cout << "Special greetings to "
             << "{{special}}" << '\n';
-  {% for n in names %
-  }
+  {% for n in names %}
   std::cout << "Hello "
             << "{{n}}" << '\n';
-  { % endfor % }
+  {% endfor %}
 }
