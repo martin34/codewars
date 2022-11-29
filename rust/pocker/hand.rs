@@ -1,27 +1,28 @@
-use std::str::FromStr;
 use std::fmt;
+use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub struct PockerCardParseError;
 
-impl fmt::Display for PockerCardParseError{
+impl fmt::Display for PockerCardParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Could not parse Suit")
     }
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
-pub enum Suit{
-    Heart, Tile, Clover, Pike
+#[derive(Debug, PartialEq)]
+pub enum Suit {
+    Heart,
+    Tile,
+    Clover,
+    Pike,
 }
-
 
 impl FromStr for Suit {
     type Err = PockerCardParseError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err>{
-        match s{
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
             "H" => Ok(Suit::Heart),
             "P" => Ok(Suit::Pike),
             "T" => Ok(Suit::Tile),
@@ -31,39 +32,39 @@ impl FromStr for Suit {
     }
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
-pub enum Face{
-  Two,
-  Three,
-  Four,
-  Five,
-  Six,
-  Seven,
-  Eight,
-  Nine,
-  Ten,
-  Jack,
-  Queen,
-  King,
-  Ace
+#[derive(Debug, PartialEq)]
+pub enum Face {
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Ten,
+    Jack,
+    Queen,
+    King,
+    Ace,
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
-pub struct Card
-{
-    pub suit : Suit,
-    pub face : Face,
+#[derive(Debug, PartialEq)]
+pub struct Card {
+    pub suit: Suit,
+    pub face: Face,
 }
 
 impl FromStr for Card {
     type Err = PockerCardParseError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err>{
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (face_string, suit_string) = s.split_at(1);
         let suit = suit_string.parse::<Suit>()?;
 
-        Ok(Card{suit: suit, face: Face::Ace})
+        Ok(Card {
+            suit: suit,
+            face: Face::Ace,
+        })
     }
 }
