@@ -75,4 +75,32 @@ mod tests {
         let lhs = Card::from_str("AHAH");
         assert!(lhs.is_err());
     }
+
+    #[rustfmt::skip]
+    #[test]
+    fn test_trivial_order() {
+        assert!(Card{suit: Suit::Heart, face: Face::Two} < Card{suit: Suit::Heart, face: Face::Three});
+        assert!(Card{suit: Suit::Heart, face: Face::Three} < Card{suit: Suit::Heart, face: Face::Four});
+        assert!(Card{suit: Suit::Heart, face: Face::Four} < Card{suit: Suit::Heart, face: Face::Five});
+        assert!(Card{suit: Suit::Heart, face: Face::Five} < Card{suit: Suit::Heart, face: Face::Six});
+        assert!(Card{suit: Suit::Heart, face: Face::Six} < Card{suit: Suit::Heart, face: Face::Seven});
+        assert!(Card{suit: Suit::Heart, face: Face::Seven} < Card{suit: Suit::Heart, face: Face::Eight});
+        assert!(Card{suit: Suit::Heart, face: Face::Eight} < Card{suit: Suit::Heart, face: Face::Nine});
+        assert!(Card{suit: Suit::Heart, face: Face::Nine} < Card{suit: Suit::Heart, face: Face::Ten});
+        assert!(Card{suit: Suit::Heart, face: Face::Ten} < Card{suit: Suit::Heart, face: Face::Jack});
+        assert!(Card{suit: Suit::Heart, face: Face::Jack} < Card{suit: Suit::Heart, face: Face::Queen});
+        assert!(Card{suit: Suit::Heart, face: Face::Queen} < Card{suit: Suit::Heart, face: Face::King});
+        assert!(Card{suit: Suit::Heart, face: Face::King} < Card{suit: Suit::Heart, face: Face::Ace});
+
+        assert!(Card{suit: Suit::Pike, face: Face::King} < Card{suit: Suit::Heart, face: Face::Ace});
+    }
+
+    #[rustfmt::skip]
+    #[test]
+    fn test_trivial_eq() {
+        assert!(Card{suit: Suit::Heart, face: Face::Two} != Card{suit: Suit::Heart, face: Face::Three});
+        assert!(Card{suit: Suit::Heart, face: Face::Three} != Card{suit: Suit::Heart, face: Face::Four});
+        assert!(Card{suit: Suit::Heart, face: Face::Queen} == Card{suit: Suit::Heart, face: Face::Queen});
+        assert!(Card{suit: Suit::Heart, face: Face::Ace} == Card{suit: Suit::Heart, face: Face::Ace});
+    }
 }

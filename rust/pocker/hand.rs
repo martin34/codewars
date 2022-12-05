@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::fmt;
 use std::str::FromStr;
 
@@ -10,7 +11,7 @@ impl fmt::Display for PockerCardParseError {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Suit {
     Heart,
     Tile,
@@ -32,7 +33,7 @@ impl FromStr for Suit {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Face {
     Two,
     Three,
@@ -72,10 +73,22 @@ impl FromStr for Face {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Card {
     pub suit: Suit,
     pub face: Face,
+}
+
+impl Ord for Card {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.face.cmp(&other.face)
+    }
+}
+
+impl PartialOrd for Card {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
 }
 
 impl FromStr for Card {
