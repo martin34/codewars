@@ -118,6 +118,16 @@ impl PartialEq for Hand {
 
 impl PartialOrd for Hand {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        let flush_lhs = self.cards.iter().all(|x| x.suit == self.cards[0].suit);
+        let flush_rhs = other.cards.iter().all(|x| x.suit == other.cards[0].suit);
+        if flush_lhs && !flush_rhs
+        {
+            return Some(Ordering::Greater)
+        }
+        else if flush_rhs && !flush_lhs
+        {
+            return Some(Ordering::Less)
+        }
         Some(self.cards.cmp(&other.cards))
     }
 }

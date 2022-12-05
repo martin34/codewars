@@ -124,4 +124,23 @@ mod tests {
         assert!(player_1 != player_2);
         assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Equal));
     }
+
+    #[rustfmt::skip]
+    #[test]
+    fn test_trivial_hand_comparison_flush_vs_straight() {
+        let player_1: Hand = Hand{cards: [Card{suit: Suit::Heart, face: Face::Two}, 
+                                          Card{suit: Suit::Heart, face: Face::Three}, 
+                                          Card{suit: Suit::Clover, face: Face::Four}, 
+                                          Card{suit: Suit::Heart, face: Face::Five}, 
+                                          Card{suit: Suit::Heart, face: Face::Six}]};
+
+        let player_2: Hand = Hand{cards: [Card{suit: Suit::Pike, face: Face::Two}, 
+                                          Card{suit: Suit::Pike, face: Face::Three}, 
+                                          Card{suit: Suit::Pike, face: Face::Four}, 
+                                          Card{suit: Suit::Pike, face: Face::Five}, 
+                                          Card{suit: Suit::Pike, face: Face::Six}]};
+
+        assert!(player_1 != player_2);
+        assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Less));
+    }
 }
