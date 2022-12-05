@@ -1,6 +1,6 @@
-use std::cmp::Ordering;
 use std::fmt;
 use std::str::FromStr;
+use std::cmp::Ordering;
 
 #[derive(Debug, Clone)]
 pub struct PockerCardParseError;
@@ -103,5 +103,21 @@ impl FromStr for Card {
             suit: suit,
             face: face,
         })
+    }
+}
+
+pub struct Hand{
+    pub cards: [Card; 5]
+}
+
+impl PartialEq for Hand {
+    fn eq(&self, other: &Self) -> bool {
+        self.cards == other.cards
+    }
+}
+
+impl PartialOrd for Hand {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cards.cmp(&other.cards))
     }
 }

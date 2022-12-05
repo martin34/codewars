@@ -6,6 +6,8 @@ mod tests {
     use pocker_lib::Card;
     use pocker_lib::Face;
     use pocker_lib::Suit;
+    use pocker_lib::Hand;
+    use std::cmp::Ordering;
     use std::str::FromStr;
 
     use parameterized::parameterized;
@@ -102,5 +104,24 @@ mod tests {
         assert!(Card{suit: Suit::Heart, face: Face::Three} != Card{suit: Suit::Heart, face: Face::Four});
         assert!(Card{suit: Suit::Heart, face: Face::Queen} == Card{suit: Suit::Heart, face: Face::Queen});
         assert!(Card{suit: Suit::Heart, face: Face::Ace} == Card{suit: Suit::Heart, face: Face::Ace});
+    }
+
+    #[rustfmt::skip]
+    #[test]
+    fn test_trivial_hand_comparison() {
+        let player_1: Hand = Hand{cards: [Card{suit: Suit::Heart, face: Face::Two}, 
+                                          Card{suit: Suit::Heart, face: Face::Three}, 
+                                          Card{suit: Suit::Heart, face: Face::Four}, 
+                                          Card{suit: Suit::Heart, face: Face::Five}, 
+                                          Card{suit: Suit::Heart, face: Face::Six}]};
+
+        let player_2: Hand = Hand{cards: [Card{suit: Suit::Pike, face: Face::Two}, 
+                                          Card{suit: Suit::Pike, face: Face::Three}, 
+                                          Card{suit: Suit::Pike, face: Face::Four}, 
+                                          Card{suit: Suit::Pike, face: Face::Five}, 
+                                          Card{suit: Suit::Pike, face: Face::Six}]};
+
+        assert!(player_1 != player_2);
+        assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Equal));
     }
 }
