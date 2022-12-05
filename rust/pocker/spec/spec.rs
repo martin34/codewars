@@ -34,16 +34,45 @@ mod tests {
         let lhs = Card::from_str("AX");
         assert!(lhs.is_err());
     }
-    #[parameterized(s = {String::from("AH"),
-                         String::from("AP"), 
-                         String::from("AT"), 
-                         String::from("AC")}, 
-                    card = {Card{suit: Suit::Heart, face: Face::Ace},
-                            Card{suit: Suit::Pike, face: Face::Ace},
-                            Card{suit: Suit::Tile, face: Face::Ace},
-                            Card{suit: Suit::Clover,face: Face::Ace}}
-                    )]
-    fn test_from_string(s: String, card: Card) {
-        assert_eq!(Card::from_str(&s[..]).unwrap(), card)
+
+    struct ParserTestParams {
+        input: String,
+        output: Card,
+    }
+    #[parameterized(
+        p = {
+            ParserTestParams{input: String::from("AH"), output: Card{suit: Suit::Heart, face: Face::Ace}},
+            ParserTestParams{input: String::from("AP"), output: Card{suit: Suit::Pike, face: Face::Ace}},
+            ParserTestParams{input: String::from("AT"), output: Card{suit: Suit::Tile, face: Face::Ace}},
+            ParserTestParams{input: String::from("AC"), output: Card{suit: Suit::Clover, face: Face::Ace}},
+        })]
+    fn test_from_string_with_varying_suit(p: ParserTestParams) {
+        assert_eq!(Card::from_str(&p.input[..]).unwrap(), p.output)
+    }
+
+    #[parameterized(
+        p = {
+            ParserTestParams{input: String::from("2H"), output: Card{suit: Suit::Heart, face: Face::Two}},
+            ParserTestParams{input: String::from("3H"), output: Card{suit: Suit::Heart, face: Face::Three}},
+            ParserTestParams{input: String::from("4H"), output: Card{suit: Suit::Heart, face: Face::Four}},
+            ParserTestParams{input: String::from("5H"), output: Card{suit: Suit::Heart, face: Face::Five}},
+            ParserTestParams{input: String::from("6H"), output: Card{suit: Suit::Heart, face: Face::Six}},
+            ParserTestParams{input: String::from("7H"), output: Card{suit: Suit::Heart, face: Face::Seven}},
+            ParserTestParams{input: String::from("8H"), output: Card{suit: Suit::Heart, face: Face::Eight}},
+            ParserTestParams{input: String::from("9H"), output: Card{suit: Suit::Heart, face: Face::Nine}},
+            ParserTestParams{input: String::from("TH"), output: Card{suit: Suit::Heart, face: Face::Ten}},
+            ParserTestParams{input: String::from("JH"), output: Card{suit: Suit::Heart, face: Face::Jack}},
+            ParserTestParams{input: String::from("QH"), output: Card{suit: Suit::Heart, face: Face::Queen}},
+            ParserTestParams{input: String::from("KH"), output: Card{suit: Suit::Heart, face: Face::King}},
+            ParserTestParams{input: String::from("AH"), output: Card{suit: Suit::Heart, face: Face::Ace}},
+        })]
+    fn test_from_string_with_varying_face(p: ParserTestParams) {
+        assert_eq!(Card::from_str(&p.input[..]).unwrap(), p.output)
+    }
+
+    #[test]
+    fn test_from_string_with_to_many_characters() {
+        let lhs = Card::from_str("AHAH");
+        assert!(lhs.is_err());
     }
 }
