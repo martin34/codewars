@@ -25,7 +25,9 @@ impl FromStr for Suit {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "H" => Ok(Suit::Heart),
+            "S" => Ok(Suit::Pike),
             "P" => Ok(Suit::Pike),
+            "D" => Ok(Suit::Tile),
             "T" => Ok(Suit::Tile),
             "C" => Ok(Suit::Clover),
             _ => Err(PockerCardParseError),
@@ -106,6 +108,7 @@ impl FromStr for Card {
     }
 }
 
+#[derive(Debug)]
 pub struct Hand{
     pub cards: [Card; 5]
 }
@@ -129,5 +132,18 @@ impl PartialOrd for Hand {
             return Some(Ordering::Less)
         }
         Some(self.cards.cmp(&other.cards))
+    }
+}
+
+impl FromStr for Hand {
+    type Err = PockerCardParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let one = Card::from_str(&s[0..2])?;
+        let two = Card::from_str(&s[3..5])?;
+        let three = Card::from_str(&s[6..8])?;
+        let four = Card::from_str(&s[9..11])?;
+        let five = Card::from_str(&s[12..14])?;
+        Ok(Hand{cards: [one, two, three, four, five]})
     }
 }

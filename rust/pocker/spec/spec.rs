@@ -44,8 +44,8 @@ mod tests {
     #[parameterized(
         p = {
             ParserTestParams{input: String::from("AH"), output: Card{suit: Suit::Heart, face: Face::Ace}},
-            ParserTestParams{input: String::from("AP"), output: Card{suit: Suit::Pike, face: Face::Ace}},
-            ParserTestParams{input: String::from("AT"), output: Card{suit: Suit::Tile, face: Face::Ace}},
+            ParserTestParams{input: String::from("AS"), output: Card{suit: Suit::Pike, face: Face::Ace}},
+            ParserTestParams{input: String::from("AD"), output: Card{suit: Suit::Tile, face: Face::Ace}},
             ParserTestParams{input: String::from("AC"), output: Card{suit: Suit::Clover, face: Face::Ace}},
         })]
     fn test_from_string_with_varying_suit(p: ParserTestParams) {
@@ -95,6 +95,16 @@ mod tests {
         assert!(Card{suit: Suit::Heart, face: Face::King} < Card{suit: Suit::Heart, face: Face::Ace});
 
         assert!(Card{suit: Suit::Pike, face: Face::King} < Card{suit: Suit::Heart, face: Face::Ace});
+    }
+
+    #[test]
+    fn test_parse_hand() {
+        let hand: Hand = Hand{cards: [Card{suit: Suit::Clover, face: Face::Eight}, 
+                                          Card{suit: Suit::Pike, face: Face::Ten}, 
+                                          Card{suit: Suit::Clover, face: Face::King}, 
+                                          Card{suit: Suit::Heart, face: Face::Nine},
+                                          Card{suit: Suit::Pike, face: Face::Four}]};
+        assert_eq!(Hand::from_str("8C TP KC 9H 4P").unwrap(), hand);
     }
 
     #[rustfmt::skip]
