@@ -4,6 +4,9 @@ rust_library(
     name = "pocker_lib",
     srcs = ["hand.rs"],
     visibility = [":__subpackages__"],
+    deps = [
+        "@crate_index//:itertools",
+    ],
 )
 
 rust_binary(

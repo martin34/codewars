@@ -102,6 +102,9 @@ crates_repository(
         "parameterized": crate.spec(
             version = "1.0.1",
         ),
+        "itertools": crate.spec(
+            version = "0.10.5",
+        ),
     },
     # Setting the default package name to `""` forces the use of the macros defined in this repository
     # to always use the root package when looking for dependencies or aliases. This should be considered

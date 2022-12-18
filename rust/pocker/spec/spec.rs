@@ -5,8 +5,8 @@ mod tests {
 
     use pocker_lib::Card;
     use pocker_lib::Face;
-    use pocker_lib::Suit;
     use pocker_lib::Hand;
+    use pocker_lib::Suit;
     use std::cmp::Ordering;
     use std::str::FromStr;
 
@@ -99,11 +99,28 @@ mod tests {
 
     #[test]
     fn test_parse_hand() {
-        let hand: Hand = Hand{cards: [Card{suit: Suit::Clover, face: Face::Eight}, 
-                                          Card{suit: Suit::Pike, face: Face::Ten}, 
-                                          Card{suit: Suit::Clover, face: Face::King}, 
-                                          Card{suit: Suit::Heart, face: Face::Nine},
-                                          Card{suit: Suit::Pike, face: Face::Four}]};
+        let hand: Hand = Hand::new(
+            Card {
+                suit: Suit::Clover,
+                face: Face::Eight,
+            },
+            Card {
+                suit: Suit::Pike,
+                face: Face::Ten,
+            },
+            Card {
+                suit: Suit::Clover,
+                face: Face::King,
+            },
+            Card {
+                suit: Suit::Heart,
+                face: Face::Nine,
+            },
+            Card {
+                suit: Suit::Pike,
+                face: Face::Four,
+            },
+        );
         assert_eq!(Hand::from_str("8C TP KC 9H 4P").unwrap(), hand);
     }
 
@@ -119,17 +136,17 @@ mod tests {
     #[rustfmt::skip]
     #[test]
     fn test_trivial_hand_comparison() {
-        let player_1: Hand = Hand{cards: [Card{suit: Suit::Heart, face: Face::Two}, 
-                                          Card{suit: Suit::Heart, face: Face::Three}, 
-                                          Card{suit: Suit::Heart, face: Face::Four}, 
-                                          Card{suit: Suit::Heart, face: Face::Five}, 
-                                          Card{suit: Suit::Heart, face: Face::Six}]};
+        let player_1: Hand = Hand::new(Card{suit: Suit::Heart, face: Face::Two}, 
+                                       Card{suit: Suit::Heart, face: Face::Three}, 
+                                       Card{suit: Suit::Heart, face: Face::Four}, 
+                                       Card{suit: Suit::Heart, face: Face::Five}, 
+                                       Card{suit: Suit::Heart, face: Face::Six});
 
-        let player_2: Hand = Hand{cards: [Card{suit: Suit::Pike, face: Face::Two}, 
-                                          Card{suit: Suit::Pike, face: Face::Three}, 
-                                          Card{suit: Suit::Pike, face: Face::Four}, 
-                                          Card{suit: Suit::Pike, face: Face::Five}, 
-                                          Card{suit: Suit::Pike, face: Face::Six}]};
+        let player_2: Hand = Hand::new(Card{suit: Suit::Pike, face: Face::Two}, 
+                                       Card{suit: Suit::Pike, face: Face::Three}, 
+                                       Card{suit: Suit::Pike, face: Face::Four}, 
+                                       Card{suit: Suit::Pike, face: Face::Five}, 
+                                       Card{suit: Suit::Pike, face: Face::Six});
 
         assert!(player_1 != player_2);
         assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Equal));
@@ -138,19 +155,40 @@ mod tests {
     #[rustfmt::skip]
     #[test]
     fn test_trivial_hand_comparison_flush_vs_straight() {
-        let player_1: Hand = Hand{cards: [Card{suit: Suit::Heart, face: Face::Two}, 
-                                          Card{suit: Suit::Heart, face: Face::Three}, 
-                                          Card{suit: Suit::Clover, face: Face::Four}, 
-                                          Card{suit: Suit::Heart, face: Face::Five}, 
-                                          Card{suit: Suit::Heart, face: Face::Six}]};
+        let player_1: Hand = Hand::new(Card{suit: Suit::Heart, face: Face::Two}, 
+                                       Card{suit: Suit::Heart, face: Face::Three}, 
+                                       Card{suit: Suit::Clover, face: Face::Four}, 
+                                       Card{suit: Suit::Heart, face: Face::Five}, 
+                                       Card{suit: Suit::Heart, face: Face::Six});
 
-        let player_2: Hand = Hand{cards: [Card{suit: Suit::Pike, face: Face::Two}, 
-                                          Card{suit: Suit::Pike, face: Face::Three}, 
-                                          Card{suit: Suit::Pike, face: Face::Four}, 
-                                          Card{suit: Suit::Pike, face: Face::Five}, 
-                                          Card{suit: Suit::Pike, face: Face::Six}]};
+        let player_2: Hand = Hand::new(Card{suit: Suit::Pike, face: Face::Two}, 
+                                       Card{suit: Suit::Pike, face: Face::Three}, 
+                                       Card{suit: Suit::Pike, face: Face::Four}, 
+                                       Card{suit: Suit::Pike, face: Face::Five}, 
+                                       Card{suit: Suit::Pike, face: Face::Six});
 
         assert!(player_1 != player_2);
         assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Less));
+        assert_eq!(player_2.partial_cmp(&player_1), Some(Ordering::Greater));
+    }
+
+    #[test]
+    fn test_flush_vs_full_house() {
+        let player_1: Hand = Hand::from_str("4H 6H 7H 8H TH").unwrap();
+        let player_2: Hand = Hand::from_str("3H 3P 3C 5C 5H").unwrap();
+
+        assert!(player_1 != player_2);
+        assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Less));
+        assert_eq!(player_2.partial_cmp(&player_1), Some(Ordering::Greater));
+    }
+
+    #[test]
+    fn test_full_house_vs_full_house() {
+        let bigger: Hand = Hand::from_str("2H 2P 2C 6C 6H").unwrap();
+        let smaller: Hand = Hand::from_str("3H 3P 3C 5C 5H").unwrap();
+
+        assert!(bigger != smaller);
+        assert_eq!(smaller.partial_cmp(&bigger), Some(Ordering::Less));
+        assert_eq!(bigger.partial_cmp(&smaller), Some(Ordering::Greater));
     }
 }
