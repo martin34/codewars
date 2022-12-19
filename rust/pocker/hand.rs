@@ -56,6 +56,7 @@ pub enum Face {
 impl Face {
     fn next(&self) -> Option<Face> {
         match self {
+            Face::Ace => Some(Face::Two),
             Face::Two => Some(Face::Three),
             Face::Three => Some(Face::Four),
             Face::Four => Some(Face::Five),
@@ -68,7 +69,6 @@ impl Face {
             Face::Jack => Some(Face::Queen),
             Face::Queen => Some(Face::King),
             Face::King => Some(Face::Ace),
-            Face::Ace => None,
         }
     }
 }
@@ -150,18 +150,36 @@ impl PartialEq for Hand {
 fn is_straight(hand: &Hand) -> bool {
     let mut is_straight = true;
     for i in 0..4 {
+        println!("Before: {:?}", hand.cards[i].face);
         match hand.cards[i].face.next() {
-            Some(value) => is_straight |= value == hand.cards[i + 1].face,
-            None => is_straight |= false,
+            Some(value) => {
+                let tmp = value == hand.cards[i + 1].face;
+                println!("Tmp: {} {:?} {:?}", tmp, value, hand.cards[i + 1].face);
+                is_straight = is_straight && tmp;
+            }
+            None => {
+                is_straight = is_straight && false;
+            }
         };
     }
     is_straight
 }
 
-struct FullHouse {
-    face_with_count: [(Face, i8); 2],
+#[derive(PartialEq, Eq)]
+enum Score {
+    HighCard,
+    OnePair,
+    TwoPairs,
+    ThreeOfAKind,
+    Straight,
+    Flush,
+    FullHouse { face_with_count: [(Face, i8); 2] },
+    FourOfAKind,
+    StraightFlush,
+    RoyalFlush,
 }
-fn create_full_house(hand: &Hand) -> Option<FullHouse> {
+
+fn create_highest_score(hand: &Hand) -> Score {
     let face_values = hand.cards.map(|card| card.face);
     let face_with_count = face_values.iter().unique().map(|unique_value| {
         (
@@ -172,54 +190,86 @@ fn create_full_house(hand: &Hand) -> Option<FullHouse> {
                 .count() as i8,
         )
     });
-
     let vec = face_with_count.collect_vec();
     if vec.len() == 2 && (vec[0].1 == 2 || vec[0].1 == 3) && (vec[1].1 == 3 || vec[1].1 == 2) {
         let mut face_with_count_array = [vec[0], vec[1]];
-        face_with_count_array.sort_by(|lhs, rhs| lhs.0.partial_cmp(&rhs.0).unwrap());
-        Some(FullHouse {
+        face_with_count_array.sort_by(|lhs, rhs| lhs.1.partial_cmp(&rhs.1).unwrap());
+        println!("Created FullHouse");
+        return Score::FullHouse {
             face_with_count: face_with_count_array,
-        })
-    } else {
-        None
+        };
+    }
+
+    if is_straight(hand) {
+        println!("Created Straight");
+        return Score::Straight;
+    }
+
+    let flush = hand.cards.iter().all(|x| x.suit == hand.cards[0].suit);
+    if flush {
+        println!("Created Flush");
+        return Score::Flush;
+    }
+    println!("Created HighCard");
+    return Score::HighCard;
+}
+
+fn create_numeric_score(score: &Score) -> i8 {
+    match score {
+        Score::HighCard => 0,
+        Score::OnePair => 1,
+        Score::TwoPairs => 2,
+        Score::ThreeOfAKind => 3,
+        Score::Straight => 4,
+        Score::Flush => 5,
+        Score::FullHouse { .. } => 6,
+        Score::FourOfAKind => 7,
+        Score::StraightFlush => 8,
+        Score::RoyalFlush => 9,
+    }
+}
+
+impl PartialOrd for Score {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        let ns = create_numeric_score(self);
+        let ons = create_numeric_score(other);
+        let nsc = ns.partial_cmp(&ons);
+        if nsc != Some(Ordering::Equal) {
+            println!("Simple");
+            return nsc;
+        }
+
+        println!("Blub");
+        match self {
+            Score::FullHouse { face_with_count } => {
+                let self_face_with_count = face_with_count;
+                println!("Found 1 full house");
+                match other {
+                    Score::FullHouse { face_with_count } => {
+                        println!("Found 2 full house");
+                        let other_face_with_count = face_with_count;
+                        let high_card_ordering =
+                            self_face_with_count[0].0.cmp(&other_face_with_count[0].0);
+                        if high_card_ordering == Ordering::Equal {
+                            return Some(high_card_ordering);
+                        }
+                        return Some(self_face_with_count[1].0.cmp(&other_face_with_count[1].0));
+                    }
+                    _ => Some(Ordering::Greater),
+                }
+            }
+            _ => None,
+        }
     }
 }
 
 impl PartialOrd for Hand {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        let flush_lhs = self.cards.iter().all(|x| x.suit == self.cards[0].suit);
-        let flush_rhs = other.cards.iter().all(|x| x.suit == other.cards[0].suit);
-        if !create_full_house(self).is_none() && create_full_house(other).is_none() {
-            return Some(Ordering::Greater);
-        } else if !create_full_house(other).is_none() && create_full_house(self).is_none() {
-            return Some(Ordering::Less);
-        } else if !create_full_house(other).is_none() && !create_full_house(self).is_none() {
-            let lhs = create_full_house(self).unwrap();
-            let rhs = create_full_house(other).unwrap();
-            if lhs.face_with_count[1]
-                .0
-                .partial_cmp(&rhs.face_with_count[1].0)
-                .unwrap()
-                != Ordering::Equal
-            {
-                return lhs.face_with_count[1]
-                    .0
-                    .partial_cmp(&rhs.face_with_count[1].0);
-            } else {
-                return lhs.face_with_count[0]
-                    .0
-                    .partial_cmp(&rhs.face_with_count[0].0);
-            }
-        } else if is_straight(self) && !is_straight(other) {
-            return Some(Ordering::Greater);
-        } else if is_straight(other) && !is_straight(self) {
-            return Some(Ordering::Less);
-        } else if flush_lhs && !flush_rhs {
-            return Some(Ordering::Greater);
-        } else if flush_rhs && !flush_lhs {
-            return Some(Ordering::Less);
-        }
-        Some(self.cards.cmp(&other.cards))
+        let self_score = create_highest_score(self);
+        let other_score = create_highest_score(other);
+
+        println!("FooBar");
+        self_score.partial_cmp(&other_score)
     }
 }
 

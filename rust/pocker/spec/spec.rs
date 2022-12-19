@@ -135,25 +135,6 @@ mod tests {
 
     #[rustfmt::skip]
     #[test]
-    fn test_trivial_hand_comparison() {
-        let player_1: Hand = Hand::new(Card{suit: Suit::Heart, face: Face::Two}, 
-                                       Card{suit: Suit::Heart, face: Face::Three}, 
-                                       Card{suit: Suit::Heart, face: Face::Four}, 
-                                       Card{suit: Suit::Heart, face: Face::Five}, 
-                                       Card{suit: Suit::Heart, face: Face::Six});
-
-        let player_2: Hand = Hand::new(Card{suit: Suit::Pike, face: Face::Two}, 
-                                       Card{suit: Suit::Pike, face: Face::Three}, 
-                                       Card{suit: Suit::Pike, face: Face::Four}, 
-                                       Card{suit: Suit::Pike, face: Face::Five}, 
-                                       Card{suit: Suit::Pike, face: Face::Six});
-
-        assert!(player_1 != player_2);
-        assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Equal));
-    }
-
-    #[rustfmt::skip]
-    #[test]
     fn test_trivial_hand_comparison_flush_vs_straight() {
         let player_1: Hand = Hand::new(Card{suit: Suit::Heart, face: Face::Two}, 
                                        Card{suit: Suit::Heart, face: Face::Three}, 
@@ -165,7 +146,7 @@ mod tests {
                                        Card{suit: Suit::Pike, face: Face::Three}, 
                                        Card{suit: Suit::Pike, face: Face::Four}, 
                                        Card{suit: Suit::Pike, face: Face::Five}, 
-                                       Card{suit: Suit::Pike, face: Face::Six});
+                                       Card{suit: Suit::Pike, face: Face::King});
 
         assert!(player_1 != player_2);
         assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Less));
@@ -184,8 +165,8 @@ mod tests {
 
     #[test]
     fn test_full_house_vs_full_house() {
-        let bigger: Hand = Hand::from_str("2H 2P 2C 6C 6H").unwrap();
-        let smaller: Hand = Hand::from_str("3H 3P 3C 5C 5H").unwrap();
+        let smaller: Hand = Hand::from_str("2H 2P 2C 6C 6H").unwrap();
+        let bigger: Hand = Hand::from_str("3H 3P 3C 5C 5H").unwrap();
 
         assert!(bigger != smaller);
         assert_eq!(smaller.partial_cmp(&bigger), Some(Ordering::Less));
