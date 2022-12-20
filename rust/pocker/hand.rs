@@ -165,35 +165,35 @@ fn is_straight(hand: &Hand) -> bool {
     is_straight
 }
 
-#[derive(PartialEq, Eq)]
-enum Score {
+#[derive(PartialEq, Eq, PartialOrd)]
+enum Rank {
     HighCard,
     OnePair,
     TwoPairs,
     ThreeOfAKind,
     Straight,
-    Flush {
-        face_values_decreasing_order: [Face; 5],
-    },
-    FullHouse {
-        face_with_count: [(Face, i8); 2],
-    },
+    Flush,
+    FullHouse,
     FourOfAKind,
-    StraightFlush {
-        face_values_decreasing_order: [Face; 5],
-    },
+    StraightFlush,
+}
+
+#[derive(PartialEq, Eq, PartialOrd)]
+struct Score {
+    rank: Rank,
+    face_values_decreasing_order: Vec<Face>,
 }
 
 fn create_highest_score(hand: &Hand) -> Score {
     let is_flush = hand.cards.iter().all(|x| x.suit == hand.cards[0].suit);
     let is_straight = is_straight(hand);
 
-
     let face_values_decreasing_order = hand.cards.map(|card| card.face);
 
     if is_flush && is_straight {
-        return Score::StraightFlush {
-            face_values_decreasing_order: face_values_decreasing_order,
+        return Score {
+            rank: Rank::StraightFlush,
+            face_values_decreasing_order: face_values_decreasing_order.to_vec(),
         };
     }
 
@@ -209,103 +209,39 @@ fn create_highest_score(hand: &Hand) -> Score {
     });
 
     let mut vec = face_with_count.collect_vec();
-    vec.sort_by(|lhs, rhs| lhs.1.partial_cmp(&rhs.1).unwrap());
+    vec.sort_by(|lhs, rhs| rhs.1.partial_cmp(&lhs.1).unwrap());
 
-    if vec.len() == 2 && (vec[0].1 == 4 || vec[1].1 == 4) {
-        return Score::FourOfAKind;
+    if (vec.len() == 2) && (vec[0].1 == 4) {
+        return Score {
+            rank: Rank::FourOfAKind,
+            face_values_decreasing_order: [vec[0].0, vec[1].0].to_vec(),
+        };
     }
-    if vec.len() == 2 && (vec[0].1 == 2 || vec[0].1 == 3) && (vec[1].1 == 3 || vec[1].1 == 2) {
-        let face_with_count_array = [vec[0], vec[1]];
-        return Score::FullHouse {
-            face_with_count: face_with_count_array,
+    if (vec.len() == 2) && (vec[0].1 == 3) && (vec[1].1 == 2) {
+        return Score {
+            rank: Rank::FullHouse,
+            face_values_decreasing_order: [vec[0].0, vec[1].0].to_vec(),
         };
     }
 
     if is_straight {
-        println!("Created Straight");
-        return Score::Straight;
+        return Score {
+            rank: Rank::Straight,
+            face_values_decreasing_order: face_values_decreasing_order.to_vec(),
+        };
     }
 
     if is_flush {
         println!("Created Flush");
-        return Score::Flush{face_values_decreasing_order: face_values_decreasing_order};
+        return Score {
+            rank: Rank::Flush,
+            face_values_decreasing_order: face_values_decreasing_order.to_vec(),
+        };
     }
-    println!("Created HighCard");
-    return Score::HighCard;
-}
-
-fn create_numeric_score(score: &Score) -> i8 {
-    match score {
-        Score::HighCard => 0,
-        Score::OnePair => 1,
-        Score::TwoPairs => 2,
-        Score::ThreeOfAKind => 3,
-        Score::Straight => 4,
-        Score::Flush { .. } => 5,
-        Score::FullHouse { .. } => 6,
-        Score::FourOfAKind => 7,
-        Score::StraightFlush { .. } => 8,
-    }
-}
-
-impl PartialOrd for Score {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        let ns = create_numeric_score(self);
-        let ons = create_numeric_score(other);
-        let nsc = ns.partial_cmp(&ons);
-        if nsc != Some(Ordering::Equal) {
-            println!("Simple {} {}", ns, ons);
-            return nsc;
-        }
-
-        if let Score::StraightFlush {
-            face_values_decreasing_order,
-        } = self
-        {
-            let self_face_values_decreasing_order = face_values_decreasing_order;
-            if let Score::StraightFlush {
-                face_values_decreasing_order,
-            } = other
-            {
-                return Some(self_face_values_decreasing_order.cmp(&face_values_decreasing_order));
-            }
-        }
-
-        if let Score::Flush {
-            face_values_decreasing_order,
-        } = self
-        {
-            let self_face_values_decreasing_order = face_values_decreasing_order;
-            if let Score::Flush {
-                face_values_decreasing_order,
-            } = other
-            {
-                return Some(self_face_values_decreasing_order.cmp(&face_values_decreasing_order));
-            }
-        }
-
-        println!("Blub");
-        match self {
-            Score::FullHouse { face_with_count } => {
-                let self_face_with_count = face_with_count;
-                println!("Found 1 full house");
-                match other {
-                    Score::FullHouse { face_with_count } => {
-                        println!("Found 2 full house");
-                        let other_face_with_count = face_with_count;
-                        let high_card_ordering =
-                            self_face_with_count[0].0.cmp(&other_face_with_count[0].0);
-                        if high_card_ordering == Ordering::Equal {
-                            return Some(high_card_ordering);
-                        }
-                        return Some(self_face_with_count[1].0.cmp(&other_face_with_count[1].0));
-                    }
-                    _ => Some(Ordering::Greater),
-                }
-            }
-            _ => None,
-        }
-    }
+    return Score {
+        rank: Rank::HighCard,
+        face_values_decreasing_order: face_values_decreasing_order.to_vec(),
+    };
 }
 
 impl PartialOrd for Hand {
