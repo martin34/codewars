@@ -153,34 +153,17 @@ mod tests {
         assert_eq!(player_2.partial_cmp(&player_1), Some(Ordering::Greater));
     }
 
-    #[test]
-    fn test_flush_vs_full_house() {
-        let player_1: Hand = Hand::from_str("4H 6H 7H 8H TH").unwrap();
-        let player_2: Hand = Hand::from_str("3H 3P 3C 5C 5H").unwrap();
-
-        assert!(player_1 != player_2);
-        assert_eq!(player_1.partial_cmp(&player_2), Some(Ordering::Less));
-        assert_eq!(player_2.partial_cmp(&player_1), Some(Ordering::Greater));
-    }
-
-    #[test]
-    fn test_full_house_vs_full_house() {
-        let smaller: Hand = Hand::from_str("2H 2P 2C 6C 6H").unwrap();
-        let bigger: Hand = Hand::from_str("5C 5H 3H 3P 3C").unwrap();
-
-        assert!(bigger != smaller);
-        assert_eq!(smaller.partial_cmp(&bigger), Some(Ordering::Less));
-        assert_eq!(bigger.partial_cmp(&smaller), Some(Ordering::Greater));
-    }
-
     struct HandCmpTestParams {
         smaller: String,
         bigger: String,
     }
     #[parameterized(
         p = {
-            HandCmpTestParams{smaller: String::from("3H 3P 3C 6C 6H"), bigger: String::from("2H 2P 2C 2T 7H")},
-            HandCmpTestParams{smaller: String::from("2H 2P 2C 2T 8H"), bigger: String::from("3H 4H 5H 6H 7H")},
+            HandCmpTestParams{smaller: String::from("4H 6H 7H 8H TH"), bigger: String::from("4C 6C 7C 8C KC")}, // Flush vs Flush TODO: Equal Case
+            HandCmpTestParams{smaller: String::from("4H 6H 7H 8H TH"), bigger: String::from("3H 3P 3C 5C 5H")}, // Flush vs FullHouse
+            HandCmpTestParams{smaller: String::from("2H 2P 2C 6C 6H"), bigger: String::from("5C 5H 3H 3P 3C")}, // FullHouse vs FullHouse
+            HandCmpTestParams{smaller: String::from("3H 3P 3C 6C 6H"), bigger: String::from("2H 2P 2C 2T 7H")}, // FullHouse vs FourOfAKind
+            HandCmpTestParams{smaller: String::from("2H 2P 2C 2T 8H"), bigger: String::from("3H 4H 5H 6H 7H")}, // FourOfAKind vs FourOfAKind
             HandCmpTestParams{smaller: String::from("3H 4H 5H 6H 7H"), bigger: String::from("4C 5C 6C 7C 8C")}, // TODO: Equal case
         })]
     fn test_hand_comparison(p: HandCmpTestParams) {

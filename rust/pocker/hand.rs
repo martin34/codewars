@@ -147,7 +147,7 @@ impl PartialEq for Hand {
     }
 }
 
-fn create_straight(hand: &Hand) -> Option<[Face; 5]> {
+fn is_straight(hand: &Hand) -> bool {
     let mut is_straight = true;
     for i in 0..4 {
         println!("Before: {:?}", hand.cards[i].face);
@@ -162,11 +162,7 @@ fn create_straight(hand: &Hand) -> Option<[Face; 5]> {
             }
         };
     }
-    if is_straight {
-        Some(hand.cards.map(|card| card.face))
-    } else {
-        None
-    }
+    is_straight
 }
 
 #[derive(PartialEq, Eq)]
@@ -176,7 +172,9 @@ enum Score {
     TwoPairs,
     ThreeOfAKind,
     Straight,
-    Flush,
+    Flush {
+        face_values_decreasing_order: [Face; 5],
+    },
     FullHouse {
         face_with_count: [(Face, i8); 2],
     },
@@ -188,13 +186,15 @@ enum Score {
 
 fn create_highest_score(hand: &Hand) -> Score {
     let is_flush = hand.cards.iter().all(|x| x.suit == hand.cards[0].suit);
-    let straight = create_straight(hand);
-    if is_flush {
-        if let Some(face_values) = straight {
-            return Score::StraightFlush {
-                face_values_decreasing_order: face_values,
-            };
-        }
+    let is_straight = is_straight(hand);
+
+
+    let face_values_decreasing_order = hand.cards.map(|card| card.face);
+
+    if is_flush && is_straight {
+        return Score::StraightFlush {
+            face_values_decreasing_order: face_values_decreasing_order,
+        };
     }
 
     let face_values = hand.cards.map(|card| card.face);
@@ -221,14 +221,14 @@ fn create_highest_score(hand: &Hand) -> Score {
         };
     }
 
-    if let Some(face_values) = straight {
+    if is_straight {
         println!("Created Straight");
         return Score::Straight;
     }
 
     if is_flush {
         println!("Created Flush");
-        return Score::Flush;
+        return Score::Flush{face_values_decreasing_order: face_values_decreasing_order};
     }
     println!("Created HighCard");
     return Score::HighCard;
@@ -241,7 +241,7 @@ fn create_numeric_score(score: &Score) -> i8 {
         Score::TwoPairs => 2,
         Score::ThreeOfAKind => 3,
         Score::Straight => 4,
-        Score::Flush => 5,
+        Score::Flush { .. } => 5,
         Score::FullHouse { .. } => 6,
         Score::FourOfAKind => 7,
         Score::StraightFlush { .. } => 8,
@@ -264,6 +264,19 @@ impl PartialOrd for Score {
         {
             let self_face_values_decreasing_order = face_values_decreasing_order;
             if let Score::StraightFlush {
+                face_values_decreasing_order,
+            } = other
+            {
+                return Some(self_face_values_decreasing_order.cmp(&face_values_decreasing_order));
+            }
+        }
+
+        if let Score::Flush {
+            face_values_decreasing_order,
+        } = self
+        {
+            let self_face_values_decreasing_order = face_values_decreasing_order;
+            if let Score::Flush {
                 face_values_decreasing_order,
             } = other
             {
