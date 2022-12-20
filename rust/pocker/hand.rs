@@ -147,7 +147,7 @@ impl PartialEq for Hand {
     }
 }
 
-fn is_straight(hand: &Hand) -> bool {
+fn create_straight(hand: &Hand) -> Option<[Face; 5]> {
     let mut is_straight = true;
     for i in 0..4 {
         println!("Before: {:?}", hand.cards[i].face);
@@ -162,7 +162,11 @@ fn is_straight(hand: &Hand) -> bool {
             }
         };
     }
-    is_straight
+    if is_straight {
+        Some(hand.cards.map(|card| card.face))
+    } else {
+        None
+    }
 }
 
 #[derive(PartialEq, Eq)]
@@ -173,13 +177,26 @@ enum Score {
     ThreeOfAKind,
     Straight,
     Flush,
-    FullHouse { face_with_count: [(Face, i8); 2] },
+    FullHouse {
+        face_with_count: [(Face, i8); 2],
+    },
     FourOfAKind,
-    StraightFlush,
-    RoyalFlush,
+    StraightFlush {
+        face_values_decreasing_order: [Face; 5],
+    },
 }
 
 fn create_highest_score(hand: &Hand) -> Score {
+    let is_flush = hand.cards.iter().all(|x| x.suit == hand.cards[0].suit);
+    let straight = create_straight(hand);
+    if is_flush {
+        if let Some(face_values) = straight {
+            return Score::StraightFlush {
+                face_values_decreasing_order: face_values,
+            };
+        }
+    }
+
     let face_values = hand.cards.map(|card| card.face);
     let face_with_count = face_values.iter().unique().map(|unique_value| {
         (
@@ -190,23 +207,26 @@ fn create_highest_score(hand: &Hand) -> Score {
                 .count() as i8,
         )
     });
-    let vec = face_with_count.collect_vec();
+
+    let mut vec = face_with_count.collect_vec();
+    vec.sort_by(|lhs, rhs| lhs.1.partial_cmp(&rhs.1).unwrap());
+
+    if vec.len() == 2 && (vec[0].1 == 4 || vec[1].1 == 4) {
+        return Score::FourOfAKind;
+    }
     if vec.len() == 2 && (vec[0].1 == 2 || vec[0].1 == 3) && (vec[1].1 == 3 || vec[1].1 == 2) {
-        let mut face_with_count_array = [vec[0], vec[1]];
-        face_with_count_array.sort_by(|lhs, rhs| lhs.1.partial_cmp(&rhs.1).unwrap());
-        println!("Created FullHouse");
+        let face_with_count_array = [vec[0], vec[1]];
         return Score::FullHouse {
             face_with_count: face_with_count_array,
         };
     }
 
-    if is_straight(hand) {
+    if let Some(face_values) = straight {
         println!("Created Straight");
         return Score::Straight;
     }
 
-    let flush = hand.cards.iter().all(|x| x.suit == hand.cards[0].suit);
-    if flush {
+    if is_flush {
         println!("Created Flush");
         return Score::Flush;
     }
@@ -224,8 +244,7 @@ fn create_numeric_score(score: &Score) -> i8 {
         Score::Flush => 5,
         Score::FullHouse { .. } => 6,
         Score::FourOfAKind => 7,
-        Score::StraightFlush => 8,
-        Score::RoyalFlush => 9,
+        Score::StraightFlush { .. } => 8,
     }
 }
 
@@ -235,8 +254,21 @@ impl PartialOrd for Score {
         let ons = create_numeric_score(other);
         let nsc = ns.partial_cmp(&ons);
         if nsc != Some(Ordering::Equal) {
-            println!("Simple");
+            println!("Simple {} {}", ns, ons);
             return nsc;
+        }
+
+        if let Score::StraightFlush {
+            face_values_decreasing_order,
+        } = self
+        {
+            let self_face_values_decreasing_order = face_values_decreasing_order;
+            if let Score::StraightFlush {
+                face_values_decreasing_order,
+            } = other
+            {
+                return Some(self_face_values_decreasing_order.cmp(&face_values_decreasing_order));
+            }
         }
 
         println!("Blub");

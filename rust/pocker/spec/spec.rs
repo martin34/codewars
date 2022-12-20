@@ -166,10 +166,32 @@ mod tests {
     #[test]
     fn test_full_house_vs_full_house() {
         let smaller: Hand = Hand::from_str("2H 2P 2C 6C 6H").unwrap();
-        let bigger: Hand = Hand::from_str("3H 3P 3C 5C 5H").unwrap();
+        let bigger: Hand = Hand::from_str("5C 5H 3H 3P 3C").unwrap();
 
         assert!(bigger != smaller);
         assert_eq!(smaller.partial_cmp(&bigger), Some(Ordering::Less));
         assert_eq!(bigger.partial_cmp(&smaller), Some(Ordering::Greater));
+    }
+
+    struct HandCmpTestParams {
+        smaller: String,
+        bigger: String,
+    }
+    #[parameterized(
+        p = {
+            HandCmpTestParams{smaller: String::from("3H 3P 3C 6C 6H"), bigger: String::from("2H 2P 2C 2T 7H")},
+            HandCmpTestParams{smaller: String::from("2H 2P 2C 2T 8H"), bigger: String::from("3H 4H 5H 6H 7H")},
+            HandCmpTestParams{smaller: String::from("3H 4H 5H 6H 7H"), bigger: String::from("4C 5C 6C 7C 8C")}, // TODO: Equal case
+        })]
+    fn test_hand_comparison(p: HandCmpTestParams) {
+        let smaller_hand = Hand::from_str(&p.smaller).unwrap();
+        let bigger_hand = Hand::from_str(&p.bigger).unwrap();
+
+        assert!(bigger_hand != smaller_hand);
+        assert_eq!(smaller_hand.partial_cmp(&bigger_hand), Some(Ordering::Less));
+        assert_eq!(
+            bigger_hand.partial_cmp(&smaller_hand),
+            Some(Ordering::Greater)
+        );
     }
 }
