@@ -4,12 +4,15 @@ import sqlite3
 from pathlib import Path
 
 db_path = "/tmp/example.db"
+create_new_table = False
+if not Path(db_path).is_file():
+    create_new_table = True
+   
 con = sqlite3.connect(db_path)
 cur = con.cursor()
-if not Path(db_path).is_file():
+if create_new_table:
     cur.execute(
-        """CREATE TABLE greetings
-                   (greetings text, name text)"""
+        """CREATE TABLE greetings (greetings text, name text)"""
     )
 cur.execute("""INSERT INTO greetings VALUES ("foo", "bar")""")
 con.commit()
