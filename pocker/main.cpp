@@ -1,4 +1,5 @@
 
+#include "report.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -15,6 +16,10 @@ int main(int argc, char *argv[]) {
   std::filesystem::path input_file =
       std::filesystem::absolute("/home/martin/repo/codewars/pocker/pocker.txt");
   std::ifstream in{input_file};
+  if(in.good())
+  {
+      pocker::Report();
+  }
 
   std::string tmp;
   std::int32_t player_one_win_count{0};
