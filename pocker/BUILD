@@ -1,12 +1,6 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
 cc_library(
-    name = "report",
-    hdrs = ["report.h"],
-    visibility = [":__subpackages__"],
-)
-
-cc_library(
     name = "pocker",
     srcs = glob(
         [
@@ -36,8 +30,5 @@ cc_binary(
     ],
     deps = [
         ":pocker",
-    ] + select({
-        "//:v1": ["//pocker/v1:report"],
-        "//conditions:default": ["//pocker/default:report"],
-    }),
+    ],
 )

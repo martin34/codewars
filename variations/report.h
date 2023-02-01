@@ -1,7 +1,6 @@
 #pragma once
 
-namespace pocker {
+namespace variations {
 
 void Report();
-
 }
