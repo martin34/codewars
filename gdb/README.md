@@ -95,3 +95,38 @@ New value = 20
 Child::DoSomething (this=0x7fffffffdf40) at gdb/inheritance.cpp:27
 27	  }
 ```
+
+Break on function cal to specific object:
+The following does not work reliably if breakpoint is set with `b Child::DoSomething()`
+
+```
+(gdb) print &ci
+$17 = (Interface *) 0x7fffffffdf40
+(gdb) b inheritance.cpp:25 if this==0x7fffffffdf40
+Breakpoint 8 at 0x5555555550f4: file gdb/inheritance.cpp, line 25.
+(gdb) c
+Continuing.
+Base does something with b = 14
+
+Breakpoint 8, Child::DoSomething (this=0x7fffffffdf40) at gdb/inheritance.cpp:25
+25          std::cout << "Child does something with c = " << c << std::endl;
+(gdb) bt
+#0  Child::DoSomething (this=0x7fffffffdf40) at gdb/inheritance.cpp:25
+#1  0x0000555555554fb5 in <lambda(auto:1)>::operator()<Interface*>(Interface *) const (__closure=0x7fffffffdedf, i=0x7fffffffdf40) at gdb/inheritance.cpp:39
+#2  0x0000555555555002 in std::for_each<__gnu_cxx::__normal_iterator<Interface**, std::vector<Interface*> >, main(int, char**)::<lambda(auto:1)> >(__gnu_cxx::__normal_iterator<Interface**, std::vector<Interface*, std::allocator<Interface*> > >, __gnu_cxx::__normal_iterator<Interface**, std::vector<Interface*, std::allocator<Interface*> > >, <lambda(auto:1)>) (__first=0x7fffffffdf40, __last=0x0,
+__f=...) at /usr/include/c++/9/bits/stl_algo.h:3882
+#3  0x0000555555554efb in main () at gdb/inheritance.cpp:39
+(gdb) c
+Continuing.
+Child does something with c = 16
+
+Breakpoint 8, Child::DoSomething (this=0x7fffffffdf40) at gdb/inheritance.cpp:25
+25          std::cout << "Child does something with c = " << c << std::endl;
+(gdb) bt
+#0  Child::DoSomething (this=0x7fffffffdf40) at gdb/inheritance.cpp:25
+#1  0x0000555555554f0e in main () at gdb/inheritance.cpp:40
+(gdb) c
+Continuing.
+Child does something with c = 18
+Child does something with c = 14
+```
