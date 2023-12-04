@@ -69,3 +69,29 @@ set follow-fork-mode child # Follows first fork --> if second fork needs to be d
 
 Generate coredump by `ulimit -c unlimited`
 
+Inheritance and watchpoint:
+
+```
+Breakpoint 1 at 0xe7b: file gdb/inheritance.cpp, line 38.
+Starting program: /home/martin/.cache/bazel/_bazel_martin/f47ed1420b79cb256707e5fc2f9da665/execroot/codewars/bazel-out/k8-dbg/bin/gdb/inheritance 
+
+Breakpoint 1, main () at gdb/inheritance.cpp:38
+38	    std::vector<Interface*> things{&b, &c};
+Hardware watchpoint 2: reinterpret_cast<Child*>(&ci).c
+Continuing.
+
+Hardware watchpoint 2: reinterpret_cast<Child*>(&ci).c
+
+Old value = 16
+New value = 18
+Child::DoSomething (this=0x7fffffffdf40) at gdb/inheritance.cpp:27
+27	  }
+Continuing.
+
+Hardware watchpoint 2: reinterpret_cast<Child*>(&ci).c
+
+Old value = 18
+New value = 20
+Child::DoSomething (this=0x7fffffffdf40) at gdb/inheritance.cpp:27
+27	  }
+```
