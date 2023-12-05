@@ -15,6 +15,13 @@ KingsTable::KingsTable(std::uint64_t const number_of_seats)
   std::iota(knights_.begin(), knights_.end(), 1);
 }
 
+void KingsTable::Debug() {
+  auto neighbors = FindPossibleNeighbors();
+
+  auto graph = BuildGraphFromNeighbors(neighbors);
+  graph.Print();
+}
+
 void KingsTable::ArrangeSeating() {
   auto neighbors = FindPossibleNeighbors();
 

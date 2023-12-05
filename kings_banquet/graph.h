@@ -22,6 +22,8 @@ public:
   Vertices Leafs() const;
   Path GetPathFromTo(Vertex::Name start, Vertex::Name end);
 
+  void Print() const;
+
 private:
   Vertices vertices{};
 };

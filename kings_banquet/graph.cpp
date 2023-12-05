@@ -1,4 +1,5 @@
 #include "graph.h"
+#include <iostream>
 
 class VisitableVertex {
 public:
@@ -45,7 +46,7 @@ VisitableVertices::iterator FindVertexByName(VisitableVertices &vertices,
 }
 
 std::optional<Vertex::Name>
-JumpBack(std::vector<VisitableVertices::iterator> &path);
+JumpBackIfNoSuccessor(std::vector<VisitableVertices::iterator> &path);
 Path ConvertToNames(std::vector<VisitableVertices::iterator> const &path);
 void AddIfNotInPath(std::vector<VisitableVertices::iterator> &path,
                     VisitableVertices::iterator const next);
@@ -88,6 +89,7 @@ Path DepthFirstSearchUntilPathWithAllVerticesVisitedFound(
   auto next = start->Next();
   while (next) {
     Vertex::Name next_value = next.value();
+    // std::cout << next_value << " ";
     auto next_vertex = FindVertexByName(visitable, next_value);
 
     AddIfNotInPath(path, next_vertex);
@@ -100,12 +102,12 @@ Path DepthFirstSearchUntilPathWithAllVerticesVisitedFound(
         path.pop_back();
       }
     }
-    next = JumpBack(path);
+    next = JumpBackIfNoSuccessor(path);
   }
   return {};
 }
 std::optional<Vertex::Name>
-JumpBack(std::vector<VisitableVertices::iterator> &path) {
+JumpBackIfNoSuccessor(std::vector<VisitableVertices::iterator> &path) {
   auto next = path.back()->Next();
   while (!next) {
     path.back()->ClearVisitedCounter();
@@ -113,6 +115,7 @@ JumpBack(std::vector<VisitableVertices::iterator> &path) {
     if (path.empty()) {
       return {};
     }
+    // std::cout << " < ";
     next = path.back()->Next();
   }
   return next;
@@ -129,5 +132,15 @@ void AddIfNotInPath(std::vector<VisitableVertices::iterator> &path,
                     VisitableVertices::iterator const next) {
   if (std::find(path.cbegin(), path.cend(), next) == path.cend()) {
     path.push_back(next);
+  }
+}
+
+void Graph::Print() const {
+  for (const auto &v : vertices) {
+    std::cout << v.name;
+    for (const auto e : v.edges) {
+      std::cout << "," << e;
+    }
+    std::cout << std::endl;
   }
 }

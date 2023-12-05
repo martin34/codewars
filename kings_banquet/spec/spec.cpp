@@ -48,10 +48,23 @@ TEST(KingsTable, Return3thsKnightOnTableWith34Seats) {
   table.ArrangeSeating();
   EXPECT_THAT(table.NthKnightLeftToTheKing(3), Eq(30));
 }
-// TEST(KingsTable, Return3thsKnightOnTableWith88Seats) {
-//   KingsTable table{88};
-//   table.ArrangeSeating();
-// }
+TEST(KingsTable, ArrangeSeatingForVariousN) {
+  for (unsigned int n{0}; n < 87; ++n) {
+    try {
+      KingsTable table{n};
+      table.ArrangeSeating();
+      std::cout << "Found result for: " << n << std::endl;
+    } catch (std::runtime_error &) {
+      // std::cout << "No result for " << n << std::endl;
+    }
+  }
+  // table.Debug();
+}
+TEST(KingsTable, Return3thsKnightOnTableWith88Seats) {
+  KingsTable table{88};
+  table.ArrangeSeating();
+  // table.Debug();
+}
 // TEST(KingsTable, Return3thsKnightOnTableWith34Seatsxxx) {
 //   KingsTable table{99'194'853'094'755'497};
 //   std::cerr << "Result is: " <<

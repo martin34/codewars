@@ -16,6 +16,7 @@ public:
     CheckIfSeatingIsArranged();
     return knights_;
   }
+  void Debug();
 
 private:
   std::map<std::uint64_t, std::vector<std::uint64_t>>
