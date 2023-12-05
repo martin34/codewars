@@ -18,3 +18,8 @@ sh_binary(
         ":waiting_bin",
     ],
 )
+
+cc_binary(
+    name = "inheritance",
+    srcs = ["inheritance.cpp"],
+)

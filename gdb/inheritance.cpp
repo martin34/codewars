@@ -38,4 +38,6 @@ int main(int, char **) {
     std::vector<Interface*> things{&b, &c};
     std::for_each(things.begin(), things.end(), [](auto i){i->DoSomething();});
     ci.DoSomething();
+    Child oc{};
+    oc.DoSomething();
 }
