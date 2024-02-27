@@ -13,4 +13,8 @@ py_binary(
 
 example_rule(
     name = "foo",
+    deps = [
+        "//builder",
+        "//csv",
+    ],
 )

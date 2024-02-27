@@ -10,7 +10,10 @@ cc_library(
     linkopts = [
         "-lstdc++fs",
     ],
-    visibility = ["//csv/test:__pkg__"],
+    visibility = [
+        "//bazel_rules:__pkg__",
+        "//csv/test:__pkg__",
+    ],
     deps = ["//utils/string"],
 )
 

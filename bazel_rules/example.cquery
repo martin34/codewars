@@ -1,0 +1,4 @@
+def format(target):
+    p = providers(target)
+    cc_info = p.get("CcInfo")
+    return (target, cc_info.compilation_context.headers)
