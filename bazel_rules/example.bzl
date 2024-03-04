@@ -1,7 +1,14 @@
+ExampleInfo = provider(
+    "Example provider",
+    fields = {
+        "headers": "Just to show",
+        "files": "depset of Files generated",
+    },
+)
+
 def _example_rule(ctx):
     abc = []
     for dep in ctx.attr.deps:
-        print("_example_rule impl {}".format(dep[CcInfo].compilation_context.headers))
         abc += dep[CcInfo].compilation_context.headers.to_list()
 
     output = ctx.actions.declare_file("generated_data.txt")
@@ -20,7 +27,7 @@ def _example_rule(ctx):
     )
 
     return [
-        DefaultInfo(files = depset([final])),
+        ExampleInfo(headers = abc, files = depset([final])),
     ]
 
 example_rule = rule(
